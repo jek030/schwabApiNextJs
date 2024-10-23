@@ -1,27 +1,32 @@
 
 import Image from "next/image";
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue} from "@nextui-org/table";
-//import { accounts }  from '@/app/lib/accounts';
+import { accounts as accountsFile}  from '@/app/lib/accounts';
 import Link from 'next/link';
 import Breadcrumbs from '@/app/accounts/[account]/positions/breadcrumbs';
 const axios = require("axios");
 
 export default async function Page({params} : {params: {account: string }}) {
-//let accs = accounts;
+let accounts;
 const accountNumber = params.account;
 console.log("in positions: account number passed in" +  accountNumber);
 let accessToken = "" //todo, get access token
-const res = await axios({
-  method: "GET",
-  url: "https://api.schwabapi.com/trader/v1/accounts?fields=positions",
-  contentType: "application/json",
-  headers: {
-    "Accept-Encoding": "application/json",
-    Authorization: "Bearer " + accessToken,
-  },
-});
-let accounts = res.data;
+try {
+  const res = await axios({
+    method: "GET",
+    url: "https://api.schwabapi.com/trader/v1/accounts?fields=positions",
+    contentType: "application/json",
+    headers: {
+      "Accept-Encoding": "application/json",
+      Authorization: "Bearer " + accessToken,
+    },
+  });
+  accounts = res.data;
+} catch(error) {
+  console.log("Web service call failed with error: " + error)
 
+  accounts = accountsFile;
+}
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'decimal',
   minimumFractionDigits: 2,
