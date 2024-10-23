@@ -22,9 +22,10 @@ export default function Home() {
         </strong> 
           <ul className="list-inside list-decimal text-center sm:text-left font-[family-name:var(--font-geist-mono)]">   
             <li>get more account information for the accounts</li>
-            <li>Hook up a database</li>
-            <li>get more account information for the accounts</li>
-
+            <li>add more fields for the tickers, link yahoo finance site</li>
+            <li>Figure out how to not do 2 api calls on accounts and ticker page</li>
+            <li>lookup wtf breadcrumbs actually is</li>
+            <li>do I add a database?</li>
 
           </ul>
         <p className={` text-xl text-gray-800 md:text-2xl md:leading-normal`}>

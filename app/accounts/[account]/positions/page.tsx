@@ -10,14 +10,14 @@ export default async function Page({params} : {params: {account: string }}) {
 //let accs = accounts;
 const accountNumber = params.account;
 console.log("in positions: account number passed in" +  accountNumber);
-
+let accessToken = "" //todo, get access token
 const res = await axios({
   method: "GET",
   url: "https://api.schwabapi.com/trader/v1/accounts?fields=positions",
   contentType: "application/json",
   headers: {
     "Accept-Encoding": "application/json",
-    Authorization: "Bearer " + "I0.b2F1dGgyLmNkYy5zY2h3YWIuY29t.fn5kDwTo8KpReIJKFTZVfiTNzwPexRyfbuFh0kDjwvg@",
+    Authorization: "Bearer " + accessToken,
   },
 });
 let accounts = res.data;
