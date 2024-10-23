@@ -2,7 +2,6 @@ import Image from "next/image";
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue} from "@nextui-org/table";
 import { accounts as accountsFile }  from '@/app/lib/accounts';
 import Link from 'next/link';
-import Breadcrumbs from '@/app/accounts/[account]/positions/breadcrumbs';
 
 const axios = require("axios");
 
@@ -10,6 +9,7 @@ export  default async function Page() {
   console.log("*** API CALL: ACCOUNTS ***");
   //uncomment the get and use accounts above to ignore web service
   let accounts;
+  let accessToken : string = ""
   try {
     const res = await axios({
       method: "GET",
@@ -17,7 +17,7 @@ export  default async function Page() {
       contentType: "application/json",
       headers: {
         "Accept-Encoding": "application/json",
-        Authorization: "Bearer " + "I0.b2F1dGgyLmNkYy5zY2h3YWIuY29t.fn5kDwTo8KpReIJKFTZVfiTNzwPexRyfbuFh0kDjwvg@",
+        Authorization: "Bearer " + accessToken,
         },
     });
     accounts = res.data;
@@ -83,14 +83,12 @@ export  default async function Page() {
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex items-center gap-3">                    
-                        <Breadcrumbs 
-                            breadcrumbs={[        
-                              {
-                                label: item.securitiesAccount.accountNumber,
-                                href: `/accounts/${item.securitiesAccount.accountNumber}/positions`,
-                              }
-                            ]}
-                        />
+                         
+                        <Link className="mt-4 rounded-md bg-green-500 px-4 py-2 text-sm text-black transition-colors hover:bg-blue-400" 
+                              href={{pathname: `/accounts/${item.securitiesAccount.accountNumber}/positions`}}>
+                                      {item.securitiesAccount.accountNumber}
+                        </Link>
+
                     </div>
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">

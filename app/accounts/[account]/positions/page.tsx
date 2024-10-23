@@ -3,14 +3,14 @@ import Image from "next/image";
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue} from "@nextui-org/table";
 import { accounts as accountsFile}  from '@/app/lib/accounts';
 import Link from 'next/link';
-import Breadcrumbs from '@/app/accounts/[account]/positions/breadcrumbs';
 const axios = require("axios");
 
-export default async function Page({params} : {params: {account: string }}) {
-let accounts;
+export default async function Page({params} : {params: {account: string}}) {
 const accountNumber = params.account;
 console.log("in positions: account number passed in" +  accountNumber);
-let accessToken = "" //todo, get access token
+let accessToken : string = "" //todo, get access token
+
+let accounts;
 try {
   const res = await axios({
     method: "GET",
@@ -59,10 +59,6 @@ let positions: any[] = [];
       </header>
 
       <main className="flex flex-col gap-8 row-start-2 justify-items-center items-center sm:items-start">
-
-
-    
-
           <div>
             <table className="hidden min-w-full text-gray-900 md:table">
                   <thead className="rounded-lg text-left text-sm font-normal">
@@ -75,45 +71,50 @@ let positions: any[] = [];
                       </th>
                       <th scope="col" className="px-3 py-5 font-medium">
                         Avg Price
-                      </th>                                    
+                      </th> 
+                      <th scope="col" className="px-3 py-5 font-medium">
+                        Quantity
+                      </th>
+                      <th scope="col" className="px-3 py-5 font-medium">
+                        P/L ($)
+                      </th>    
+                      <th scope="col" className="px-3 py-5 font-medium">
+                        Net Change 
+                      </th>                                  
                     </tr>
                   </thead>
-
                   
                   <tbody className="bg-white">
                     {positions.map(pos => 
-
-                      <tr
-                      className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
-                    >
-                      <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                        <div className="flex items-center gap-3">
-
+                      <tr className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
+                        <td className="whitespace-nowrap py-3 pl-6 pr-3">
+                          <div className="flex items-center gap-3">
                            
-                          <Breadcrumbs
-                            breadcrumbs={[
-
-                              {
-                                label: `${pos.instrument.symbol}`,
-                                href: `/ticker/${pos.instrument.symbol }`,
-                              },
-                            ]}
-      />
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-3">
-                        ${formatter.format(pos.marketValue)}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-3">
-                        ${formatter.format(pos.averageLongPrice.toFixed(2))}
-                      </td>                                           
-                    </tr>
+                            <Link className="mt-4 rounded-md bg-green-500 px-4 py-2 text-sm text-black transition-colors hover:bg-blue-400" 
+                              href={{pathname:  `/ticker/${pos.instrument.symbol }`}}>
+                                ${pos.instrument.symbol}
+                            </Link>
+                          </div>
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-3">
+                          ${formatter.format(pos.marketValue)}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-3">
+                          ${formatter.format(pos.averagePrice)}
+                        </td> 
+                        <td className="whitespace-nowrap px-3 py-3">
+                          ${pos.longQuantity}
+                        </td>  
+                        <td className="whitespace-nowrap px-3 py-3">
+                          ${formatter.format(pos.longOpenProfitLoss)}
+                        </td>      
+                        <td className="whitespace-nowrap px-3 py-3">
+                          ${formatter.format(pos.instrument.netChange)}
+                        </td>                                       
+                      </tr>
                     )}
                   </tbody>
-            </table>
-                      
-
-              
+            </table>                   
           </div>  
       </main>
 

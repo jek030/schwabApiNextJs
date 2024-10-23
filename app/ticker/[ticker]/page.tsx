@@ -6,7 +6,8 @@ export default function Page({params} : {params: {ticker: string }}) {
     let ticker: string = params.ticker;
 
     //todo : web service call to schwabapi
-    
+  const yahooURL = "https://finance.yahoo.com/quote/" + ticker
+
   return (
     
     <div className="grid grid-rows-[20px_1fr_20px]  justify-items-left  min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -20,6 +21,7 @@ export default function Page({params} : {params: {ticker: string }}) {
       <main className="flex flex-col gap-8 row-start-2 justify-items-center items-center sm:items-start">
 
           {"Ticker " + ticker} 
+          <Link href={yahooURL}>{"Yahoo Finance"}</Link>
       </main>
 
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
