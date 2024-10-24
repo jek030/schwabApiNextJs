@@ -2,7 +2,6 @@ import Image from "next/image";
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue} from "@nextui-org/table";
 import { accounts as accountsFile }  from '@/app/lib/accounts';
 import Link from 'next/link';
-//const axios = require("axios");
 import { getAccounts } from "../getAccounts";
 
 export  default async function Page() {

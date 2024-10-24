@@ -3,7 +3,6 @@ import Image from "next/image";
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue} from "@nextui-org/table";
 import { accounts as accountsFile}  from '@/app/lib/accounts';
 import Link from 'next/link';
-//const axios = require("axios");
 import { getAccounts } from "@/app/getAccounts";
 
 export default async function Page({params} : {params: {account: string}}) {
@@ -33,7 +32,7 @@ export default async function Page({params} : {params: {account: string}}) {
           }
 
       }
-      
+
     return (
 
       <div className="grid grid-rows-[20px_1fr_20px]  justify-items-left  min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
