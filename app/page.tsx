@@ -24,7 +24,6 @@ export default function Home() {
             <li>get more account information for the accounts</li>
             <li>add more fields for the tickers, link yahoo finance site</li>
             <li>Figure out how to not do 2 api calls on accounts and ticker page</li>
-            <li>lookup wtf breadcrumbs actually is</li>
             <li>do I add a database?</li>
 
           </ul>

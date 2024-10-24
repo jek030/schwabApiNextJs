@@ -2,30 +2,18 @@ import Image from "next/image";
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue} from "@nextui-org/table";
 import { accounts as accountsFile }  from '@/app/lib/accounts';
 import Link from 'next/link';
-
-const axios = require("axios");
+//const axios = require("axios");
+import { getAccounts } from "../getAccounts";
 
 export  default async function Page() {
-  console.log("*** API CALL: ACCOUNTS ***");
-  //uncomment the get and use accounts above to ignore web service
+
   let accounts;
-  let accessToken : string = ""
+  
   try {
-    const res = await axios({
-      method: "GET",
-      url: "https://api.schwabapi.com/trader/v1/accounts?fields=positions",
-      contentType: "application/json",
-      headers: {
-        "Accept-Encoding": "application/json",
-        Authorization: "Bearer " + accessToken,
-        },
-    });
-    accounts = res.data;
+     accounts = await getAccounts();
   } catch (error) {
     console.log("Web service call failed with error: " + error)
-
-   accounts = accountsFile;
-
+    accounts = accountsFile;
   }
 
   const formatter = new Intl.NumberFormat('en-US', {
