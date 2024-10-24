@@ -4,6 +4,7 @@ import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyV
 import { accounts as accountsFile}  from '@/app/lib/accounts';
 import Link from 'next/link';
 import { getAccounts } from "@/app/getAccounts";
+import next from "next";
 
 export default async function Page({params} : {params: {account: string}}) {
 
@@ -77,7 +78,10 @@ export default async function Page({params} : {params: {account: string}}) {
                     </thead>
 
                     <tbody className="bg-white">
-                      {positions.map(pos => 
+                      
+                      
+                      
+                       { positions != undefined &&  positions.length != 0  && positions.map(pos => 
                         <tr className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
                           <td className="whitespace-nowrap py-3 pl-6 pr-3">
                             <div className="flex items-center gap-3">
