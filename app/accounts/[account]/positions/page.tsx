@@ -46,7 +46,7 @@ export default async function Page({params} : {params: {account: string}}) {
               href=".."
               className="mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
               >
-              Go Back
+              Go Back 
               </Link>
           </p>
         </header>
@@ -114,16 +114,7 @@ export default async function Page({params} : {params: {account: string}}) {
             </div>  
         </main>
 
-        <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-          <a
-            className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-            href="https://github.com/jek030"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Created by jek030
-          </a>
-        </footer>
+       
       </div>
     );
   }

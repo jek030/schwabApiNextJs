@@ -40,7 +40,6 @@ export  default async function Page() {
         </p>
       </header>
 
-      <main className="flex flex-col gap-8 row-start-2 justify-items-center items-center sm:items-start"> 
 
         <div>
           <table className="hidden min-w-full text-gray-900 md:table">
@@ -98,18 +97,6 @@ export  default async function Page() {
           </div> 
 
            
-      </main>
-
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://github.com/jek030"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Created by jek030
-        </a>
-      </footer>
     </div>
   );
 }

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import SideNav from '@/app/ui/sidenav';
-
+import Footer from "./ui/footer";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -26,16 +26,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-      <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <div className="flex h-screen flex-col md:flex-row md:overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-green-100">
         <div className="w-full flex-none md:w-64">
           <SideNav />
+          
         </div>
-        <div className="flex-grow p-6 md:overflow-y-auto md:p-12">{children}</div>
+        <div className="flex min-h-screen w-full flex-col items-center justify-center py-32">{children}</div>
+       
       </div>
+      <Footer/>
       </body>
     </html>
   );
 }
+
