@@ -26,8 +26,6 @@ const formatterVol = new Intl.NumberFormat('en-US', {
 
     //todo : web service call to schwabapi
   const yahooURL = "https://finance.yahoo.com/quote/" + ticker
-
-
   
   return (
     
@@ -48,7 +46,7 @@ const formatterVol = new Intl.NumberFormat('en-US', {
         {formatter.format(accounts[ticker].quote.mark)}         {formatter.format(accounts[ticker].quote.netChange)} <br></br>
 
       </p>
-      <Link className="rounded-md bg-purple-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
+      <Link className="rounded-md bg-purple-500 px-4 py-2 text-sm text-white transition-colors hover:bg-purple-400"
            href={yahooURL}>{"Yahoo Finance"}
       </Link>
 

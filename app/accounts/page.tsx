@@ -31,7 +31,7 @@ export  default async function Page() {
         <p >
             <Link
             href=".."
-            className="mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
+            className="border border-black mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
             >
             Go Back
             </Link>
@@ -60,15 +60,15 @@ export  default async function Page() {
                   </th>                                    
                 </tr>
               </thead>
-              <tbody className="bg-white">
+              <tbody className="bg-white ">
                 {accounts.map(item => (
                   <tr
-                  className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
+                  className="w-full border border-slate-200 py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    <div className="flex items-center gap-3">                    
+                    <div className=" flex items-center gap-3">                    
                          
-                        <Link className="mt-4 rounded-md bg-green-500 px-4 py-2 text-sm text-black transition-colors hover:bg-blue-400" 
+                        <Link className="border border-black mt-4 rounded-md bg-green-500 px-4 py-2 text-sm text-black transition-colors hover:bg-blue-400" 
                               href={{pathname: `/accounts/${item.securitiesAccount.accountNumber}/positions`}}>
                                       {item.securitiesAccount.accountNumber}
                         </Link>
