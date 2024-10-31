@@ -23,11 +23,11 @@ let positions: any[] = [];
     console.log("In [account].page: Account Number: " + accountNumber);
 
   return (
-    <main>
+    <div>
       <Link className="mt-4 rounded-md bg-green-500 px-4 py-2 text-sm text-black transition-colors hover:bg-blue-400" 
             href={{pathname:  `/accounts/positions/${accountNumber}`}}>
               {'Account Number'}
       </Link>
-    </main>
+    </div>
   );
 }

@@ -27,12 +27,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-      <div className="flex h-screen flex-col md:flex-row md:overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-green-100">
+      <div className="flex h-screen flex-col md:flex-row md:overflow-hidden bg-gradient-to-br from-green-200 via-white to-green-100">
         <div className="w-full flex-none md:w-64">
           <SideNav />
           
         </div>
-        <div className="flex min-h-screen w-full flex-col items-center justify-center py-32">{children}</div>
+        <main className="flex w-full flex-col">{children}</main>
        
       </div>
       <Footer/>

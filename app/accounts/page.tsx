@@ -23,12 +23,10 @@ export  default async function Page() {
 
   return (
     
-    <div className="grid grid-rows-[20px_1fr_20px]  justify-items-left min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <header className="flex flex-col gap-8 row-start-1  sm:items-start"> 
-        <p className={` text-xl text-gray-800 md:text-2xl md:leading-normal`}>
-           
+    <div className="grid grid-rows-[20px_1fr_20px]  justify-items-left p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <header className="flex flex-col gap-8 sm:items-start"> 
+      <p className={` text-xl text-gray-800 md:text-2xl `}>        
            <strong>Welcome to FinanceGuy.</strong> This is the accounts page.
-           
         </p>
         <p >
             <Link
@@ -41,7 +39,7 @@ export  default async function Page() {
       </header>
 
 
-        <div>
+        <div className="flex flex-col gap-8 items-left ">
           <table className="hidden min-w-full text-gray-900 md:table">
               <thead className="rounded-lg text-left text-sm font-normal">
                 <tr>
@@ -94,9 +92,7 @@ export  default async function Page() {
 
               </tbody>
             </table>
-          </div> 
-
-           
+          </div>      
     </div>
   );
 }
