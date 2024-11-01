@@ -1,15 +1,18 @@
 
 import Image from "next/image";
-import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue} from "@nextui-org/table";
 import { accounts as accountsFile}  from '@/app/lib/accounts';
 import Link from 'next/link';
 import { getAccounts } from "@/app/getAccounts";
-import next from "next";
+import { Divider } from "@nextui-org/react";
+import {Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle} from '@/app/ui/card';
+import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow,} from '@/app/ui/table';
+import { Position } from "@/app/lib/utils";
+import PositionsTable from "@/app/ui/positions-table";
+
 
 export default async function Page({params} : {params: {account: string}}) {
 
   const accountNumber = params.account;
-  console.log("in positions: account number passed in" +  accountNumber);
 
   let accounts;
   try {
@@ -29,92 +32,40 @@ export default async function Page({params} : {params: {account: string}}) {
     for (let acc in accounts) {
       if ( accounts[acc].securitiesAccount.accountNumber == accountNumber ) {
           positions = accounts[acc].securitiesAccount.positions
-          console.log("acc number in object" +  accounts[acc].securitiesAccount.accountNumber)
           }
 
       }
+      let formatPositions: Position[] = Object.entries(positions).map(([key, value]) => 
+        ({
+          key: key,
+          symbol: value.instrument.symbol,
+          marketValue: value.marketValue,
+          averagePrice: value.averagePrice,
+          longQuantity: value.longQuantity,
+          longOpenProfitLoss: value.longOpenProfitLoss,
+          netChange: value.instrument.netChange
+        }));
 
     return (
 
-      <div className="grid grid-rows-[20px_1fr_20px]  justify-items-left  p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-        <header className="flex flex-col gap-8 row-start-1  sm:items-start"> 
-          <p className={` text-xl text-gray-800 md:text-2xl md:leading-normal`}>
+      <div className="grid grid-rows-[20px_1fr_20px] p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+        <header className="flex flex-col gap-8 sm:items-start"> 
+          <p className={`text-xl text-gray-800 md:text-2xl `}>
              <strong>Welcome to FinanceGuy.</strong> This is the positions page.
           </p>
-          <p >
+          
+        </header>
+        <main className="flex flex-col gap-8 row-start-2 justify-items-center items-center sm:items-start">
+        <p >
               <Link
               href=".."
-              className="mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
+              className="border border-slate-200 mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
               >
               Go Back 
               </Link>
           </p>
-        </header>
-
-        <main className="flex flex-col gap-8 row-start-2 justify-items-center items-center sm:items-start">
-            <div>
-              <table className="hidden min-w-full text-gray-900 md:table">
-                    <thead className="rounded-lg text-left text-sm font-normal">
-                      <tr>
-                        <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                          Ticker
-                        </th>
-                        <th scope="col" className="px-3 py-5 font-medium">
-                          Market Value
-                        </th>
-                        <th scope="col" className="px-3 py-5 font-medium">
-                          Avg Price
-                        </th> 
-                        <th scope="col" className="px-3 py-5 font-medium">
-                          Quantity
-                        </th>
-                        <th scope="col" className="px-3 py-5 font-medium">
-                          P/L ($)
-                        </th>    
-                        <th scope="col" className="px-3 py-5 font-medium">
-                          Net Change 
-                        </th>                                  
-                      </tr>
-                    </thead>
-
-                    <tbody className="bg-white">
-                      
-                      
-                      
-                       { positions != undefined &&  positions.length != 0  && positions.map(pos => 
-                        <tr className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
-                          <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                            <div className="flex items-center gap-3">
-
-                              <Link className="mt-4 rounded-md bg-green-500 px-4 py-2 text-sm text-black transition-colors hover:bg-blue-400" 
-                                href={{pathname:  `/ticker/${pos.instrument.symbol }`}}>
-                                  ${pos.instrument.symbol}
-                              </Link>
-                            </div>
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-3">
-                            ${formatter.format(pos.marketValue)}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-3">
-                            ${formatter.format(pos.averagePrice)}
-                          </td> 
-                          <td className="whitespace-nowrap px-3 py-3">
-                            ${pos.longQuantity}
-                          </td>  
-                          <td className="whitespace-nowrap px-3 py-3">
-                            ${formatter.format(pos.longOpenProfitLoss)}
-                          </td>      
-                          <td className="whitespace-nowrap px-3 py-3">
-                            ${formatter.format(pos.instrument.netChange)}
-                          </td>                                       
-                        </tr>
-                      )}
-                    </tbody>
-              </table>                   
-            </div>  
-        </main>
-
-       
+          <PositionsTable positions={formatPositions} accountNumber ={accountNumber}/>
+        </main>    
       </div>
     );
   }

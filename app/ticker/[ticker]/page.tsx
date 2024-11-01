@@ -19,7 +19,6 @@ const formatterVol = new Intl.NumberFormat('en-US', {
 });
   try {
     accounts = await getTicker(ticker);
-    console.log(accounts);
  } catch (error) {
    console.log(`getTicker(${ticker}) web service call failed with error: ${error}`)
  }

@@ -2,17 +2,11 @@
 
 import React from "react";
 import Link from 'next/link';
+import { Divider } from "@nextui-org/react";
+import {Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle} from '@/app/ui/card';
+import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow,} from '@/app/ui/table';
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow, getKeyValue
-} from "@nextui-org/table";
-
-import { Account } from "../lib/Account";
+import { Account, Position } from "../lib/utils";
 
 
 const columns = [
@@ -38,43 +32,54 @@ const columns = [
   }
 ]
 
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'decimal',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+
 export default function AccountTable({accounts }: {accounts: Account[]}) {
 
-  const renderCell = React.useCallback((account, columnKey) => {
-    const cellValue = account[columnKey];
-    console.log("bello " + cellValue)
-
-    switch (columnKey) {
-      case "accountNumber":
-        return (
-          <Link className="border border-black mt-4 rounded-md bg-green-500 px-4 py-2 text-sm text-black transition-colors hover:bg-blue-400" 
-                              href={{pathname: `/accounts/${cellValue}/positions`}}>
-                                      {cellValue}
-                        </Link>
-        );
-          
-      default:
-        return cellValue;
-    }
-  }, []);
-
   return (
-    <div className="">
-      <Table aria-label="Accounts Table">
-        <TableHeader columns={columns}>
-          {column => <TableColumn key={column.key}> {column.label}</TableColumn>}
-        </TableHeader>
-
-        <TableBody items={accounts}>
-          {(item) => (
-            <TableRow key={item.key}>
-              {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-
-            </TableRow>                                  
-            )}
-
-      </TableBody>
-      </Table>
-    </div>
-  )
+   <Card>
+      <CardHeader>
+        <CardTitle>Accounts</CardTitle>
+        
+        <CardDescription>
+          View accounts retrieved form Charles Schwab API.
+        </CardDescription>
+      </CardHeader>
+      <Divider/>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow >
+              {columns.map((col) =>
+                <TableHead className="hidden w-[100px] sm:table-cell">
+                          {col.label} 
+                </TableHead>
+              )}
+            </TableRow>
+          </TableHeader>
+            
+          <TableBody >
+            {accounts.map((item) => (
+              <TableRow className = "hover:bg-white">
+                <TableCell className="hidden md:table-cell">{
+                  <Link className="border border-black rounded-md bg-gradient-to-br from-blue-300 via-white to-blue-200 px-4 py-2 text-sm text-black transition-colors hover:bg-blue-400" 
+                        href={{pathname: `/accounts/${ item.accountNumber}/positions`}}>
+                    {item.accountNumber}
+                   </Link>}
+                </TableCell>
+                <TableCell className="hidden md:table-cell whitespace-nowrap px-4 py-5 text-s">${formatter.format(item.accountValue)}</TableCell>
+                <TableCell className="hidden md:table-cell">${formatter.format(item.accountEquity)}</TableCell>
+                <TableCell className="hidden md:table-cell">{item.roundTrips}</TableCell>
+                <TableCell className="hidden md:table-cell">${formatter.format(item.cashBalance)}</TableCell>
+              </TableRow> 
+            )) }
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+ )
 }
