@@ -2,6 +2,23 @@ import { accounts }  from '@/app/lib/accounts';
 import Link from 'next/link';
 import { getAccounts } from '@/app/getAccounts';
 import { getTicker } from '@/getTicker';
+import {Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle} from '@/app/ui/card';
+import { Divider } from "@nextui-org/react";
+import { clsx } from "clsx"
+import ColorfulText from '@/app/lib/utils';
+
+const getColor = (num:number) => {
+  if(num < 0 ) {
+     return 'red';
+  }
+  else if (num > 0) { 
+    return 'green'; 
+  }
+  else {
+     return 'black';
+  }
+};
+ 
 
 export default async function Page({params} : {params: {ticker: string }}) {
   let accounts;
@@ -10,13 +27,13 @@ export default async function Page({params} : {params: {ticker: string }}) {
     style: 'decimal',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
-});
+  });
 
-const formatterVol = new Intl.NumberFormat('en-US', {
-  style: 'decimal',
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0
-});
+  const formatterVol = new Intl.NumberFormat('en-US', {
+    style: 'decimal',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  });
   try {
     accounts = await getTicker(ticker);
  } catch (error) {
@@ -28,65 +45,91 @@ const formatterVol = new Intl.NumberFormat('en-US', {
   
   return (
     
-    <div className="grid grid-rows-[20px_1fr_20px]  justify-items-left p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <header className="flex flex-col gap-2 row-start-1  sm:items-start"> 
+    <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+
+      <header className="flex flex-col  sm:items-start"> 
         <p className=" text-gray-800 md:text-2xl md:leading-normal">
-           <strong >Welcome to FinanceGuy.</strong>
-        </p> 
-        <p className=" text-gray-800 md:text-l ">
-           This is the ticker page.
-        </p> 
-        
+           <strong >Welcome to FinanceGuy.</strong> This is the ticker page.
+        </p>  
+        <Link
+              href=".."
+              className="border border-slate-200 mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
+              >
+              Go Back 
+              </Link>
       </header>
       
-      <main className="flex flex-col gap-8 row-start-2 justify-items-center  sm:items-start">
-      <p className=" p-3 hidden h-auto w-auto grow rounded-md bg-gray-50 md:block">
-        <strong className="text-xl"> {ticker} </strong> { accounts[ticker].reference.description}  <br></br>
-        {formatter.format(accounts[ticker].quote.mark)}         {formatter.format(accounts[ticker].quote.netChange)} <br></br>
+      <main className="grid grid-cols-2 gap-8  sm:items-start">
 
-      </p>
-      <Link className="rounded-md bg-purple-500 px-4 py-2 text-sm text-white transition-colors hover:bg-purple-400"
-           href={yahooURL}>{"Yahoo Finance"}
-      </Link>
+      <Card>
+        <CardHeader>
+          <CardTitle>{ticker}</CardTitle>       
+          <Divider></Divider>
+          <CardDescription>
+            { accounts[ticker].reference.description}
+          </CardDescription>
+        </CardHeader>
+        <CardContent >
+          Price: {formatter.format(accounts[ticker].quote.mark) }   <br></br>    
+          Net Change: <span style={{ color: getColor(accounts[ticker].quote.netChange)}}> {formatter.format(accounts[ticker].quote.netChange)} </span>          
+        </CardContent>
+        <CardContent>
+          <Link className="rounded-md bg-purple-500 px-4 py-2 text-sm text-white transition-colors hover:bg-purple-400"
+           href={yahooURL} 
+           target="_blank" 
+           rel="noopener noreferrer">{"Yahoo Finance"}
+          </Link>
+        </CardContent>
+      </Card>
 
+      <Card>
+        <CardHeader>
+          <CardTitle>Statistics</CardTitle>       
+          <Divider></Divider>       
+        </CardHeader>
+        <CardContent>
+            52 week high: {accounts[ticker].quote["52WeekHigh"]} <br></br>
+            52 week low: {accounts[ticker].quote["52WeekLow"]} <br></br>
+            10 day average volume: {formatterVol.format(accounts[ticker].fundamental.avg10DaysVolume)} <br></br>      
+            1 year average volume: { formatterVol.format(accounts[ticker].fundamental.avg1YearVolume)} <br></br>  
+        </CardContent>
+      </Card>
 
-      <p className="p-3 hidden h-auto w-full grow rounded-md bg-gray-50 md:block">
-        <strong>Fundamentals</strong><br></br>
-        {"P/E Ratio: " + formatter.format(accounts[ticker].fundamental.peRatio)}<br></br>
-        {"EPS: " + formatter.format(accounts[ticker].fundamental.eps)}<br></br>
-        {"Next ex-dividend date: " + new Date(accounts[ticker].fundamental.nextDivExDate).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}<br></br>
-        {"Next dividend payment date: " + new Date(accounts[ticker].fundamental.nextDivPayDate).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}<br></br>
-        {"Dividend yield: " + formatter.format(accounts[ticker].fundamental.divYield)}%<br></br>
-        {"EPS: " + formatter.format(accounts[ticker].fundamental.eps)}<br></br>
-      </p>
+      <Card>
+        <CardHeader>
+          <CardTitle>Fundamentals</CardTitle>       
+          <Divider></Divider>       
+        </CardHeader>
+        <CardContent>
+            P/E Ratio:<span style={{ color: getColor(accounts[ticker].fundamental.peRatio)}}> {formatter.format(accounts[ticker].fundamental.peRatio)} </span> <br></br>
+            EPS:<span style={{ color: getColor(accounts[ticker].fundamental.eps)}}> {formatter.format(accounts[ticker].fundamental.eps)} </span> <br></br>
+            Next ex-dividend date: {new Date(accounts[ticker].fundamental.nextDivExDate).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}<br></br>
+            Next dividend payment date: {new Date(accounts[ticker].fundamental.nextDivPayDate).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}<br></br>
+            Dividend yield: {formatter.format(accounts[ticker].fundamental.divYield)}%<br></br>
+        </CardContent>
+      </Card>
 
-      <p className="p-3 hidden h-auto w-full grow rounded-md bg-gray-50 md:block">
-        <strong>Statistics</strong><br></br>
-        {"52 week high: " + accounts[ticker].quote["52WeekHigh"]} <br></br>
-        {"52 week low: " + accounts[ticker].quote["52WeekLow"]} <br></br>
-        {"10 day average volume: " + formatterVol.format(accounts[ticker].fundamental.avg10DaysVolume)} <br></br>      
-        {"1 year average volume: " + formatterVol.format(accounts[ticker].fundamental.avg1YearVolume)} <br></br>      
-      </p>
-      <p className="p-3 hidden h-auto w-full grow rounded-md bg-gray-50 md:block">
-        <strong>Daily</strong><br></br>
-        {"Regular market price " + formatter.format(accounts[ticker].regular.regularMarketLastPrice)} <br></br>
-        {"Daily volume: " + formatterVol.format(accounts[ticker].quote.totalVolume)} <br></br>
-        {"Regular market net change " + formatter.format(accounts[ticker].regular.regularMarketNetChange)} <br></br>
-        {"Regular market % change " + formatter.format(accounts[ticker].regular.regularMarketPercentChange)} <br></br><br></br>
-        {"Last close price " + formatter.format(accounts[ticker].quote.closePrice)} <br></br>
-        {"Daily high: " + formatter.format(accounts[ticker].quote.highPrice)} <br></br>
-        {"Daily low: " + formatter.format(accounts[ticker].quote.lowPrice)} <br></br><br></br>
-        {"Mark: " + formatter.format(accounts[ticker].quote.mark)} <br></br>
-        {"Daily % change: " + formatter.format(accounts[ticker].quote.netPercentChange)} <br></br>
-        {"Daily net change: " + formatter.format(accounts[ticker].quote.netChange)} <br></br>
-        {"After hours change: " + formatter.format(accounts[ticker].quote.postMarketChange)} <br></br>
-        {"After hours % change: " + formatter.format(accounts[ticker].quote.postMarketPercentChange)} <br></br>
-      </p>
-          
-          
-      </main>
-
-      
+      <Card>
+        <CardHeader>
+          <CardTitle>Daily</CardTitle>       
+          <Divider></Divider>       
+        </CardHeader>
+        <CardContent>
+            Regular market price {formatter.format(accounts[ticker].regular.regularMarketLastPrice)} <br></br>
+            Daily volume: {formatterVol.format(accounts[ticker].quote.totalVolume)} <br></br>
+            Regular market net change {formatter.format(accounts[ticker].regular.regularMarketNetChange)} <br></br>
+            Regular market % change {formatter.format(accounts[ticker].regular.regularMarketPercentChange)} <br></br><br></br>
+            Last close price {formatter.format(accounts[ticker].quote.closePrice)} <br></br>
+            Daily high: {formatter.format(accounts[ticker].quote.highPrice)} <br></br>
+            Daily low: {formatter.format(accounts[ticker].quote.lowPrice)} <br></br><br></br>
+            Mark: {formatter.format(accounts[ticker].quote.mark)} <br></br>
+            Daily % change: <span style={{ color: getColor(accounts[ticker].quote.netPercentChange)}}> {formatter.format(accounts[ticker].quote.netPercentChange)} </span> <br></br>        
+            Daily net change: <span style={{ color: getColor(accounts[ticker].quote.netChange)}}> {formatter.format(accounts[ticker].quote.netChange)} </span> <br></br>
+            After hours change: <span style={{ color: getColor(accounts[ticker].quote.postMarketChange)}}> {formatter.format(accounts[ticker].quote.postMarketChange)} </span> <br></br>
+            After hours % change: <span style={{ color: getColor(accounts[ticker].quote.postMarketPercentChange)}}> {formatter.format(accounts[ticker].quote.postMarketPercentChange)} </span> <br></br>
+        </CardContent>
+      </Card>     
+    </main>    
     </div>
   );
 }

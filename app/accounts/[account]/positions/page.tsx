@@ -8,7 +8,7 @@ import {Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle} from '
 import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow,} from '@/app/ui/table';
 import { Position } from "@/app/lib/utils";
 import PositionsTable from "@/app/ui/positions-table";
-
+import ColorfulText from "@/app/lib/utils";
 
 export default async function Page({params} : {params: {account: string}}) {
 
@@ -48,14 +48,14 @@ export default async function Page({params} : {params: {account: string}}) {
 
     return (
 
-      <div className="grid grid-rows-[20px_1fr_20px] p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-        <header className="flex flex-col gap-8 sm:items-start"> 
-          <p className={`text-xl text-gray-800 md:text-2xl `}>
+      <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+        <header className="flex flex-col sm:items-start"> 
+          <p className=" text-gray-800 md:text-2xl md:leading-normal">
              <strong>Welcome to FinanceGuy.</strong> This is the positions page.
           </p>
           
         </header>
-        <main className="flex flex-col gap-8 row-start-2 justify-items-center items-center sm:items-start">
+        <main className="flex flex-col gap-8 sm:items-start">
         <p >
               <Link
               href=".."
