@@ -19,7 +19,7 @@ export default function Home() {
              Here is the TODO list:
         </strong> 
           <ul className="list-inside list-decimal text-center sm:text-left font-[family-name:var(--font-geist-mono)]">   
-            <li>get more account information for the accounts</li>
+            <li>why is the netChange NaN on the positions page....</li>
             <li>add more fields for the tickers, link yahoo finance site</li>
             <li>Check if API call is cached on ticker and positions pages</li>
             <li>do I add a database?</li>

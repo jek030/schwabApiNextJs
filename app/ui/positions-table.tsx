@@ -12,7 +12,7 @@ import { Account, Position } from "../lib/utils";
 const columns = [
     {
       key: "ticker",
-      label: "Ticker"
+      label: "Ticker"   
     },
     {
       key: "marketValue",
@@ -49,7 +49,7 @@ export default function PositionsTable({positions, accountNumber }: {positions: 
             <CardHeader>
               <CardTitle>Account {accountNumber}</CardTitle>       
                 <CardDescription>
-                  View position for account {accountNumber} retrieved from the Charles Schwab API.
+                  View positions for account {accountNumber} retrieved from the Charles Schwab API.
                 </CardDescription>
             </CardHeader>
             <Divider/>
