@@ -36,13 +36,14 @@ export default async function Page({params} : {params: {ticker: string }}) {
   });
   try {
     accounts = await getTicker(ticker);
+    console.log(accounts)
  } catch (error) {
    console.log(`getTicker(${ticker}) web service call failed with error: ${error}`)
  }
 
     //todo : web service call to schwabapi
   const yahooURL = "https://finance.yahoo.com/quote/" + ticker
-  
+  console.log("***** " + accounts);
   return (
     
     <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">

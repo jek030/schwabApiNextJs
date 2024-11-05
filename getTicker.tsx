@@ -7,7 +7,7 @@ export const getTicker = cache( async( ticker:string) => {
         method: 'GET',
         headers: {
           "Accept-Encoding": "application/json",
-          Authorization: "Bearer " + "I0.b2F1dGgyLmJkYy5zY2h3YWIuY29t.RgMrgd3gjMPap_zqO4UwwT7XNrWT7QUf80pM2Zoptd4@",
+          Authorization: "Bearer " + "I0.b2F1dGgyLmJkYy5zY2h3YWIuY29t.NNd9lMU2GP8tADUNTHpFFbdDu0aXocnew_EPr689LhE@",
           },
         });
   

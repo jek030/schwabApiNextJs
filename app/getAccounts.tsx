@@ -6,7 +6,7 @@ export const getAccounts = cache( async() => {
         method: 'GET',
         headers: {
           "Accept-Encoding": "application/json",
-          Authorization: "Bearer " + "I0.b2F1dGgyLmNkYy5zY2h3YWIuY29t.RPTLZPcd_AeWnQW94vutr0B4tk6-wfAw75PmAqWNHvM@",
+          Authorization: "Bearer " + "I0.b2F1dGgyLmJkYy5zY2h3YWIuY29t.NNd9lMU2GP8tADUNTHpFFbdDu0aXocnew_EPr689LhE@",
           },
         });
   

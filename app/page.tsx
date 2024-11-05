@@ -25,7 +25,7 @@ export default function Home() {
             <li>automate api keys</li>
             <li>add more fields for the tickers, link yahoo finance site</li>
             <li>Check if API call is cached on ticker and positions pages</li>
-            <li>do I add a database?</li>
+            <li>do I add a database? or websockets?</li>
           </ul>
         <p className="text-xl text-gray-800 md:text-2xl">
            <Link href="/accounts"
