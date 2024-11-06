@@ -1,11 +1,7 @@
-import { accounts }  from '@/app/lib/accounts';
 import Link from 'next/link';
-import { getAccounts } from '@/app/getAccounts';
 import { getTicker } from '@/getTicker';
 import {Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle} from '@/app/ui/card';
 import { Divider } from "@nextui-org/react";
-import { clsx } from "clsx"
-import ColorfulText from '@/app/lib/utils';
 
 const getColor = (num:number) => {
   if(num < 0 ) {
@@ -22,7 +18,7 @@ const getColor = (num:number) => {
 
 export default async function Page({params} : {params: {ticker: string }}) {
   let accounts;
-  let ticker: string = params.ticker;
+  const ticker: string = params.ticker;
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'decimal',
     minimumFractionDigits: 2,

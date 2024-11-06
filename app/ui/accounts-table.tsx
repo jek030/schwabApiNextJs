@@ -63,18 +63,18 @@ export default function AccountTable({accounts }: {accounts: Account[]}) {
           </TableHeader>
             
           <TableBody >
-            {accounts.map((item) => (
-              <TableRow className = "hover:bg-white">
+            {accounts.map((acc) => (
+              <TableRow key={acc.key} className = "hover:bg-white">
                 <TableCell className="hidden md:table-cell">{
                   <Link className="border border-black rounded-md bg-gradient-to-br from-blue-300 via-white to-blue-200 px-4 py-2 text-sm text-black transition-colors hover:bg-blue-400" 
-                        href={{pathname: `/accounts/${ item.accountNumber}/positions`}}>
-                    {item.accountNumber}
+                        href={{pathname: `/accounts/${ acc.accountNumber}/positions`}}>
+                    {acc.accountNumber}
                    </Link>}
                 </TableCell>
-                <TableCell className="hidden md:table-cell whitespace-nowrap px-4 py-5 text-s">${formatter.format(item.accountValue)}</TableCell>
-                <TableCell className="hidden md:table-cell">${formatter.format(item.accountEquity)}</TableCell>
-                <TableCell className="hidden md:table-cell">{item.roundTrips}</TableCell>
-                <TableCell className="hidden md:table-cell">${formatter.format(item.cashBalance)}</TableCell>
+                <TableCell className="hidden md:table-cell whitespace-nowrap px-4 py-5 text-s">${formatter.format(acc.accountValue)}</TableCell>
+                <TableCell className="hidden md:table-cell">${formatter.format(acc.accountEquity)}</TableCell>
+                <TableCell className="hidden md:table-cell">{acc.roundTrips}</TableCell>
+                <TableCell className="hidden md:table-cell">${formatter.format(acc.cashBalance)}</TableCell>
               </TableRow> 
             )) }
           </TableBody>

@@ -58,7 +58,7 @@ export default function PositionsTable({positions, accountNumber }: {positions: 
                 <TableHeader>
                   <TableRow >
                     {columns.map((col) =>
-                      <TableHead className="hidden w-[100px] sm:table-cell">
+                      <TableHead key={col.key} className="hidden w-[100px] sm:table-cell">
                                 {col.label} 
                       </TableHead>
                     )}
@@ -67,7 +67,7 @@ export default function PositionsTable({positions, accountNumber }: {positions: 
                   
                 <TableBody >
                 { positions != undefined &&  positions.length != 0  && positions.map(pos => 
-                    <TableRow className = "hover:bg-white">
+                    <TableRow key={pos.key} className = "hover:bg-white">
                       <TableCell className="hidden md:table-cell">
                           <Link className="border border-black rounded-md bg-gradient-to-br from-blue-300 via-white to-blue-200 px-4 py-2 text-sm text-black transition-colors hover:bg-blue-400" 
                                 href={{pathname:  `/ticker/${pos.symbol }`}}>
