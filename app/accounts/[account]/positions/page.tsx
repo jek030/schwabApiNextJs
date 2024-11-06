@@ -21,7 +21,7 @@ export default async function Page({params} : {params: {account: string}}) {
 
   let positions;
     for (const acc in accounts) {
-      if ( accounts[acc].securitiesAccount.accountNumber == accountNumber ) {
+      if ( accounts[acc].securitiesAccount?.accountNumber == accountNumber ) {
           positions = accounts[acc].securitiesAccount.positions
           }
 
