@@ -3,10 +3,10 @@
 import React from "react";
 import Link from 'next/link';
 import { Divider } from "@nextui-org/react";
-import {Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle} from '@/app/ui/card';
+import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/app/ui/card';//CardFooter
 import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow,} from '@/app/ui/table';
 
-import { Account, Position } from "../lib/utils";
+import { Account } from "../lib/utils";
 
 
 const columns = [
@@ -54,8 +54,8 @@ export default function AccountTable({accounts }: {accounts: Account[]}) {
         <Table>
           <TableHeader>
             <TableRow >
-              {columns.map((col) =>
-                <TableHead className="hidden w-[100px] sm:table-cell">
+              {columns.map((col) => 
+                <TableHead key={col.key} className="hidden w-[100px] sm:table-cell">
                           {col.label} 
                 </TableHead>
               )}

@@ -8,7 +8,7 @@ import {Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle} from '
 import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow,} from '@/app/ui/table';
 import { Position } from "@/app/lib/utils";
 import PositionsTable from "@/app/ui/positions-table";
-import ColorfulText from "@/app/lib/utils";
+
 
 export default async function Page({params} : {params: {account: string}}) {
 

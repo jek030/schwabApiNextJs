@@ -3,10 +3,10 @@
 import React from "react";
 import Link from 'next/link';
 import { Divider } from "@nextui-org/react";
-import {Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle} from '@/app/ui/card';
+import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/app/ui/card'; //CardFooter
 import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow,} from '@/app/ui/table';
 
-import { Account, Position } from "../lib/utils";
+import { Position } from "../lib/utils";
 
 
 const columns = [

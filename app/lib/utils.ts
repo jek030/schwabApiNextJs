@@ -26,17 +26,3 @@ export type Account = {
   accountEquity: number
   cashBalance: number
 }
-
-export default function ColorfulText(num :number ) {
-  const getColor = () => {
-    if(num > 0 ) {
-       return 'red';
-    }
-    else if (num < 0) { 
-      return 'green'; 
-    }
-    else {
-       return 'black';
-    }
-  };
-  }
