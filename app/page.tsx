@@ -1,6 +1,3 @@
-import Image from "next/image";
-import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue} from "@nextui-org/table";
-import { accounts }  from './lib/accounts';
 import Link from 'next/link';
 
 export default function Home() {

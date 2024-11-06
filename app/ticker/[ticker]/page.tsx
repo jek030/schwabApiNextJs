@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getTicker } from '@/getTicker';
-import {Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle} from '@/app/ui/card';
+import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/app/ui/card';//CardFooter
 import { Divider } from "@nextui-org/react";
 
 const getColor = (num:number) => {

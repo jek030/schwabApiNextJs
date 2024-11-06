@@ -1,11 +1,9 @@
 
-import Image from "next/image";
-import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue} from "@nextui-org/table";
 import { accounts as accountsFile }  from '@/app/lib/accounts';
 import Link from 'next/link';
 import { getAccounts } from "../getAccounts";
 import AccountTable from "../ui/accounts-table";
-import { Account, Position } from "../lib/utils";
+import { Account } from "../lib/utils";
 
 export  default async  function Page() {
   console.log("On accounts page...");
@@ -19,7 +17,7 @@ export  default async  function Page() {
     interfaceData = JSON.parse(accountsFile.toString());
   }
 
-    let formatAccounts: Account[] = Object.entries(interfaceData).map(([key, value]) => 
+    const formatAccounts: Account[] = Object.entries(interfaceData).map(([key, value]) => 
     ({
       key: key,
       accountNumber: value.securitiesAccount.accountNumber,

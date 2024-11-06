@@ -1,11 +1,7 @@
 
-import Image from "next/image";
 import { accounts as accountsFile}  from '@/app/lib/accounts';
 import Link from 'next/link';
 import { getAccounts } from "@/app/getAccounts";
-import { Divider } from "@nextui-org/react";
-import {Card,CardContent,CardDescription,CardFooter,CardHeader,CardTitle} from '@/app/ui/card';
-import {Table,TableBody,TableCell,TableHead,TableHeader,TableRow,} from '@/app/ui/table';
 import { Position } from "@/app/lib/utils";
 import PositionsTable from "@/app/ui/positions-table";
 
@@ -22,11 +18,6 @@ export default async function Page({params} : {params: {account: string}}) {
    accounts = accountsFile;
   }
 
-  const formatter = new Intl.NumberFormat('en-US', {
-    style: 'decimal',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
 
   let positions: any[] = [];
     for (let acc in accounts) {
@@ -35,7 +26,7 @@ export default async function Page({params} : {params: {account: string}}) {
           }
 
       }
-      let formatPositions: Position[] = Object.entries(positions).map(([key, value]) => 
+      const formatPositions: Position[] = Object.entries(positions).map(([key, value]) => 
         ({
           key: key,
           symbol: value.instrument.symbol,
