@@ -1,23 +1,39 @@
 
 import { accounts as accountsFile }  from '@/app/lib/accounts';
 import Link from 'next/link';
-import { getAccounts } from "../getAccounts";
+import { getAccounts } from "../lib/getSchwabAccounts";
 import AccountTable from "../ui/accounts-table";
-import { Account } from "../lib/utils";
+import { Account, IAccount, IInsertAccount } from "../lib/utils";
+import { getDbAccounts, insertAccount } from '../lib/database-accounts';
 
 export  default async  function Page() {
   console.log("On accounts page...");
 
-  let interfaceData
+  let interfaceData;
   
   try {
     console.log("Web service call getAccounts()")
     interfaceData = await getAccounts();
+
+
+
   } catch (error) {
     console.log("Web service call failed with error: " + error)
-    interfaceData = JSON.parse(accountsFile.toString());
+    interfaceData = JSON.parse(accountsFile.toString());   
   }
-  console.log(interfaceData)
+
+
+  let rows : IAccount[] = await getDbAccounts();
+
+  console.log("query retrieved.")
+  console.log("ROWS" + rows)
+
+  rows.forEach((row: IAccount) => {
+    console.log(`Account Number: ${row.id}`);
+  });
+      
+
+  //console.log(interfaceData)
     const formatAccounts: Account[] = Object.entries(interfaceData).map(([key,value]:[string,any]) => 
     ({
       key: key,
@@ -27,6 +43,34 @@ export  default async  function Page() {
       accountEquity: value?.securitiesAccount?.currentBalances?.equity,
       cashBalance: value?.securitiesAccount?.initialBalances?.cashBalance
     }));
+
+    formatAccounts.forEach((acc: Account ) => {
+
+      if (rows.find(item => item.accountNumber == acc.accountNumber 
+                            && new Date(item.date).toISOString().slice(0, 10) == new Date().toISOString().slice(0, 10)))  {
+        console.log(acc.accountNumber + " is already in the database.")
+
+      } else {
+        try {
+          const newPost: IInsertAccount = {
+            accountNumber: acc.accountNumber, 
+            accountValue: acc.accountValue, 
+            accountEquity: acc.accountEquity, 
+            roundTrips: acc.roundTrips, 
+            cashBalance:acc.cashBalance, 
+            date: new Date().toISOString().slice(0, 10)
+          };
+  
+          const insertId =  insertAccount(newPost);
+          console.log(`New user inserted with ID: ${insertId}`);
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }
+      
+    });
+    
+  
       
   return (
     

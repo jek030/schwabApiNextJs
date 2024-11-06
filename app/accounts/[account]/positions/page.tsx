@@ -1,7 +1,7 @@
 
 import { accounts as accountsFile}  from '@/app/lib/accounts';
 import Link from 'next/link';
-import { getAccounts } from "@/app/getAccounts";
+import { getAccounts } from "@/app/lib/getSchwabAccounts";
 import { Position } from "@/app/lib/utils";
 import PositionsTable from "@/app/ui/positions-table";
 

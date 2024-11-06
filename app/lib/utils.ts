@@ -2,6 +2,7 @@
 
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import mysql from 'mysql2/promise';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -24,4 +25,27 @@ export type Account = {
   accountValue: number
   accountEquity: number
   cashBalance: number
+}
+
+export interface IAccount extends mysql.RowDataPacket {
+  accountNumber: string
+  roundTrips: number
+  accountValue: number
+  accountEquity: number
+  cashBalance: number
+  date: string
+}
+
+export interface IInsertAccount {
+  accountNumber: string
+  roundTrips: number
+  accountValue: number
+  accountEquity: number
+  cashBalance: number
+  date: string
+}
+
+export interface IPost {
+  id: number;
+  content: string;
 }
