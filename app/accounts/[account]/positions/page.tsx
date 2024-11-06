@@ -8,7 +8,7 @@ import PositionsTable from "@/app/ui/positions-table";
 
 export default async function Page({params} : {params: {account: string}}) {
 
-  const accountNumber = params.account;
+  const accountNum = params.account;
 
   let accounts;
   try {
@@ -21,7 +21,7 @@ export default async function Page({params} : {params: {account: string}}) {
 
   let positions;
     for (const acc in accounts) {
-      if ( accounts[acc].securitiesAccount?.accountNumber == accountNumber ) {
+      if ( accounts[acc].securitiesAccount?.accountNumber == accountNum) {
           positions = accounts[acc].securitiesAccount.positions
           }
 
@@ -55,7 +55,7 @@ export default async function Page({params} : {params: {account: string}}) {
               Go Back 
               </Link>
           </p>
-          <PositionsTable positions={formatPositions} accountNumber ={accountNumber}/>
+          <PositionsTable positions={formatPositions} accountNumber ={accountNum}/>
         </main>    
       </div>
     );
