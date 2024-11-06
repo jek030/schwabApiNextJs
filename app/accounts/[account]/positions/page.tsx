@@ -26,7 +26,7 @@ export default async function Page({params} : {params: {account: string}}) {
           }
 
       }
-      const formatPositions: Position[] = Object.entries(positions).map(([key, value]) => 
+      const formatPositions: Position[] = Object.entries(positions).map(([key,value]:[string,any]) => 
         ({
           key: key,
           symbol: value.instrument.symbol,

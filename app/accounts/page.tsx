@@ -17,7 +17,7 @@ export  default async  function Page() {
     interfaceData = JSON.parse(accountsFile.toString());
   }
 
-    const formatAccounts: Account[] = Object.entries(interfaceData).map(([key, value]) => 
+    const formatAccounts: Account[] = Object.entries(interfaceData).map(([key,value]:[string,any]) => 
     ({
       key: key,
       accountNumber: value.securitiesAccount.accountNumber,
