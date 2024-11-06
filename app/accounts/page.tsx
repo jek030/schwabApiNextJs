@@ -27,7 +27,6 @@ export  default async  function Page() {
       cashBalance: value.securitiesAccount.initialBalances.cashBalance
     }));
       
-    console.log(interfaceData)
   return (
     
     <div className="grid grid-rows-[20px_1fr_20px] p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
