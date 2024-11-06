@@ -11,12 +11,13 @@ export  default async  function Page() {
   let interfaceData
   
   try {
+    console.log("Web service call getAccounts()")
     interfaceData = await getAccounts();
   } catch (error) {
     console.log("Web service call failed with error: " + error)
     interfaceData = JSON.parse(accountsFile.toString());
   }
-
+  console.log(interfaceData)
     const formatAccounts: Account[] = Object.entries(interfaceData).map(([key,value]:[string,any]) => 
     ({
       key: key,
