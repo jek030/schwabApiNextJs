@@ -5,13 +5,13 @@ import Link from 'next/link';
 export  default async  function Page() {
   console.log("On accounts page...");
 
-  let interfaceData
+  //let interfaceData
   
   try {
     //interfaceData = await getAccounts();
   } catch (error) {
     console.log("Web service call failed with error: " + error)
-    interfaceData = JSON.parse(accountsFile.toString());
+    //interfaceData = JSON.parse(accountsFile.toString());
   }
 
    
