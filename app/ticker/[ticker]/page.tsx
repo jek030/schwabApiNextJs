@@ -63,12 +63,12 @@ export default async function Page({params} : {params: {ticker: string }}) {
           <CardTitle>{ticker}</CardTitle>       
           <Divider></Divider>
           <CardDescription>
-            { accounts[ticker].reference.description}
+            { accounts[ticker]?.reference?.description}
           </CardDescription>
         </CardHeader>
         <CardContent >
-          Price: {formatter.format(accounts[ticker].quote.mark) }   <br></br>    
-          Net Change: <span style={{ color: getColor(accounts[ticker].quote.netChange)}}> {formatter.format(accounts[ticker].quote.netChange)} </span>          
+          Price: {formatter.format(accounts[ticker]?.quote?.mark) }   <br></br>    
+          Net Change: <span style={{ color: getColor(accounts[ticker]?.quote?.netChange)}}> {formatter.format(accounts[ticker]?.quote?.netChange)} </span>          
         </CardContent>
         <CardContent>
           <Link className="rounded-md bg-purple-500 px-4 py-2 text-sm text-white transition-colors hover:bg-purple-400"
@@ -85,10 +85,10 @@ export default async function Page({params} : {params: {ticker: string }}) {
           <Divider></Divider>       
         </CardHeader>
         <CardContent>
-            52 week high: {accounts[ticker].quote["52WeekHigh"]} <br></br>
-            52 week low: {accounts[ticker].quote["52WeekLow"]} <br></br>
-            10 day average volume: {formatterVol.format(accounts[ticker].fundamental.avg10DaysVolume)} <br></br>      
-            1 year average volume: { formatterVol.format(accounts[ticker].fundamental.avg1YearVolume)} <br></br>  
+            52 week high: {accounts[ticker]?.quote["52WeekHigh"]} <br></br>
+            52 week low: {accounts[ticker]?.quote["52WeekLow"]} <br></br>
+            10 day average volume: {formatterVol.format(accounts[ticker]?.fundamental?.avg10DaysVolume)} <br></br>      
+            1 year average volume: { formatterVol.format(accounts[ticker]?.fundamental?.avg1YearVolume)} <br></br>  
         </CardContent>
       </Card>
 
@@ -98,11 +98,11 @@ export default async function Page({params} : {params: {ticker: string }}) {
           <Divider></Divider>       
         </CardHeader>
         <CardContent>
-            P/E Ratio:<span style={{ color: getColor(accounts[ticker].fundamental.peRatio)}}> {formatter.format(accounts[ticker].fundamental.peRatio)} </span> <br></br>
-            EPS:<span style={{ color: getColor(accounts[ticker].fundamental.eps)}}> {formatter.format(accounts[ticker].fundamental.eps)} </span> <br></br>
-            Next ex-dividend date: {new Date(accounts[ticker].fundamental.nextDivExDate).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}<br></br>
-            Next dividend payment date: {new Date(accounts[ticker].fundamental.nextDivPayDate).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}<br></br>
-            Dividend yield: {formatter.format(accounts[ticker].fundamental.divYield)}%<br></br>
+            P/E Ratio:<span style={{ color: getColor(accounts[ticker]?.fundamental?.peRatio)}}> {formatter.format(accounts[ticker]?.fundamental?.peRatio)} </span> <br></br>
+            EPS:<span style={{ color: getColor(accounts[ticker]?.fundamental?.eps)}}> {formatter.format(accounts[ticker]?.fundamental?.eps)} </span> <br></br>
+            Next ex-dividend date: {new Date(accounts[ticker]?.fundamental?.nextDivExDate).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}<br></br>
+            Next dividend payment date: {new Date(accounts[ticker]?.fundamental?.nextDivPayDate).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}<br></br>
+            Dividend yield: {formatter.format(accounts[ticker]?.fundamental?.divYield)}%<br></br>
         </CardContent>
       </Card>
 
@@ -112,18 +112,18 @@ export default async function Page({params} : {params: {ticker: string }}) {
           <Divider></Divider>       
         </CardHeader>
         <CardContent>
-            Regular market price {formatter.format(accounts[ticker].regular.regularMarketLastPrice)} <br></br>
-            Daily volume: {formatterVol.format(accounts[ticker].quote.totalVolume)} <br></br>
-            Regular market net change {formatter.format(accounts[ticker].regular.regularMarketNetChange)} <br></br>
-            Regular market % change {formatter.format(accounts[ticker].regular.regularMarketPercentChange)} <br></br><br></br>
-            Last close price {formatter.format(accounts[ticker].quote.closePrice)} <br></br>
-            Daily high: {formatter.format(accounts[ticker].quote.highPrice)} <br></br>
-            Daily low: {formatter.format(accounts[ticker].quote.lowPrice)} <br></br><br></br>
-            Mark: {formatter.format(accounts[ticker].quote.mark)} <br></br>
-            Daily % change: <span style={{ color: getColor(accounts[ticker].quote.netPercentChange)}}> {formatter.format(accounts[ticker].quote.netPercentChange)} </span> <br></br>        
-            Daily net change: <span style={{ color: getColor(accounts[ticker].quote.netChange)}}> {formatter.format(accounts[ticker].quote.netChange)} </span> <br></br>
-            After hours change: <span style={{ color: getColor(accounts[ticker].quote.postMarketChange)}}> {formatter.format(accounts[ticker].quote.postMarketChange)} </span> <br></br>
-            After hours % change: <span style={{ color: getColor(accounts[ticker].quote.postMarketPercentChange)}}> {formatter.format(accounts[ticker].quote.postMarketPercentChange)} </span> <br></br>
+            Regular market price {formatter.format(accounts[ticker]?.regular?.regularMarketLastPrice)} <br></br>
+            Daily volume: {formatterVol.format(accounts[ticker]?.quote?.totalVolume)} <br></br>
+            Regular market net change {formatter.format(accounts[ticker]?.regular?.regularMarketNetChange)} <br></br>
+            Regular market % change {formatter.format(accounts[ticker]?.regular?.regularMarketPercentChange)} <br></br><br></br>
+            Last close price {formatter.format(accounts[ticker]?.quote?.closePrice)} <br></br>
+            Daily high: {formatter.format(accounts[ticker]?.quote?.highPrice)} <br></br>
+            Daily low: {formatter.format(accounts[ticker]?.quote?.lowPrice)} <br></br><br></br>
+            Mark: {formatter.format(accounts[ticker]?.quote?.mark)} <br></br>
+            Daily % change: <span style={{ color: getColor(accounts[ticker]?.quote?.netPercentChange)}}> {formatter.format(accounts[ticker]?.quote?.netPercentChange)} </span> <br></br>        
+            Daily net change: <span style={{ color: getColor(accounts[ticker]?.quote?.netChange)}}> {formatter.format(accounts[ticker]?.quote?.netChange)} </span> <br></br>
+            After hours change: <span style={{ color: getColor(accounts[ticker]?.quote?.postMarketChange)}}> {formatter.format(accounts[ticker]?.quote?.postMarketChange)} </span> <br></br>
+            After hours % change: <span style={{ color: getColor(accounts[ticker]?.quote?.postMarketPercentChange)}}> {formatter.format(accounts[ticker]?.quote?.postMarketPercentChange)} </span> <br></br>
         </CardContent>
       </Card>     
     </main>    

@@ -21,10 +21,10 @@ export  default async  function Page() {
     ({
       key: key,
       accountNumber: value?.securitiesAccount?.accountNumber,
-      roundTrips: value.securitiesAccount.roundTrips,
-      accountValue: value.securitiesAccount.initialBalances.accountValue,
-      accountEquity: value.securitiesAccount.currentBalances.equity,
-      cashBalance: value.securitiesAccount.initialBalances.cashBalance
+      roundTrips: value?.securitiesAccount?.roundTrips,
+      accountValue: value?.securitiesAccount?.initialBalances?.accountValue,
+      accountEquity: value?.securitiesAccount?.currentBalances?.equity,
+      cashBalance: value?.securitiesAccount?.initialBalances?.cashBalance
     }));
       
   return (
