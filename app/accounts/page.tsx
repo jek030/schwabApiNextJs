@@ -20,7 +20,7 @@ export  default async  function Page() {
     const formatAccounts: Account[] = Object.entries(interfaceData).map(([key,value]:[string,any]) => 
     ({
       key: key,
-      accountNumber: value.securitiesAccount.accountNumber,
+      accountNumber: value?.securitiesAccount?.accountNumber,
       roundTrips: value.securitiesAccount.roundTrips,
       accountValue: value.securitiesAccount.initialBalances.accountValue,
       accountEquity: value.securitiesAccount.currentBalances.equity,
