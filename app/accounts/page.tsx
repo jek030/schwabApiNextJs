@@ -1,17 +1,25 @@
-
+"use client";
 import { accounts as accountsFile }  from '@/app/lib/accounts';
 import Link from 'next/link';
 import { getSchwabAccounts } from "../lib/getSchwabAccounts";
-import AccountTable from "../ui/accounts-table";
+import { DataTable } from "../ui/table";
 import { Account, IAccount, IInsertAccount } from "../lib/utils";
 import { getDbAccounts, insertAccount } from '../lib/database-accounts';
+import { columns } from '../ui/accountsTableColumns';
+import { Divider } from "@nextui-org/react";
+import {Card, 
+        CardContent, 
+        CardDescription, 
+        CardHeader, 
+        CardTitle
+      } from '@/app/ui/card';//CardFooter
 
 export default async function Page() {
   console.log("On accounts page...");
  
   
   let rows : IAccount[] = await getDbAccounts();
-  console.log("Rows retrieved from account query: " + rows.length)
+  //console.log("Rows retrieved from account query: " + rows.length)
 
   let databaseAccounts: Account[]  = Object.entries(rows).map(([key,value]:[string,any]) => 
     ({
@@ -29,8 +37,7 @@ export default async function Page() {
   /**Try to get data from Schwab web service, if it fails use accounts from database. */
   try {
     let interfaceData = await getSchwabAccounts();
-    console.log("\tWeb service call getAccounts()")
-
+    //console.log("\tWeb service call getAccounts()")
     formattedAccounts = Object.entries(interfaceData).map(([key,value]:[string,any]) => 
       ({
         key: key,
@@ -40,20 +47,16 @@ export default async function Page() {
         accountEquity: value?.securitiesAccount?.currentBalances?.equity,
         cashBalance: value?.securitiesAccount?.initialBalances?.cashBalance
       }));
-      console.log("\tAPI call successful. formattedAccounts.length = " + formattedAccounts.length);
 
   } catch (error) {
 
     console.log("\n***Web service call failed with error: " + error)
     formattedAccounts = databaseAccounts;
-    console.log("In catch - formattedAccounts.length: " + formattedAccounts.length)
 
     /** Finally retrieved from database. If new account or new date, insert into database. */
   } finally {
 
     /**For each account from the interface, insert it into database if the timestamp. */
-    console.log("formattedAccounts.length: " + formattedAccounts.length)
-
     formattedAccounts.forEach((acc: Account ) => {
 
       if (rows.find(item => item.accountNumber == acc.accountNumber 
@@ -62,9 +65,7 @@ export default async function Page() {
                             
       } else if (acc.accountNumber === undefined) {
         console.log("\n acc.accountNumber is undefined...")
-
       } else {
-        
         try {
           console.log("\nTrying to insert account " + acc.accountNumber, acc.cashBalance)
           const newAccount: IInsertAccount = {
@@ -104,7 +105,17 @@ export default async function Page() {
             Go Back
             </Link>
         </p>
-        <AccountTable accounts={formattedAccounts}/>
+        <Card>
+          <CardHeader>
+            <CardTitle>Accounts</CardTitle>
+            <CardDescription>
+              View accounts retrieved form Charles Schwab API.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <DataTable columns={columns} data={formattedAccounts}/>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );

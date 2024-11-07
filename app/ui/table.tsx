@@ -1,117 +1,142 @@
-import * as React from "react"
+"use client"
 
-import { cn } from "@/app/lib/utils"
+import React from "react";
 
-const Table = React.forwardRef<
-  HTMLTableElement,
-  React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  <div className=" py-4  relative w-full overflow-auto">
-    <table
-      ref={ref}
-      className={cn("rounded-lg w-full caption-bottom text-sm ", className)}
-      {...props}
-    />
-  </div>
-))
-Table.displayName = "Table"
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table"
 
-const TableHeader = React.forwardRef<
-  HTMLTableSectionElement,
-  React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("bg-slate-200 [&_tr]:border-b", className)} {...props} />
-))
-TableHeader.displayName = "TableHeader"
-
-const TableBody = React.forwardRef<
-  HTMLTableSectionElement,
-  React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => (
-  <tbody
-    ref={ref}
-    className={cn("bg-slate-50 [&_tr:last-child]:border-0", className)}
-    {...props}
-  />
-))
-TableBody.displayName = "TableBody"
-
-const TableFooter = React.forwardRef<
-  HTMLTableSectionElement,
-  React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => (
-  <tfoot
-    ref={ref}
-    className={cn(
-      "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
-      className
-    )}
-    {...props}
-  />
-))
-TableFooter.displayName = "TableFooter"
-
-const TableRow = React.forwardRef<
-  HTMLTableRowElement,
-  React.HTMLAttributes<HTMLTableRowElement>
->(({ className, ...props }, ref) => (
-  <tr
-    ref={ref}
-    className={cn(
-      "border-b  transition-colors ",
-      className
-    )}
-    {...props}
-  />
-))
-TableRow.displayName = "TableRow"
-
-const TableHead = React.forwardRef<
-  HTMLTableCellElement,
-  React.ThHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
-  <th
-    ref={ref}
-    className={cn(
-      "h-12  px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
-      className
-    )}
-    {...props}
-  />
-))
-TableHead.displayName = "TableHead"
-
-const TableCell = React.forwardRef<
-  HTMLTableCellElement,
-  React.TdHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
-  <td
-    ref={ref}
-    className={cn("p-4 text-red align-middle [&:has([role=checkbox])]:pr-0", className)}
-    {...props}
-  />
-))
-TableCell.displayName = "TableCell"
-
-const TableCaption = React.forwardRef<
-  HTMLTableCaptionElement,
-  React.HTMLAttributes<HTMLTableCaptionElement>
->(({ className, ...props }, ref) => (
-  <caption
-    ref={ref}
-    className={cn("mt-4 text-sm text-muted-foreground", className)}
-    {...props}
-  />
-))
-TableCaption.displayName = "TableCaption"
-
-export {
+import {
   Table,
-  TableHeader,
   TableBody,
-  TableFooter,
-  TableHead,
-  TableRow,
   TableCell,
-  TableCaption,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+
+interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
 }
+
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+}: DataTableProps<TData, TValue>) {
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  })
+ 
+  return (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                )
+              })}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && "selected"}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                No results.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
+  )
+}
+
+
+
+
+/*
+
+
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'decimal',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+
+export default function AccountTable({accounts }: {accounts: Account[]}) {
+
+  return (
+   <Card>
+      <CardHeader>
+        <CardTitle>Accounts</CardTitle>
+        
+        <CardDescription>
+          View accounts retrieved form Charles Schwab API.
+        </CardDescription>
+      </CardHeader>
+      <Divider/>
+      <CardContent>
+        <Table >
+          <TableHeader>
+            <TableRow >
+              {columns.map((col) => 
+                <TableHead key={col.key} className="hidden w-[100px] sm:table-cell">
+                          {col.label} 
+                </TableHead>
+              )}
+            </TableRow>
+          </TableHeader>
+            
+          <TableBody >
+            {accounts.map((acc) => (
+              <TableRow key={acc.key} className = "hover:bg-white">
+                <TableCell className="hidden md:table-cell">{
+                  <Link className="border border-black rounded-md bg-gradient-to-br from-blue-300 via-white to-blue-200 px-4 py-2 text-sm text-black transition-colors hover:bg-blue-400" 
+                        href={{pathname: `/accounts/${ acc.accountNumber}/positions`}}>
+                    {acc.accountNumber}
+                   </Link>}
+                </TableCell>
+                <TableCell className="hidden md:table-cell whitespace-nowrap px-4 py-5 text-s">${formatter.format(acc.accountValue)}</TableCell>
+                <TableCell className="hidden md:table-cell">${formatter.format(acc.accountEquity)}</TableCell>
+                <TableCell className="hidden md:table-cell">{acc.roundTrips}</TableCell>
+                <TableCell className="hidden md:table-cell">${formatter.format(acc.cashBalance)}</TableCell>
+              </TableRow> 
+            )) }
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+ )
+}
+*/

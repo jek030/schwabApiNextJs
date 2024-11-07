@@ -1,9 +1,18 @@
 
 import { accounts as accountsFile}  from '@/app/lib/accounts';
 import Link from 'next/link';
-import { getAccounts } from "@/app/lib/getSchwabAccounts";
+import { getSchwabAccounts } from "@/app/lib/getSchwabAccounts";
 import { Position } from "@/app/lib/utils";
 import PositionsTable from "@/app/ui/positions-table";
+import { columns } from '@/app/ui/positionsTableColumns';
+import { DataTable } from '@/app/ui/table';
+
+import {Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle
+} from '@/app/ui/card';//CardFooter
 
 
 export default async function Page({params} : {params: {account: string}}) {
@@ -12,7 +21,7 @@ export default async function Page({params} : {params: {account: string}}) {
 
   let accounts;
   try {
-    accounts = await getAccounts();
+    accounts = await getSchwabAccounts();
   } catch (error) {
    console.log("Web service call failed with error: " + error)
    accounts = accountsFile;
@@ -55,7 +64,18 @@ export default async function Page({params} : {params: {account: string}}) {
               Go Back 
               </Link>
           </p>
-          <PositionsTable positions={formatPositions} accountNumber ={accountNum}/>
+          <Card>
+          <CardHeader>
+            <CardTitle>Account {accountNum}</CardTitle>
+            <CardDescription>
+            View positions for account {accountNum} retrieved from the Charles Schwab API.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <DataTable columns={columns} data={formatPositions}/>
+          </CardContent>
+        </Card>
+
         </main>    
       </div>
     );
