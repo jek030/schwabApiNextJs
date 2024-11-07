@@ -1,40 +1,21 @@
 
 import { accounts as accountsFile }  from '@/app/lib/accounts';
 import Link from 'next/link';
-import { getAccounts } from "../lib/getSchwabAccounts";
+import { getSchwabAccounts } from "../lib/getSchwabAccounts";
 import AccountTable from "../ui/accounts-table";
 import { Account, IAccount, IInsertAccount } from "../lib/utils";
 import { getDbAccounts, insertAccount } from '../lib/database-accounts';
 
-export  default async  function Page() {
+export default async function Page() {
   console.log("On accounts page...");
-
-  let interfaceData;
+ 
   
-  try {
-    console.log("Web service call getAccounts()")
-    interfaceData = await getAccounts();
 
-
-
-  } catch (error) {
-    console.log("Web service call failed with error: " + error)
-    interfaceData = JSON.parse(accountsFile.toString());   
-  }
-
-
+  
   let rows : IAccount[] = await getDbAccounts();
+  console.log("Rows retrieved from account query: " + rows.length)
 
-  console.log("query retrieved.")
-  console.log("ROWS" + rows)
-
-  rows.forEach((row: IAccount) => {
-    console.log(`Account Number: ${row.id}`);
-  });
-      
-
-  //console.log(interfaceData)
-    const formatAccounts: Account[] = Object.entries(interfaceData).map(([key,value]:[string,any]) => 
+  let databaseAccounts: Account[]  = Object.entries(rows).map(([key,value]:[string,any]) => 
     ({
       key: key,
       accountNumber: value?.securitiesAccount?.accountNumber,
@@ -43,16 +24,52 @@ export  default async  function Page() {
       accountEquity: value?.securitiesAccount?.currentBalances?.equity,
       cashBalance: value?.securitiesAccount?.initialBalances?.cashBalance
     }));
+    console.log("databaseAccounts.length: " + databaseAccounts.length)
 
-    formatAccounts.forEach((acc: Account ) => {
+  let formattedAccounts: Account[] = [];
+
+  /**Try to get data from Schwab web service, if it fails use accounts from database. */
+  try {
+    let interfaceData = await getSchwabAccounts();
+    console.log("\tWeb service call getAccounts()")
+
+    formattedAccounts = Object.entries(interfaceData).map(([key,value]:[string,any]) => 
+      ({
+        key: key,
+        accountNumber: value?.securitiesAccount?.accountNumber,
+        roundTrips: value?.securitiesAccount?.roundTrips,
+        accountValue: value?.securitiesAccount?.initialBalances?.accountValue,
+        accountEquity: value?.securitiesAccount?.currentBalances?.equity,
+        cashBalance: value?.securitiesAccount?.initialBalances?.cashBalance
+      }));
+      console.log("\tAPI call successful. formattedAccounts.length = " + formattedAccounts.length);
+
+  } catch (error) {
+
+    console.log("\n***Web service call failed with error: " + error)
+    formattedAccounts = databaseAccounts;
+    console.log("In catch - formattedAccounts.length: " + formattedAccounts.length)
+
+    /** Finally retrieved from database. If new account or new date, insert into database. */
+  } finally {
+
+    /**For each account from the interface, insert it into database if the timestamp. */
+    console.log("formattedAccounts.length: " + formattedAccounts.length)
+
+    formattedAccounts.forEach((acc: Account ) => {
 
       if (rows.find(item => item.accountNumber == acc.accountNumber 
                             && new Date(item.date).toISOString().slice(0, 10) == new Date().toISOString().slice(0, 10)))  {
-        console.log(acc.accountNumber + " is already in the database.")
+        console.log(acc.accountNumber + " is already in the database. No insertion.")
+                            
+      } else if (acc.accountNumber === undefined) {
+        console.log("\n acc.accountNumber is undefined...")
 
       } else {
+        
         try {
-          const newPost: IInsertAccount = {
+          console.log("\nTrying to insert account " + acc.accountNumber, acc.cashBalance)
+          const newAccount: IInsertAccount = {
             accountNumber: acc.accountNumber, 
             accountValue: acc.accountValue, 
             accountEquity: acc.accountEquity, 
@@ -60,17 +77,16 @@ export  default async  function Page() {
             cashBalance:acc.cashBalance, 
             date: new Date().toISOString().slice(0, 10)
           };
-  
-          const insertId =  insertAccount(newPost);
+        
+          const insertId = insertAccount(newAccount);
           console.log(`New user inserted with ID: ${insertId}`);
+        
         } catch (error) {
-          console.error('Error:', error);
+          console.error('Error inserting account :', error);
         }
-      }
-      
+      } 
     });
-    
-  
+  }
       
   return (
     
@@ -90,7 +106,7 @@ export  default async  function Page() {
             Go Back
             </Link>
         </p>
-        <AccountTable accounts={formatAccounts}/>
+        <AccountTable accounts={formattedAccounts}/>
       </main>
     </div>
   );

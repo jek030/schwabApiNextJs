@@ -11,10 +11,10 @@ export async function getDbAccounts(): Promise<IAccount[]> {
       database: process.env.MYSQL_DATABASE
     });
 
-    console.log("Querying from table dailyaccountvalue...")
+    console.log("\nQuerying from table dailyaccountvalue...")
 
     const [rows] = await connection.query<IAccount[]>(
-      'select v.accountNumber, v.roundTrips, v.accountValue, v.accountEquity, v.cashBalance, v.date from dailyaccountvalue v' 
+      'select v.accountNumber, v.roundTrips, v.accountValue, v.accountEquity, v.cashBalance, v.date from dailyaccountvalue v where v.date >= CURDATE()' 
     );
     return rows;
   }

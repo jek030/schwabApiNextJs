@@ -1,7 +1,5 @@
-import { cache } from "react";
-
-export const getAccounts = cache( async() => {
-
+export async function getSchwabAccounts() {
+  
     const res = await fetch("https://api.schwabapi.com/trader/v1/accounts?fields=positions", {
         method: 'GET',
         headers: {
@@ -10,6 +8,10 @@ export const getAccounts = cache( async() => {
           },
         });
   
-       const data = await res.json();
-    return data
-})
+        if (!res.ok) { 
+          throw new Error(`Failed to getAccounts from Charles Schwab API. Status: ${res.status } - ${res.statusText}`)
+        }
+
+      const data = await res.json();
+      return data
+}

@@ -1,25 +1,7 @@
 import Link from 'next/link';
-import { IPost } from './lib/utils';
-import mysql from 'mysql2/promise';
 
 
-export async function insertPost(post: IPost): Promise<number> {
-  const connection = await mysql.createConnection({
-    host: process.env.MYSQL_HOST,
-    port: process.env.MYSQL_PORT,
-    user: process.env.MYSQL_USERNAME,
-    password:  process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE
-  });
 
-  const [result] = await connection.query<mysql.ResultSetHeader>(
-    'INSERT INTO posts_test (id, content) VALUES (?, ?)',
-    [post.id, post.content]
-  );
-  console.log(result)//todo remove
-  await connection.end();
-  return result.insertId;
-}
 
 export default function Home() {
   console.log("On home page...");   
@@ -50,6 +32,7 @@ export default function Home() {
         </strong> 
           <ul className="list-inside list-decimal text-center sm:text-left font-[family-name:var(--font-geist-mono)]">   
             <li> add calendar to accounts page</li>
+            <li>add sorting to tables</li>
             <li>Add ADR and other stuff to Ticker page</li>
             <li>make ticker page accessible from sidebar, make tickers searchable to API</li>
             <li>automate api keys</li>
