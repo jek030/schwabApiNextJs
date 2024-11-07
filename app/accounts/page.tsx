@@ -10,23 +10,21 @@ export default async function Page() {
   console.log("On accounts page...");
  
   
-
-  
   let rows : IAccount[] = await getDbAccounts();
   console.log("Rows retrieved from account query: " + rows.length)
 
   let databaseAccounts: Account[]  = Object.entries(rows).map(([key,value]:[string,any]) => 
     ({
       key: key,
-      accountNumber: value?.securitiesAccount?.accountNumber,
-      roundTrips: value?.securitiesAccount?.roundTrips,
-      accountValue: value?.securitiesAccount?.initialBalances?.accountValue,
-      accountEquity: value?.securitiesAccount?.currentBalances?.equity,
-      cashBalance: value?.securitiesAccount?.initialBalances?.cashBalance
+      accountNumber: value.accountNumber,
+      roundTrips: value.roundTrips,
+      accountValue: value.accountValue,
+      accountEquity: value.accountEquity,
+      cashBalance: value.cashBalance
     }));
     console.log("databaseAccounts.length: " + databaseAccounts.length)
 
-  let formattedAccounts: Account[] = [];
+  let formattedAccounts: Account[] = databaseAccounts;
 
   /**Try to get data from Schwab web service, if it fails use accounts from database. */
   try {
