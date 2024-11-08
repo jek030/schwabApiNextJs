@@ -17,20 +17,19 @@ export default function Home() {
              Here is the TODO list:
         </strong> 
           <ul className="list-inside list-decimal text-center sm:text-left font-[family-name:var(--font-geist-mono)]">   
+            <li>Make quote pages a page where you can search to call the Schwab API, if API fails display a message that it's unavailable.</li>
+            <li>Add database tables for positions, figure out why date is 1 day ahead when inserting...</li>
+            <li>why is the accounts page taking so long to load? add skeleton and see if it loads faster..why can't sort account table?</li>
             <li> add calendar to accounts page</li>
-            <li>add sorting to tables</li>
             <li>Add ADR and other stuff to Ticker page</li>
-            <li>make ticker page accessible from sidebar, make tickers searchable to API</li>
             <li>automate api keys</li>
-            <li>add more fields for the tickers, link yahoo finance site</li>
             <li>Check if API call is cached on ticker and positions pages</li>
-            <li>do I add a database? or websockets? should use db so i can store internal values</li>
             <li>deployed on vercel - only push if want to deploy changes now...does the ts file work?</li>
 
           </ul>
         <p className="text-xl text-gray-800 md:text-2xl">
            <Link href="/accounts"
-                 className=" border border-slate-300 mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
+                 className="border border-slate-300 mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
            >
             Click here to view your accounts.
           </Link>     
