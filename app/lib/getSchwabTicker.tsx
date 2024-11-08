@@ -9,7 +9,10 @@ export const getTicker = cache( async( ticker:string) => {
           Authorization: "Bearer " + process.env.ACCESS_TOKEN,
           },
         });
-  
-       let data = await res.json();
-    return data
+
+        if (!res.ok) { 
+          throw new Error(`Failed to getAccounts from Charles Schwab API. Status: ${res.status } - ${res.statusText}`)
+        }
+      const data = await res.json();
+      return data
 })

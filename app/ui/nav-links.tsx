@@ -19,8 +19,8 @@ const links = [
     icon: DocumentDuplicateIcon,
   },
   {
-    name: 'Quote',
-    href: '/quote',
+    name: 'Search',
+    href: '/search',
     icon: UserGroupIcon,
   },
 ];
