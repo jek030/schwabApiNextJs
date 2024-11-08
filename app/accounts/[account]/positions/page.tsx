@@ -3,7 +3,6 @@ import { accounts as accountsFile}  from '@/app/lib/accounts';
 import Link from 'next/link';
 import { getSchwabAccounts } from "@/app/lib/getSchwabAccounts";
 import { Position } from "@/app/lib/utils";
-import PositionsTable from "@/app/ui/positions-table";
 import { columns } from '@/app/ui/positionsTableColumns';
 import { DataTable } from '@/app/ui/table';
 
