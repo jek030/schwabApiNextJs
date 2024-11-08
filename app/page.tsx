@@ -1,21 +1,7 @@
 import Link from 'next/link';
 
-
-
-
 export default function Home() {
   console.log("On home page...");   
-
-  //try {
-  //  const newPost: IPost = {
-  //    id:126,
-  //    content: 'john@example.com',
-  //  };
-  //  const insertId =  insertPost(newPost);
-  //  console.log(`New user inserted with ID: ${insertId}`);
-  //} catch (error) {
-  //  console.error('Error:', error);
-  //}
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px]   p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">

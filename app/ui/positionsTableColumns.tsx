@@ -1,27 +1,26 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { Account } from "../lib/utils";
-import { MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from 'next/link';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Position } from "../lib/utils";
 
 export const columns: ColumnDef<Position>[] = [
     {
       accessorKey: "symbol",
-      header: () => <div className="text-right">Symbol</div>,
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Symbol
+          </Button>
+        )
+      },
       cell: ({ row }) => {
         const symbol = String(row.getValue("symbol"))
    
-        return <Link className="border border-black rounded-md bg-blue-400  px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400" 
+        return <Link className="border border-slate-300 mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
                      href={{pathname:  `/ticker/${symbol}`}}>
                      ${symbol}
                </Link>
@@ -30,7 +29,16 @@ export const columns: ColumnDef<Position>[] = [
 
     {
       accessorKey: "marketValue",
-      header: () => <div className="text-right">Market Value</div>,
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Market Value
+          </Button>
+        )
+      },
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("marketValue"))
         const formatted = new Intl.NumberFormat("en-US", {
@@ -43,7 +51,16 @@ export const columns: ColumnDef<Position>[] = [
     },
     {
       accessorKey: "averagePrice",
-      header: () => <div className="text-right">Avg Price</div>,
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Avg Price
+          </Button>
+        )
+      },
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("averagePrice"))
         const formatted = new Intl.NumberFormat("en-US", {
@@ -55,12 +72,39 @@ export const columns: ColumnDef<Position>[] = [
       },
     },
     {
-      accessorKey: "quantity",
-      header: "Quantity",
+      accessorKey: "longQuantity",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Quantity
+          </Button>
+        )
+      },
+      cell: ({ row }) => {
+        const amount = parseFloat(row.getValue("longQuantity"))
+        const formatted = new Intl.NumberFormat("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(amount)
+   
+        return <div className="text-right font-medium">{formatted}</div>
+      },
     },
     {
       accessorKey: "pnl",
-      header: () => <div className="text-right">P/L ($)</div>,
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            P/L ($)
+          </Button>
+        )
+      },
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("pnl"))
         const formatted = new Intl.NumberFormat("en-US", {
@@ -73,7 +117,16 @@ export const columns: ColumnDef<Position>[] = [
     },
     {
         accessorKey: "netChange",
-        header: "Net Change",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              Net Change
+            </Button>
+          )
+        },
     }
     
     

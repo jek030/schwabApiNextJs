@@ -1,23 +1,14 @@
 "use client";
-import { accounts as accountsFile }  from '@/app/lib/accounts';
 import Link from 'next/link';
 import { getSchwabAccounts } from "../lib/getSchwabAccounts";
 import { DataTable } from "../ui/table";
 import { Account, IAccount, IInsertAccount } from "../lib/utils";
 import { getDbAccounts, insertAccount } from '../lib/database-accounts';
 import { columns } from '../ui/accountsTableColumns';
-import { Divider } from "@nextui-org/react";
-import {Card, 
-        CardContent, 
-        CardDescription, 
-        CardHeader, 
-        CardTitle
-      } from '@/app/ui/card';//CardFooter
+import {Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';//CardFooter
 
-export default async function Page() {
-  console.log("On accounts page...");
- 
-  
+
+async function getFormattedAccounts(): Promise<Account[]> {
   let rows : IAccount[] = await getDbAccounts();
   //console.log("Rows retrieved from account query: " + rows.length)
 
@@ -86,17 +77,26 @@ export default async function Page() {
       } 
     });
   }
+
+  return formattedAccounts;
+}
+
+export default async function Page() {
+  console.log("On accounts page...");
+ 
+  let formattedAccounts = await getFormattedAccounts();
+ 
       
   return (
     
-    <div className="grid grid-rows-[20px_1fr_20px] p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <header className="flex flex-col gap-8 sm:items-start"> 
-      <p className={`text-xl text-gray-800 md:text-2xl `}>        
+    <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <header className="flex flex-col sm:items-start"> 
+      <p className="text-gray-800 md:text-2xl md:leading-normal">        
            <strong>Welcome to FinanceGuy.</strong> This is the accounts page.
         </p>
     
       </header>
-      <main className="flex flex-col gap-8 row-start-2 justify-items-center items-center sm:items-start">
+      <main className="flex flex-col gap-8 sm:items-start">
         <p>
             <Link
             href=".."

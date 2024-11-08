@@ -1,27 +1,28 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Account } from "../lib/utils";
-import { MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
+
 import Link from 'next/link';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
 
 export const columns: ColumnDef<Account>[] = [
     {
       accessorKey: "accountNumber",
-      header: () => <div className="text-right">Account Number</div>,
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Account Number
+          </Button>
+        )
+      },
       cell: ({ row }) => {
         const acc = String(row.getValue("accountNumber"))
    
-        return <Link className="border border-black rounded-md bg-gradient-to-br from-blue-300 via-white to-blue-200 px-4 py-2 text-sm text-black transition-colors hover:bg-blue-400" 
+        return <Link className="border border-slate-300 mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400" 
         href={{pathname: `/accounts/${ acc}/positions`}}>
         {acc}
         </Link>
@@ -29,7 +30,16 @@ export const columns: ColumnDef<Account>[] = [
     },
     {
       accessorKey: "accountValue",
-      header: () => <div className="text-right">Account Value</div>,
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Account Value
+          </Button>
+        )
+      },
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("accountValue"))
         const formatted = new Intl.NumberFormat("en-US", {
@@ -42,7 +52,16 @@ export const columns: ColumnDef<Account>[] = [
     },
     {
       accessorKey: "accountEquity",
-      header: () => <div className="text-right">Account Equity</div>,
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Account Equity
+          </Button>
+        )
+      },
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("accountEquity"))
         const formatted = new Intl.NumberFormat("en-US", {
@@ -55,11 +74,29 @@ export const columns: ColumnDef<Account>[] = [
     },
     {
       accessorKey: "roundTrips",
-      header: "# of Round Trips",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+           # of Round Trips
+          </Button>
+        )
+      },
     },
     {
       accessorKey: "cashBalance",
-      header: () => <div className="text-right">Cash Balance</div>,
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Cash Balance
+          </Button>
+        )
+      },
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("cashBalance"))
         const formatted = new Intl.NumberFormat("en-US", {
