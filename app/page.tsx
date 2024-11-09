@@ -4,9 +4,9 @@ export default function Home() {
   console.log("On home page...");   
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px]   p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <header className=" flex flex-col  gap-8 sm:items-start"> 
-        <p className={`text-xl text-gray-800 md:text-2xl `}>
+    <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+        <header className="flex flex-col sm:items-start">  
+        <p className="text-gray-800 md:text-2xl md:leading-normal">
            <strong>Welcome to FinanceGuy.</strong> This is the homescreen.  
         </p>
 

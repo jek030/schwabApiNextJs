@@ -5,13 +5,8 @@ import { getSchwabAccounts } from "@/app/lib/getSchwabAccounts";
 import { Position } from "@/app/lib/utils";
 import { columns } from '@/app/ui/positionsTableColumns';
 import { DataTable } from '@/app/ui/table';
+import {Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';//CardFooter
 
-import {Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle
-} from '@/app/ui/card';//CardFooter
 
 
 export default async function Page({params} : {params: {account: string}}) {
@@ -19,6 +14,7 @@ export default async function Page({params} : {params: {account: string}}) {
   const accountNum = params.account;
 
   let accounts;
+  //Using try to catch web service ffailure into the file.
   try {
     accounts = await getSchwabAccounts();
   } catch (error) {
@@ -60,9 +56,10 @@ export default async function Page({params} : {params: {account: string}}) {
               href=".."
               className="border border-slate-200 mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
               >
-              Go Back 
+              Go Back   
               </Link>
           </p>
+          
           <Card>
           <CardHeader>
             <CardTitle>Account {accountNum}</CardTitle>
@@ -71,10 +68,11 @@ export default async function Page({params} : {params: {account: string}}) {
             </CardDescription>
           </CardHeader>
           <CardContent>
+
             <DataTable columns={columns} data={formatPositions}/>
           </CardContent>
         </Card>
-
+        
         </main>    
       </div>
     );
