@@ -23,6 +23,11 @@ const links = [
     href: '/search',
     icon: UserGroupIcon,
   },
+  {
+    name: 'Calendar',
+    href: '/accounts/calendar',
+    icon: DocumentDuplicateIcon,
+  },
 ];
 
 export default function NavLinks() {

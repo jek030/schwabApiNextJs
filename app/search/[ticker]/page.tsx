@@ -2,6 +2,9 @@ import Link from 'next/link';
 import { getTicker } from '@/app/lib/getSchwabTicker';
 import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/app/ui/card';//CardFooter
 import { Divider } from "@nextui-org/react";
+import { Suspense } from 'react';
+import EmptyDataTableSkeleton from '@/app/accounts/empty-table-skeleton';
+import { columns } from '@/app/lib/positionsTableColumns';
 
 const getColor = (num:number) => {
   if(num < 0 ) {
@@ -127,7 +130,22 @@ export default async function Page({params} : {params: {ticker: string }}) {
             After hours change: <span style={{ color: getColor(tickerData[ticker]?.quote?.postMarketChange)}}> {formatter.format(tickerData[ticker]?.quote?.postMarketChange)} </span> <br></br>
             After hours % change: <span style={{ color: getColor(tickerData[ticker]?.quote?.postMarketPercentChange)}}> {formatter.format(tickerData[ticker]?.quote?.postMarketPercentChange)} </span> <br></br>
         </CardContent>
-      </Card>     
+      </Card>  
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Additional Data</CardTitle>
+          <CardDescription>
+            This section will contain additional information
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Suspense fallback={EmptyDataTableSkeleton(columns)}>
+            <div className="min-h-[200px] flex items-center justify-center text-gray-500">
+              Future content will be loaded here
+            </div>
+          </Suspense>
+        </CardContent>
+      </Card>   
     </main>    
     </div>
   );
