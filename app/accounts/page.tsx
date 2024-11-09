@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';//CardFooter
 import AccountsTable from './accounts-table';
-import AccountsTableSkeleton from './empty-table-skeleton';
+import EmptyDataTableSkeleton from './empty-table-skeleton';
 import { Suspense } from 'react';
 import { columns } from '../lib/accountsTableColumns';
+
 export default async function Page() {
   console.log("On accounts page..."); 
       
@@ -33,7 +34,7 @@ export default async function Page() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Suspense fallback={AccountsTableSkeleton(columns)}>
+            <Suspense fallback={EmptyDataTableSkeleton(columns)}>
               <AccountsTable/>
             </Suspense>
           </CardContent>

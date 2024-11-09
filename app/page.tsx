@@ -17,7 +17,7 @@ export default function Home() {
              Here is the TODO list:
         </strong> 
           <ul className="list-inside list-decimal text-center sm:text-left font-[family-name:var(--font-geist-mono)]">   
-            <li> if search page fails API fails display a message that it's unavailable.</li>
+            <li> if not data in suspense then table says page 1 of 0</li>
             <li>replace the search with a form</li>
             <li>Add database tables for positions, figure out why date is 1 day ahead when inserting...</li>
             <li>why is the accounts page taking so long to load? add skeleton and see if it loads faster..why can't sort account table?</li>

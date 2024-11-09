@@ -1,45 +1,16 @@
 
-import { accounts as accountsFile}  from '@/app/lib/accounts';
 import Link from 'next/link';
-import { getSchwabAccounts } from "@/app/lib/getSchwabAccounts";
-import { Position } from "@/app/lib/utils";
-import { columns } from '@/app/lib/positionsTableColumns';
-import { DataTable } from '@/app/ui/table';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';//CardFooter
-
-
+import PositionsTable from './positions-table';
+import { Suspense } from 'react';
+import EmptyDataTableSkeleton from '../../empty-table-skeleton';
+import { columns } from '@/app/lib/positionsTableColumns';
 
 export default async function Page({params} : {params: {account: string}}) {
 
   const accountNum = params.account;
 
-  let accounts;
-  //Using try to catch web service ffailure into the file.
-  try {
-    accounts = await getSchwabAccounts();
-  } catch (error) {
-   console.log("Web service call failed with error: " + error)
-   accounts = accountsFile;
-  }
-
-
-  let positions;
-    for (const acc in accounts) {
-      if ( accounts[acc]?.securitiesAccount?.accountNumber == accountNum) {
-          positions = accounts[acc]?.securitiesAccount?.positions
-          }
-
-      }
-      const formatPositions: Position[] = Object.entries(positions).map(([key,value]:[string,any]) => 
-        ({
-          key: key,
-          symbol: value.instrument.symbol,
-          marketValue: value.marketValue,
-          averagePrice: value.averagePrice,
-          longQuantity: value.longQuantity,
-          longOpenProfitLoss: value.longOpenProfitLoss,
-          netChange: value.instrument.netChange
-        }));
+ 
 
     return (
 
@@ -69,7 +40,9 @@ export default async function Page({params} : {params: {account: string}}) {
           </CardHeader>
           <CardContent>
 
-            <DataTable columns={columns} data={formatPositions}/>
+            <Suspense fallback={EmptyDataTableSkeleton(columns)}>
+              {PositionsTable(accountNum)}
+            </Suspense>
           </CardContent>
         </Card>
         
