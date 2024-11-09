@@ -90,7 +90,7 @@ export  default  function Page() {
     <div className="grid grid-rows-[20px_1fr_20px] p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <header className="flex flex-col gap-8 sm:items-start"> 
       <p className={`text-xl text-gray-800 md:text-2xl `}>        
-           <strong>Welcome to FinanceGuy.</strong> This is the quote page. 
+           <strong>Welcome to FinanceGuy.</strong> This is the search page. 
         </p>
     
       </header>

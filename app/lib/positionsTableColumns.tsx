@@ -1,47 +1,46 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { Account } from "../lib/utils";
 import { Button } from "@/components/ui/button"
-
 import Link from 'next/link';
+import { Position } from "./utils";
 
+export const columns: ColumnDef<Position>[] = [
+    {
+      accessorKey: "symbol",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Symbol
+          </Button>
+        )
+      },
+      cell: ({ row }) => {
+        const symbol = String(row.getValue("symbol"))
+   
+        return <Link className="border border-slate-300 mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
+                     href={{pathname:  `/search/${symbol}`}}>
+                     ${symbol}
+               </Link>
+      },
+    },
 
-export const columns: ColumnDef<Account>[] = [
     {
-      accessorKey: "accountNumber",
+      accessorKey: "marketValue",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Account Number
+            Market Value
           </Button>
         )
       },
       cell: ({ row }) => {
-        const acc = String(row.getValue("accountNumber"))
-   
-        return <Link className="border border-slate-300 mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400" 
-        href={{pathname: `/accounts/${ acc}/positions`}}>
-        {acc}
-        </Link>
-      },
-    },
-    {
-      accessorKey: "accountValue",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Account Value
-          </Button>
-        )
-      },
-      cell: ({ row }) => {
-        const amount = parseFloat(row.getValue("accountValue"))
+        const amount = parseFloat(row.getValue("marketValue"))
         const formatted = new Intl.NumberFormat("en-US", {
           style: "currency",
           currency: "USD",
@@ -51,19 +50,19 @@ export const columns: ColumnDef<Account>[] = [
       },
     },
     {
-      accessorKey: "accountEquity",
+      accessorKey: "averagePrice",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Account Equity
+            Avg Price
           </Button>
         )
       },
       cell: ({ row }) => {
-        const amount = parseFloat(row.getValue("accountEquity"))
+        const amount = parseFloat(row.getValue("averagePrice"))
         const formatted = new Intl.NumberFormat("en-US", {
           style: "currency",
           currency: "USD",
@@ -73,32 +72,41 @@ export const columns: ColumnDef<Account>[] = [
       },
     },
     {
-      accessorKey: "roundTrips",
+      accessorKey: "longQuantity",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-           # of Round Trips
-          </Button>
-        )
-      },
-    },
-    {
-      accessorKey: "cashBalance",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Cash Balance
+            Quantity
           </Button>
         )
       },
       cell: ({ row }) => {
-        const amount = parseFloat(row.getValue("cashBalance"))
+        const amount = parseFloat(row.getValue("longQuantity"))
+        const formatted = new Intl.NumberFormat("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(amount)
+   
+        return <div className="text-right font-medium">{formatted}</div>
+      },
+    },
+    {
+      accessorKey: "pnl",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            P/L ($)
+          </Button>
+        )
+      },
+      cell: ({ row }) => {
+        const amount = parseFloat(row.getValue("pnl"))
         const formatted = new Intl.NumberFormat("en-US", {
           style: "currency",
           currency: "USD",
@@ -106,7 +114,21 @@ export const columns: ColumnDef<Account>[] = [
    
         return <div className="text-right font-medium">{formatted}</div>
       },
+    },
+    {
+        accessorKey: "netChange",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              Net Change
+            </Button>
+          )
+        },
     }
+    
     
     //{
     //    id: "actions",

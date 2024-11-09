@@ -3,7 +3,7 @@ import { accounts as accountsFile}  from '@/app/lib/accounts';
 import Link from 'next/link';
 import { getSchwabAccounts } from "@/app/lib/getSchwabAccounts";
 import { Position } from "@/app/lib/utils";
-import { columns } from '@/app/ui/positionsTableColumns';
+import { columns } from '@/app/lib/positionsTableColumns';
 import { DataTable } from '@/app/ui/table';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';//CardFooter
 
