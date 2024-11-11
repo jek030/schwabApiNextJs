@@ -89,7 +89,7 @@ export const columns: ColumnDef<Account>[] = [
         )
       },
       cell: ({ row }) => {
-        const value = row.getValue("roundTrips")
+        const value = Number(row.getValue("roundTrips"));
         return <div className="text-center font-medium">{value}</div>
       },
     },

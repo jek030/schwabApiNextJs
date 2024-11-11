@@ -1,11 +1,13 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/app/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getSchwabAccounts } from '../../lib/getSchwabAccounts';
+import {Account} from '../../lib/utils';
 
 interface EventCategory {
   name: string;
@@ -23,7 +25,7 @@ interface EventsState {
 
 const EVENT_CATEGORIES: Record<string, EventCategory> = {
   default: { name: 'Default', color: 'bg-blue-100 text-blue-800' },
-  personal: { name: 'P/L', color: 'bg-green-100 text-green-800' },
+  pnl: { name: 'P/L', color: 'bg-green-100 text-green-800' },
 };
 
 const CalendarPage: React.FC = () => {
@@ -208,7 +210,70 @@ const CalendarPage: React.FC = () => {
     
     return days;
   };
-  
+
+  // Function to get previous business day
+  const getPreviousBusinessDay = (date: Date): Date => {
+    const previousDay = new Date(date);
+    previousDay.setDate(date.getDate() - 1);
+
+    // Keep going back until we find a weekday (0 = Sunday, 6 = Saturday)
+    while (previousDay.getDay() === 0 || previousDay.getDay() === 6) {
+      previousDay.setDate(previousDay.getDate() - 1);
+    }
+
+    return previousDay;
+  };
+
+  // Add initial events on component mount
+
+  useEffect(() => {
+    const loadAccountEvents = async () => {
+      try {
+        const accounts = await getSchwabAccounts();
+        console.log("Fetched accounts:", accounts);
+        
+        const prevBusinessDay = getPreviousBusinessDay(new Date());
+        const dateKey = getDateKey(
+          prevBusinessDay.getFullYear(),
+          prevBusinessDay.getMonth(),
+          prevBusinessDay.getDate()
+        );
+        console.log("Date key for events:", dateKey);
+
+
+        let formattedAccounts: Account[] = Object.entries(accounts).map(([key,value]:[string,any]) => 
+            ({
+              key: key,
+              accountNumber: value?.securitiesAccount?.accountNumber,
+              roundTrips: value?.securitiesAccount?.roundTrips,
+              accountValue: value?.securitiesAccount?.initialBalances?.accountValue,
+              accountEquity: value?.securitiesAccount?.currentBalances?.equity,
+              cashBalance: value?.securitiesAccount?.initialBalances?.cashBalance
+            }));
+
+
+        const accountEvents = formattedAccounts.map(account => ({
+          title: account.accountNumber,
+          category: 'pnl' as keyof typeof EVENT_CATEGORIES
+        }));
+        console.log("Created events:", accountEvents);
+
+        setEvents(prev => {
+          const newEvents = {
+            ...prev,
+            [dateKey]: [...(prev[dateKey] || []), ...accountEvents]
+          };
+          console.log("New events state:", newEvents);
+          return newEvents;
+        });
+
+      } catch (error) {
+        console.error('Error loading accounts:', error);
+      }
+    };
+
+    loadAccountEvents();
+  }, []);
   return (
     <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="w-full">
