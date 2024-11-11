@@ -4,8 +4,8 @@ import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/app/ui/ca
 import { Divider } from "@nextui-org/react";
 import { Suspense } from 'react';
 import EmptyDataTableSkeleton from '@/app/accounts/empty-table-skeleton';
-import { columns } from '@/app/lib/positionsTableColumns';
-
+import { columns } from '@/app/lib/priceHistoryColumns';
+import PriceHistoryTable from '@/app/search/[ticker]/price-history-table';
 const getColor = (num:number) => {
   if(num < 0 ) {
      return 'red';
@@ -24,6 +24,7 @@ const getColor = (num:number) => {
 export default async function Page({params} : {params: {ticker: string }}) {
   console.log("Inside search/[ticker]/page.tsx...")
   let tickerData;
+  let priceHistory;
   const ticker: string = params.ticker;
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'decimal',
@@ -44,6 +45,8 @@ export default async function Page({params} : {params: {ticker: string }}) {
 
   const yahooURL = "https://finance.yahoo.com/quote/" + ticker;
   const hasData = tickerData && tickerData[ticker];
+
+
 
   return (
     <div className="flex flex-col w-full gap-6 p-4">
@@ -145,16 +148,14 @@ export default async function Page({params} : {params: {ticker: string }}) {
         
         <Card className="w-full lg:col-span-2">
           <CardHeader>
-            <CardTitle>Additional Data</CardTitle>
+            <CardTitle>{ticker} Price History</CardTitle>
             <CardDescription>
-              This section will contain additional information
+            {ticker} daily price history from 9/1/2024 to {new Date().toLocaleDateString('en-US')}.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Suspense fallback={EmptyDataTableSkeleton(columns)}>
-              <div className="min-h-[200px] flex items-center justify-center text-gray-500">
-                Future content will be loaded here
-              </div>
+              {PriceHistoryTable(ticker,"9-1-2024", new Date().toLocaleDateString('en-US'))}
             </Suspense>
           </CardContent>
         </Card>   

@@ -135,7 +135,5 @@ export const columns: ColumnDef<Position>[] = [
         )
       },
     },
-    
-    
   ]
   
