@@ -2,10 +2,10 @@ import Link from 'next/link';
 import { getTicker } from '@/app/lib/getSchwabTicker';
 import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/app/ui/card';//CardFooter
 import { Divider } from "@nextui-org/react";
+import { PriceHistoryCard } from '@/app/ui/PriceHistoryCard';
 import { Suspense } from 'react';
-import EmptyDataTableSkeleton from '@/app/accounts/empty-table-skeleton';
-import { columns } from '@/app/lib/priceHistoryColumns';
-import PriceHistoryTable from '@/app/search/[ticker]/price-history-table';
+
+
 const getColor = (num:number) => {
   if(num < 0 ) {
      return 'red';
@@ -18,13 +18,9 @@ const getColor = (num:number) => {
   }
 };
 
-
-
-
 export default async function Page({params} : {params: {ticker: string }}) {
-  console.log("Inside search/[ticker]/page.tsx...")
   let tickerData;
-  let priceHistory;
+  
   const ticker: string = params.ticker;
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'decimal',
@@ -37,6 +33,7 @@ export default async function Page({params} : {params: {ticker: string }}) {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
   });
+
   try {
     tickerData = await getTicker(ticker);
   } catch (error) {
@@ -45,8 +42,6 @@ export default async function Page({params} : {params: {ticker: string }}) {
 
   const yahooURL = "https://finance.yahoo.com/quote/" + ticker;
   const hasData = tickerData && tickerData[ticker];
-
-
 
   return (
     <div className="flex flex-col w-full gap-6 p-4">
@@ -145,20 +140,9 @@ export default async function Page({params} : {params: {ticker: string }}) {
               </span> <br></br>
           </CardContent>
         </Card>  
-        
-        <Card className="w-full lg:col-span-2">
-          <CardHeader>
-            <CardTitle>{ticker} Price History</CardTitle>
-            <CardDescription>
-            {ticker} daily price history from 9/1/2024 to {new Date().toLocaleDateString('en-US')}.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Suspense fallback={EmptyDataTableSkeleton(columns)}>
-              {PriceHistoryTable(ticker,"9-1-2024", new Date().toLocaleDateString('en-US'))}
-            </Suspense>
-          </CardContent>
-        </Card>   
+        <Suspense fallback={<div>Loading price history...</div>}>
+                    <PriceHistoryCard ticker={ticker} />
+                </Suspense>
       </main>    
     </div>
   );

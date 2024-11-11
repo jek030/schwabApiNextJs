@@ -1,10 +1,18 @@
-"use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button"
-import Link from 'next/link';
-import { Position } from "./utils";
 
-export const columns: ColumnDef<Position>[] = [  
+
+interface PriceHistory {
+    key: string;
+    open: number;
+    high: number;
+    low: number;
+    close: number;
+    volume: number;
+    datetime: string;
+    change: string;
+}
+export const columns: ColumnDef<PriceHistory>[] = [  
     {
         accessorKey: "datetime",
         header: ({ column }) => {
