@@ -7,7 +7,17 @@ import { Position } from "./utils";
 export const columns: ColumnDef<Position>[] = [  
     {
         accessorKey: "datetime",
-        header: () => <div className="text-center">Date</div>,
+        header: ({ column }) => {
+            return (
+              <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                className="w-full justify-center"
+              >
+                Date
+              </Button>
+            )
+        },
         cell: ({ row }) => {
           const date = new Date(row.getValue("datetime")).toLocaleDateString('en-US');
      
@@ -78,6 +88,20 @@ export const columns: ColumnDef<Position>[] = [
         return <div className="text-center font-medium">{formatted}</div>
       },
     },
+    {
+        accessorKey: "change",
+        header: () => <div className="text-center">Change</div>,
+        cell: ({ row }) => {
+          const amount = parseFloat(row.getValue("change"))
+          const formatted = new Intl.NumberFormat("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+            signDisplay: 'always'
+          }).format(amount)
+  
+          return <div className="text-center font-medium" style={{ color: amount < 0 ? 'red' : 'green' }}>{formatted}%</div>
+        },
+      },
     
 ]
   

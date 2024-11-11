@@ -22,7 +22,8 @@ export default async function PriceHistoryTable( ticker:string, startDate:string
             low: value.low,
             close: value.close,
             volume: value.volume,
-            datetime: value.datetime
+            datetime: value.datetime,
+            change: (((value.close - value.open) / value.open) * 100) .toFixed(2)
           }));
         }
         //console.log("days: " + JSON.stringify(days,null,2));
