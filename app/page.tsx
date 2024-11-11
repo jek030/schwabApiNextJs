@@ -1,5 +1,6 @@
+"use client"
 import Link from 'next/link';
-
+import ADRCalculationCard from './lib/adr-calculation-card';
 export default function Home() {
   console.log("On home page...");   
 
@@ -35,6 +36,7 @@ export default function Home() {
             Click here to view your accounts.
           </Link>     
         </p>
+        <ADRCalculationCard />
       </div>  
     </div>
   );
