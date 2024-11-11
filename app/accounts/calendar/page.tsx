@@ -23,10 +23,7 @@ interface EventsState {
 
 const EVENT_CATEGORIES: Record<string, EventCategory> = {
   default: { name: 'Default', color: 'bg-blue-100 text-blue-800' },
-  meeting: { name: 'Meeting', color: 'bg-purple-100 text-purple-800' },
-  personal: { name: 'Personal', color: 'bg-green-100 text-green-800' },
-  deadline: { name: 'Deadline', color: 'bg-red-100 text-red-800' },
-  holiday: { name: 'Holiday', color: 'bg-yellow-100 text-yellow-800' },
+  personal: { name: 'P/L', color: 'bg-green-100 text-green-800' },
 };
 
 const CalendarPage: React.FC = () => {

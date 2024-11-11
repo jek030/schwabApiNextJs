@@ -26,7 +26,19 @@ export const columns: ColumnDef<Position>[] = [
                </Link>
       },
     },
-
+    {
+      accessorKey: "netChange",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Net Change
+          </Button>
+        )
+      },
+  },
     {
       accessorKey: "marketValue",
       header: ({ column }) => {
@@ -94,7 +106,7 @@ export const columns: ColumnDef<Position>[] = [
       },
     },
     {
-      accessorKey: "pnl",
+      accessorKey: "longOpenProfitLoss",
       header: ({ column }) => {
         return (
           <Button
@@ -106,28 +118,24 @@ export const columns: ColumnDef<Position>[] = [
         )
       },
       cell: ({ row }) => {
-        const amount = parseFloat(row.getValue("pnl"))
+        const amount = parseFloat(row.getValue("longOpenProfitLoss"))
         const formatted = new Intl.NumberFormat("en-US", {
           style: "currency",
           currency: "USD",
         }).format(amount)
    
-        return <div className="text-right font-medium">{formatted}</div>
+        return (
+          <div 
+            className={`text-right font-medium ${
+              amount > 0 ? 'text-green-600' : amount < 0 ? 'text-red-600' : ''
+            }`}
+          >
+            {formatted}
+          </div>
+        )
       },
     },
-    {
-        accessorKey: "netChange",
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-              Net Change
-            </Button>
-          )
-        },
-    }
+    
     
   ]
   
