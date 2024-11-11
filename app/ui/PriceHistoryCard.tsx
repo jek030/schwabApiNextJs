@@ -81,28 +81,30 @@ export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-            <div className="flex flex-col">
-              <label htmlFor="startDate" className="text-sm mb-1">Start Date</label>
-              <Input
-                id="startDate"
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-40"
-              />
+            <div className="flex flex-row gap-4 items-end mb-4">
+                <div className="flex flex-col">
+                    <label htmlFor="startDate" className="text-sm mb-1">Start Date</label>
+                    <Input
+                        id="startDate"
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="w-40"
+                    />
+                </div>
+                <div className="flex flex-col">
+                    <label htmlFor="endDate" className="text-sm mb-1">End Date</label>
+                    <Input
+                        id="endDate"
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className="w-40"
+                    />
+                </div>
+                <Button onClick={() => fetchPriceHistory()} className="h-10">Update</Button>
             </div>
-            <div className="flex flex-col">
-              <label htmlFor="endDate" className="text-sm mb-1">End Date</label>
-              <Input
-                id="endDate"
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="w-40"
-              />
-            </div>
-            <Button onClick={() => fetchPriceHistory()} className="mt-auto">Update</Button>
-          
+            
             <DataTable columns={columns} data={priceHistory}/>
         </CardContent>
       </Card>

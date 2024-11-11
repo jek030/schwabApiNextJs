@@ -98,7 +98,7 @@ export const columns: ColumnDef<PriceHistory>[] = [
     },
     {
         accessorKey: "change",
-        header: () => <div className="text-center">Change</div>,
+        header: () => <div className="text-center">Daily Change</div>,
         cell: ({ row }) => {
           const amount = parseFloat(row.getValue("change"))
           const formatted = new Intl.NumberFormat("en-US", {
