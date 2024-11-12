@@ -2,23 +2,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Suspense } from 'react';
-import EmptyDataTableSkeleton from '@/app/accounts/empty-table-skeleton';
 import { columns } from '@/app/lib/priceHistoryColumns';
 import { DataTable } from "@/app/ui/table";
-import { getPriceHistory } from '@/app/lib/getSchwabPriceHistory';
 import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/app/ui/card';//CardFooter
-
-interface PriceHistory {
-    key: string;
-    open: number;
-    high: number;
-    low: number;
-    close: number;
-    volume: number;
-    datetime: string;
-    change: string;
-}
+import { PriceHistory } from '@/app/lib/utils';
 
 export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
 
@@ -41,27 +28,10 @@ export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
         if (isValidDate(startDate) && isValidDate(endDate)) {
             try {
                 const response = await fetch(`/api/price-history?ticker=${ticker}&startDate=${startDate}&endDate=${endDate}`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const rawData = await response.json();
-
-                // Check if rawData is an object with a candles property
-                const candles = rawData.candles || [];
                 
-                // Transform the data to match PriceHistory interface
-                const formattedData: PriceHistory[] = candles.map((item: any, index: number) => ({
-                    key: index.toString(),
-                    open: item.open,
-                    high: item.high,
-                    low: item.low,
-                    close: item.close,
-                    volume: item.volume,
-                    datetime: new Date(item.datetime).toLocaleDateString(),
-                    change: ((item.close - item.open) / item.open * 100).toFixed(2)
-                }));
+                const formattedPriceHistory = await response.json();
+                setPriceHistory(formattedPriceHistory);
 
-                setPriceHistory(formattedData);
             } catch (error) {
                 console.error('Error fetching price history:', error);
                 setPriceHistory([]);

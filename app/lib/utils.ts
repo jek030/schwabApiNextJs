@@ -8,6 +8,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+
 export type Position = {
   key: string
   symbol: string
@@ -48,4 +49,14 @@ export interface IInsertAccount {
 export interface IPost {
   id: number;
   content: string;
+}
+export interface PriceHistory {
+    key: string;
+    open: number;
+    high: number;
+    low: number;
+    close: number;
+    volume: number;
+    datetime: string;
+    change: string;
 }
