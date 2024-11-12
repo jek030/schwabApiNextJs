@@ -18,7 +18,10 @@ export default function Home() {
              Here is the TODO list:
         </strong> 
           <ul className="list-inside list-decimal text-center sm:text-left font-[family-name:var(--font-geist-mono)]">   
-            <li> if not data in suspense then table says page 1 of 0</li>
+          <li>replace getSchwab accounts call with the new route.ts on calendar page</li>
+          <li>replace getTicker with a route, so that we can add a form where we enter a ticker on that page instead of using the search page</li>
+          <li>get calendar working</li>
+            <li> fix all table footers, if not data in suspense then table says page 1 of 0</li>
             <li>replace the search with a form</li>
             <li>Add database tables for positions, figure out why date is 1 day ahead when inserting...</li>
             <li>why is the accounts page taking so long to load? add skeleton and see if it loads faster..why can't sort account table?</li>
