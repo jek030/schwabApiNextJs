@@ -17,9 +17,10 @@ export default function Home() {
         </strong> 
           <ul className="list-inside list-decimal text-center sm:text-left font-[family-name:var(--font-geist-mono)]">   
           <li>have the calendar add the price of the calendar as a category</li>
-          <li>cache the getPositions and getTickers calls</li>
+          <li>cache the getPositions and getTickers calls?</li>
             <li> fix all table footers, if not data in suspense then table says page 1 of 0</li>
             <li>replace the search with a form</li>
+            <li>remove NaN from ticker page id web service calls fails</li>
             <li>Add database tables for positions, figure out why date is 1 day ahead when inserting...</li>
             <li>why is the accounts page taking so long to load? add skeleton and see if it loads faster..why can't sort account table?</li>
             <li> add calendar to accounts page</li>

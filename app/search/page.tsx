@@ -1,12 +1,13 @@
 "use client";
-//import { accounts as accountsFile }  from '@/app/lib/accounts';
+
 import Link from 'next/link';
-import Search from '../ui/search';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Search as SearchIcon } from 'lucide-react'
+import { useRouter } from 'next/navigation';
 
 import {
   Form,
@@ -19,82 +20,79 @@ import {
 } from "@/components/ui/form"
 
 const FormSchema = z.object({
-  ticker: z.string().min(2, {
+  ticker: z.string().min(1, {
     message: "Ticker must be at least 1 character.",
   }),
 })
 
-export function InputForm() {
+export function SearchForm() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       ticker: "",
     },
-
   })
  
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data.ticker)
-    //toast({
-    //  title: "You submitted the following values:",
-    //  description: (
-    //    <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-    //      <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-    //    </pre>
-    //  ),
-    //})
+    router.push(`/search/${data.ticker.toUpperCase()}`);
   }
  
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full border border-slate-200 max-w-md space-y-4 bg-white p-6 rounded-lg shadow-sm">
         <FormField
           control={form.control}
           name="ticker"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Ticker</FormLabel>
-              <FormControl>
-                <Input placeholder="NVDA" {...field} />
-              </FormControl>
-              <FormDescription>
-                Enter a ticker to search for.
+              <FormLabel className="text-gray-700">Search Stock</FormLabel>
+              <div className="flex gap-2">
+                <FormControl>
+                  <Input 
+                    placeholder="Enter ticker (e.x., NVDA)" 
+                    className="flex-1"
+                    {...field} 
+                  />
+                </FormControl>
+                <Button 
+                  type="submit"
+                  className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+                >
+                  <SearchIcon className="h-4 w-4" />
+                  Search
+                </Button>
+              </div>
+              <FormDescription className="text-sm text-gray-500">
+                Enter a stock ticker symbol to search the Schwab API.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
       </form>
     </Form>
-    
   )
 }
 
-
-export  default  function Page() {
-
-   
+export default function Page() {
   return (
-    
     <div className="grid grid-rows-[20px_1fr_20px] p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <header className="flex flex-col gap-8 sm:items-start"> 
-      <p className={`text-xl text-gray-800 md:text-2xl `}>        
-           <strong>Welcome to FinanceGuy.</strong> This is the search page. 
+        <p className="text-xl text-gray-800 md:text-2xl">        
+          <strong>Welcome to FinanceGuy.</strong> This is the search page. 
         </p>
-    
       </header>
       <main className="flex flex-col gap-8 row-start-2 justify-items-center items-center sm:items-start">
         <p>
-            <Link
+          <Link
             href=".."
             className="border border-slate-200 mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
-            >
+          >
             Go Back
-            </Link>
+          </Link>
         </p>
-        <Search placeholder='Search'></Search>
-        
+        <SearchForm />
       </main>
     </div>
   );
