@@ -6,6 +6,7 @@ import { Divider } from "@nextui-org/react";
 import { PriceHistoryCard } from '@/app/ui/PriceHistoryCard';
 import { Suspense } from 'react';
 import { Ticker } from '@/app/lib/utils';
+import PageHeader from '@/app/components/PageHeader';
 
 
 const getColor = (num:number) => {
@@ -61,18 +62,15 @@ export default function Page({params} : {params: {ticker: string }}) {
 
   return (
     <div className="flex flex-col w-full gap-6 p-4">
-      <header className="flex flex-col sm:items-start px-4">
-        <p className="text-gray-800 md:text-2xl md:leading-normal">
-           <strong>Welcome to FinanceGuy.</strong> This is the ticker page.
-        </p>  
+      <PageHeader>
+        This is the ticker page.    
         <Link
           href=".."
           className="border border-slate-200 mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
         >
           Go Back 
         </Link>
-      </header>
-      
+      </PageHeader> 
       <main className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-4 w-full">
         <Card className="w-full">
           <CardHeader>

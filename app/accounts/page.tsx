@@ -5,6 +5,7 @@ import { Suspense } from 'react';
 import { columns } from '../lib/accountsTableColumns';
 import { getAccounts } from '../lib/accountStore';
 import { DataTable } from '../ui/table';
+import PageHeader from '../components/PageHeader';
 
 export default async function Page() {
   const accounts = await getAccounts();
@@ -12,12 +13,10 @@ export default async function Page() {
   return (
     
     <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <header className="flex flex-col sm:items-start"> 
-      <p className="text-gray-800 md:text-2xl md:leading-normal">        
-           <strong>Welcome to FinanceGuy.</strong> This is the accounts page.
-      </p>
+      <PageHeader>
+        This is the accounts page.
+      </PageHeader>
     
-      </header>
       <main className="flex flex-col gap-8 sm:items-start">
         <p>
             <Link

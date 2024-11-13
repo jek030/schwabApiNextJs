@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Search as SearchIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation';
+import PageHeader from '../components/PageHeader';
 
 import {
   Form,
@@ -18,6 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+
 
 const FormSchema = z.object({
   ticker: z.string().min(1, {
@@ -77,12 +79,11 @@ export function SearchForm() {
 
 export default function Page() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <header className="flex flex-col gap-8 sm:items-start"> 
-        <p className="text-xl text-gray-800 md:text-2xl">        
-          <strong>Welcome to FinanceGuy.</strong> This is the search page. 
-        </p>
-      </header>
+    <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <PageHeader>
+        This is the search page.
+      </PageHeader>
+
       <main className="flex flex-col gap-8 row-start-2 justify-items-center items-center sm:items-start">
         <p>
           <Link

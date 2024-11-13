@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {Account} from '../../lib/utils';
+import PageHeader from '@/app/components/PageHeader';
 
 interface EventCategory {
   name: string;
@@ -332,14 +333,12 @@ const CalendarPage: React.FC = () => {
   return (
     
     <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="w-full">
-        <header className="flex flex-col sm:items-start"> 
-          <p className="text-gray-800 md:text-2xl md:leading-normal">
-            <strong>Welcome to FinanceGuy.</strong> This is the calendar page.
-          </p>
-        </header>
+      <PageHeader>
+        This is the calendar page.
+      </PageHeader>
 
-        <div className="min-h-screen p-2">
+      <main className="w-full mt-8">
+        <div className="flex flex-col gap-8 sm:items-start">
           <Card className="w-full">
             <CardHeader>
               <div className="flex items-center justify-between">

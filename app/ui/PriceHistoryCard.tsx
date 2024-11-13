@@ -7,9 +7,22 @@ import { DataTable } from "@/app/ui/table";
 import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/app/ui/card';//CardFooter
 import { PriceHistory } from '@/app/lib/utils';
 
+// Add this helper function at the top of the file, after imports
+const getFirstBusinessDay = () => {
+    const date = new Date();
+    date.setDate(1); // First day of current month
+    
+    // Adjust for weekend
+    while (date.getDay() === 0 || date.getDay() === 6) {
+        date.setDate(date.getDate() + 1);
+    }
+    
+    return date.toISOString().split('T')[0];
+};
+
 export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
 
-    const [startDate, setStartDate] = useState("2024-09-01");
+    const [startDate, setStartDate] = useState(getFirstBusinessDay());
     const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
     const [priceHistory, setPriceHistory] = useState<PriceHistory[]>([]);
 
@@ -20,9 +33,7 @@ export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
         return date instanceof Date && !isNaN(date.getTime());
     };
 
-    useEffect(() => {
-        fetchPriceHistory();
-    }, []);
+    
 
     const fetchPriceHistory = useCallback(async () => {    
         if (isValidDate(startDate) && isValidDate(endDate)) {
@@ -41,6 +52,10 @@ export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
             setPriceHistory([]);
         }
     }, [ticker, startDate, endDate]);
+
+    useEffect(() => {
+        fetchPriceHistory();
+    }, []);
 
     return (
       <Card className="w-full lg:col-span-2">

@@ -28,7 +28,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} h-screen flex flex-col divide-y divide-slate-300 overflow-auto`}>
         <div className="flex flex-row grow h-auto bg-gradient-to-br from-green-200 via-white to-green-100">
-            <SideNav />           
+        
+          <SideNav />           
           <main className="flex-1 w-full">{children}</main>
         </div>
         <div className="flex-none h-14">

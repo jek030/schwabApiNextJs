@@ -1,26 +1,22 @@
 import Link from 'next/link';
 import ADRCalculationCard from './lib/adr-calculation-card';
+import PageHeader from './components/PageHeader';
+
 export default function Home() {
 
   return (
     <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-        <header className="flex flex-col sm:items-start">  
-        <p className="text-gray-800 md:text-2xl md:leading-normal">
-           <strong>Welcome to FinanceGuy.</strong> This is the homescreen.  
-        </p>
-
-      </header>
-
+      <PageHeader>
+        This is the home page.
+      </PageHeader>
       <div className="flex flex-col gap-8 ">  
         <strong className={` text-xl text-gray-800 md:text-2xl `}>
              Here is the TODO list:
         </strong> 
           <ul className="list-inside list-decimal text-center sm:text-left font-[family-name:var(--font-geist-mono)]">   
-          <li>have the calendar add the price of the calendar as a category</li>
-          <li>cache the getPositions and getTickers calls?</li>
+            <li>cache the getPositions and getTickers calls?</li>
             <li> fix all table footers, if not data in suspense then table says page 1 of 0</li>
             <li>remove NaN from ticker page id web service calls fails</li>
-            <li>Add database tables for positions, figure out why date is 1 day ahead when inserting...</li>
             <li>why is the accounts page taking so long to load? add skeleton and see if it loads faster..why can't sort account table?</li>
             <li>Add ADR and other stuff to Ticker page</li>
             <li>automate api keys</li>
