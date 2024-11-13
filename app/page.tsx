@@ -16,7 +16,6 @@ export default function Home() {
              Here is the TODO list:
         </strong> 
           <ul className="list-inside list-decimal text-center sm:text-left font-[family-name:var(--font-geist-mono)]">   
-          <li>replace getTicker with a route, so that we can add a form where we enter a ticker on that page instead of using the search page</li>
           <li>have the calendar add the price of the calendar as a category</li>
           <li>cache the getPositions and getTickers calls</li>
             <li> fix all table footers, if not data in suspense then table says page 1 of 0</li>

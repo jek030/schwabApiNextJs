@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { getTicker } from '@/app/lib/getSchwabTicker';
 import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/app/ui/card';//CardFooter
 import { Divider } from "@nextui-org/react";
 import { PriceHistoryCard } from '@/app/ui/PriceHistoryCard';
