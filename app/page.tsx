@@ -19,11 +19,9 @@ export default function Home() {
           <li>have the calendar add the price of the calendar as a category</li>
           <li>cache the getPositions and getTickers calls?</li>
             <li> fix all table footers, if not data in suspense then table says page 1 of 0</li>
-            <li>replace the search with a form</li>
             <li>remove NaN from ticker page id web service calls fails</li>
             <li>Add database tables for positions, figure out why date is 1 day ahead when inserting...</li>
             <li>why is the accounts page taking so long to load? add skeleton and see if it loads faster..why can't sort account table?</li>
-            <li> add calendar to accounts page</li>
             <li>Add ADR and other stuff to Ticker page</li>
             <li>automate api keys</li>
             <li>Check if API call is cached on ticker and positions pages</li>

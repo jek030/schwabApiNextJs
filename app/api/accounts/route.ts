@@ -17,6 +17,7 @@ export async function GET() {
         }
 
         const interfaceData = await res.json();
+        //console.log("interfaceData: " + JSON.stringify(interfaceData, null, 2));
         const formattedAccounts : Account[] = Object.entries(interfaceData).map(([key, value]: [string, any]) => ({
             key: key,
             accountNumber: value?.securitiesAccount?.accountNumber,
@@ -37,7 +38,7 @@ export async function GET() {
 
         // Store the formatted accounts in the server-side cache
         setAccounts(formattedAccounts);
-        console.log("Accounts: " + JSON.stringify(formattedAccounts, null, 2));
+       // console.log("Accounts: " + JSON.stringify(formattedAccounts, null, 2));
         return NextResponse.json(formattedAccounts);
 
     } catch (error) {

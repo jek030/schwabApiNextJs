@@ -15,17 +15,25 @@ interface EventCategory {
 
 interface CalendarEvent {
   title: string;
-  category: keyof typeof EVENT_CATEGORIES;
+  category: string;
 }
 
 interface EventsState {
   [key: string]: CalendarEvent[];
 }
 
-const EVENT_CATEGORIES: Record<string, EventCategory> = {
-  default: { name: 'Default', color: 'bg-blue-100 text-blue-800' },
-  pnl: { name: 'P/L', color: 'bg-green-100 text-green-800' },
-};
+const TAILWIND_COLORS = [
+  'bg-red-100 text-red-800',
+  'bg-green-100 text-green-800',
+  'bg-blue-100 text-blue-800',
+  'bg-yellow-100 text-yellow-800',
+  'bg-purple-100 text-purple-800',
+  'bg-pink-100 text-pink-800',
+  'bg-indigo-100 text-indigo-800',
+  'bg-orange-100 text-orange-800',
+  'bg-teal-100 text-teal-800',
+  'bg-cyan-100 text-cyan-800',
+];
 
 const CalendarPage: React.FC = () => {
     const initialized = useRef(false);
@@ -34,7 +42,11 @@ const CalendarPage: React.FC = () => {
   const [events, setEvents] = useState<EventsState>({});
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [newEvent, setNewEvent] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState<keyof typeof EVENT_CATEGORIES>('default');
+  const [selectedCategory, setSelectedCategory] = useState<string>('default');
+  const [eventCategories, setEventCategories] = useState<Record<string, EventCategory>>({
+    default: { name: 'Default', color: 'bg-blue-100 text-blue-800' },
+  });
+  const [editingEvent, setEditingEvent] = useState<{ index: number; text: string } | null>(null);
   
   const daysInMonth = (date: Date): number => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -79,7 +91,7 @@ const CalendarPage: React.FC = () => {
   };
 
   const renderEventBadge = (event: CalendarEvent): JSX.Element => {
-    const categoryStyle = EVENT_CATEGORIES[event.category]?.color || EVENT_CATEGORIES.default.color;
+    const categoryStyle = eventCategories[event.category]?.color || eventCategories.default.color;
     return (
       <div className={`text-xs truncate p-1 mb-1 rounded ${categoryStyle}`}>
         {event.title}
@@ -89,7 +101,7 @@ const CalendarPage: React.FC = () => {
 
   const CategoryLegend: React.FC = () => (
     <div className="flex flex-wrap gap-2 mt-4">
-      {Object.entries(EVENT_CATEGORIES).map(([key, category]) => (
+      {Object.entries(eventCategories).map(([key, category]) => (
         <div key={key} className="flex items-center space-x-1">
           <div className={`w-3 h-3 rounded ${category.color.split(' ')[0]}`} />
           <span className="text-xs">{category.name}</span>
@@ -159,12 +171,12 @@ const CalendarPage: React.FC = () => {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEvent(e.target.value)}
                   onKeyPress={(e: React.KeyboardEvent) => e.key === 'Enter' && handleAddEvent()}
                 />
-                <Select value={selectedCategory} onValueChange={(value: keyof typeof EVENT_CATEGORIES) => setSelectedCategory(value)}>
+                <Select value={selectedCategory} onValueChange={(value: string) => setSelectedCategory(value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(EVENT_CATEGORIES).map(([key, category]) => (
+                    {Object.entries(eventCategories).map(([key, category]) => (
                       <SelectItem key={key} value={key}>
                         <div className="flex items-center space-x-2">
                           <div className={`w-3 h-3 rounded ${category.color.split(' ')[0]}`} />
@@ -181,20 +193,48 @@ const CalendarPage: React.FC = () => {
               </div>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {dayEvents.map((event, idx) => (
-                  <div key={idx} className={`flex justify-between items-center p-2 rounded ${EVENT_CATEGORIES[event.category]?.color || EVENT_CATEGORIES.default.color}`}>
-                    <span>{event.title}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setEvents(prev => ({
-                          ...prev,
-                          [dateKey]: prev[dateKey].filter((_, i) => i !== idx)
-                        }));
-                      }}
-                    >
-                      Remove
-                    </Button>
+                  <div key={idx} className={`flex justify-between items-center p-2 rounded ${eventCategories[event.category]?.color || eventCategories.default.color}`}>
+                    {editingEvent?.index === idx ? (
+                      <Input
+                        value={editingEvent.text}
+                        onChange={(e) => setEditingEvent({ ...editingEvent, text: e.target.value })}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            setEvents(prev => ({
+                              ...prev,
+                              [selectedDate!]: prev[selectedDate!].map((ev, i) => 
+                                i === idx ? { ...ev, title: editingEvent.text } : ev
+                              )
+                            }));
+                            setEditingEvent(null);
+                          }
+                        }}
+                        autoFocus
+                      />
+                    ) : (
+                      <span>{event.title}</span>
+                    )}
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setEditingEvent({ index: idx, text: event.title })}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setEvents(prev => ({
+                            ...prev,
+                            [selectedDate!]: prev[selectedDate!].filter((_, i) => i !== idx)
+                          }));
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </div>
                   </div>
                 ))}
                 {dayEvents.length === 0 && (
@@ -245,15 +285,11 @@ const CalendarPage: React.FC = () => {
           prevBusinessDay.getMonth(),
           prevBusinessDay.getDate()
         );
-        console.log("Date key for events:", dateKey);
-
-
-
 
 
         const accountEvents = formattedAccounts.map((account: Account) => ({
-          title: account.accountNumber + " " + account,
-          category: 'pnl' as keyof typeof EVENT_CATEGORIES
+          title: account.accountNumber + " Account Value: $" + account.accountValue.toLocaleString(),
+          category: account.accountNumber as keyof typeof eventCategories
         }));
         console.log("Created events:", accountEvents);
 
@@ -275,6 +311,24 @@ const CalendarPage: React.FC = () => {
 
    
   }, []);
+
+  useEffect(() => {
+    if (formattedAccounts.length > 0) {
+      const newCategories = formattedAccounts.reduce((acc, account, index) => ({
+        ...acc,
+        [account.accountNumber]: { 
+          name: `Account ${account.accountNumber}`, 
+          color: TAILWIND_COLORS[index % TAILWIND_COLORS.length] 
+        }
+      }), {});
+
+      setEventCategories({
+        default: { name: 'Default', color: 'bg-gray-100 text-gray-800' },
+        ...newCategories
+      });
+    }
+  }, [formattedAccounts]);
+
   return (
     
     <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
