@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { setAccounts } from '@/app/lib/accountStore';
+import { Account } from '@/app/lib/utils';
 
 export async function GET() {
     try {
@@ -16,7 +17,7 @@ export async function GET() {
         }
 
         const interfaceData = await res.json();
-        const formattedAccounts = Object.entries(interfaceData).map(([key, value]: [string, any]) => ({
+        const formattedAccounts : Account[] = Object.entries(interfaceData).map(([key, value]: [string, any]) => ({
             key: key,
             accountNumber: value?.securitiesAccount?.accountNumber,
             roundTrips: value?.securitiesAccount?.roundTrips,

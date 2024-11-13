@@ -1,9 +1,12 @@
+"use client";
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { getTicker } from '@/app/lib/getSchwabTicker';
 import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/app/ui/card';//CardFooter
 import { Divider } from "@nextui-org/react";
 import { PriceHistoryCard } from '@/app/ui/PriceHistoryCard';
 import { Suspense } from 'react';
+import { Ticker } from '@/app/lib/utils';
 
 
 const getColor = (num:number) => {
@@ -18,30 +21,44 @@ const getColor = (num:number) => {
   }
 };
 
-export default async function Page({params} : {params: {ticker: string }}) {
-  let tickerData;
-  
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'decimal',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+
+const formatterVol = new Intl.NumberFormat('en-US', {
+  style: 'decimal',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0
+});
+
+export default function Page({params} : {params: {ticker: string }}) {
   const ticker: string = params.ticker;
-  const formatter = new Intl.NumberFormat('en-US', {
-    style: 'decimal',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
-
-  const formatterVol = new Intl.NumberFormat('en-US', {
-    style: 'decimal',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  });
-
-  try {
-    tickerData = await getTicker(ticker);
-  } catch (error) {
-    console.log(`getTicker(${ticker}) web service call failed with error: ${error}`)
-  }
-
   const yahooURL = "https://finance.yahoo.com/quote/" + ticker;
-  const hasData = tickerData && tickerData[ticker];
+  const [tickerData, setTickerData] = useState<Ticker>({} as Ticker);
+
+
+  const fetchTickerData = useCallback(async () => {    
+          try {
+              const response = await fetch(`/api/ticker?ticker=${ticker}`).then(res => res.json());
+              
+              //const formattedTickerData = await response.json();
+              setTickerData(response);
+
+          } catch (error) {
+            console.log(`getTicker(${ticker}) web service call failed with error: ${error}`)
+
+              setTickerData({} as Ticker);
+          }
+
+  }, [ticker]);
+
+  useEffect(() => {
+    fetchTickerData();
+  }, [ticker,fetchTickerData]);
+
+  const hasData = Object.keys(tickerData).length > 0;
 
   return (
     <div className="flex flex-col w-full gap-6 p-4">
@@ -63,13 +80,13 @@ export default async function Page({params} : {params: {ticker: string }}) {
             <CardTitle>{ticker}</CardTitle>       
             <Divider></Divider>
             <CardDescription>
-              {hasData ? tickerData[ticker]?.reference?.description : 'Failed to load data from Charles Schwab API.'}
+              {hasData ? tickerData.description : 'Failed to load data from Charles Schwab API.'}
             </CardDescription>
           </CardHeader>
           <CardContent >
-            Price: {hasData ? formatter.format(tickerData[ticker]?.quote?.mark) : 'N/A'}   <br></br>    
-            Net Change: <span style={{ color: hasData ? getColor(tickerData[ticker]?.quote?.netChange) : 'black'}}> 
-              {hasData ? formatter.format(tickerData[ticker]?.quote?.netChange) : 'N/A'} 
+            Price: {hasData ? formatter.format(tickerData.mark) : 'N/A'}   <br></br>    
+            Net Change: <span style={{ color: hasData ? getColor(tickerData.netChange) : 'black'}}> 
+              {hasData ? formatter.format(tickerData.netChange) : 'N/A'} 
             </span>          
           </CardContent>
           <CardContent>
@@ -87,10 +104,10 @@ export default async function Page({params} : {params: {ticker: string }}) {
             <Divider></Divider>       
           </CardHeader>
           <CardContent>
-              52 week high: {hasData ? tickerData[ticker]?.quote["52WeekHigh"] : 'N/A'} <br></br>
-              52 week low: {hasData ? tickerData[ticker]?.quote["52WeekLow"] : 'N/A'} <br></br>
-              10 day average volume: {hasData ? formatterVol.format(tickerData[ticker]?.fundamental?.avg10DaysVolume) : 'N/A'} <br></br>      
-              1 year average volume: {hasData ? formatterVol.format(tickerData[ticker]?.fundamental?.avg1YearVolume) : 'N/A'} <br></br>  
+              52 week high: {hasData ? tickerData["52WeekHigh"] : 'N/A'} <br></br>
+              52 week low: {hasData ? tickerData["52WeekLow"] : 'N/A'} <br></br>
+              10 day average volume: {hasData ? formatterVol.format(tickerData['10DayAverageVolume']) : 'N/A'} <br></br>      
+              1 year average volume: {hasData ? formatterVol.format(tickerData['1YearAverageVolume']) : 'N/A'} <br></br>  
           </CardContent>
         </Card>
 
@@ -100,15 +117,19 @@ export default async function Page({params} : {params: {ticker: string }}) {
             <Divider></Divider>       
           </CardHeader>
           <CardContent>
-              P/E Ratio: <span style={{ color: hasData ? getColor(tickerData[ticker]?.fundamental?.peRatio) : 'black'}}> 
-                {hasData ? formatter.format(tickerData[ticker]?.fundamental?.peRatio) : 'N/A'} 
+              P/E Ratio: <span style={{ color: hasData ? getColor(tickerData.peRatio) : 'black'}}> 
+                {hasData ? formatter.format(tickerData.peRatio) : 'N/A'} 
               </span> <br></br>
-              EPS: <span style={{ color: hasData ? getColor(tickerData[ticker]?.fundamental?.eps) : 'black'}}> 
-                {hasData ? formatter.format(tickerData[ticker]?.fundamental?.eps) : 'N/A'} 
+              EPS: <span style={{ color: hasData ? getColor(tickerData.eps) : 'black'}}> 
+                {hasData ? formatter.format(tickerData.eps) : 'N/A'} 
               </span> <br></br>
-              Next ex-dividend date: {hasData ? new Date(tickerData[ticker]?.fundamental?.nextDivExDate).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) : 'N/A'}<br></br>
-              Next dividend payment date: {hasData ? new Date(tickerData[ticker]?.fundamental?.nextDivPayDate).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) : 'N/A'}<br></br>
-              Dividend yield: {hasData ? formatter.format(tickerData[ticker]?.fundamental?.divYield) : 'N/A'}%<br></br>
+              Next ex-dividend date: {hasData && tickerData?.nextDivExDate ? 
+                new Date(tickerData?.nextDivExDate).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) 
+                : ''}<br></br>
+              Next dividend payment date: {hasData && tickerData.nextDivPayDate ? 
+                new Date(tickerData.nextDivPayDate).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) 
+                : ''}<br></br>
+              Dividend yield: {hasData ? formatter.format(tickerData.divYield) : 'N/A'}%<br></br>
           </CardContent>
         </Card>
 
@@ -118,31 +139,31 @@ export default async function Page({params} : {params: {ticker: string }}) {
             <Divider></Divider>       
           </CardHeader>
           <CardContent>
-              Regular market price: {hasData ? formatter.format(tickerData[ticker]?.regular?.regularMarketLastPrice) : 'N/A'} <br></br>
-              Daily volume: {hasData ? formatterVol.format(tickerData[ticker]?.quote?.totalVolume) : 'N/A'} <br></br>
-              Regular market net change: {hasData ? formatter.format(tickerData[ticker]?.regular?.regularMarketNetChange) : 'N/A'} <br></br>
-              Regular market % change: {hasData ? formatter.format(tickerData[ticker]?.regular?.regularMarketPercentChange) : 'N/A'} <br></br><br></br>
-              Last close price: {hasData ? formatter.format(tickerData[ticker]?.quote?.closePrice) : 'N/A'} <br></br>
-              Daily high: {hasData ? formatter.format(tickerData[ticker]?.quote?.highPrice) : 'N/A'} <br></br>
-              Daily low: {hasData ? formatter.format(tickerData[ticker]?.quote?.lowPrice) : 'N/A'} <br></br><br></br>
-              Mark: {hasData ? formatter.format(tickerData[ticker]?.quote?.mark) : 'N/A'} <br></br>
-              Daily % change: <span style={{ color: hasData ? getColor(tickerData[ticker]?.quote?.netPercentChange) : 'black'}}> 
-                {hasData ? formatter.format(tickerData[ticker]?.quote?.netPercentChange) : 'N/A'}% 
+              Regular market price: {hasData ? formatter.format(tickerData.regularMarketLastPrice) : 'N/A'} <br></br>
+              Daily volume: {hasData ? formatterVol.format(tickerData .totalVolume) : 'N/A'} <br></br>
+              Regular market net change: {hasData ? formatter.format(tickerData.regularMarketNetChange) : 'N/A'} <br></br>
+              Regular market % change: {hasData ? formatter.format(tickerData.regularMarketPercentChange) : 'N/A'} <br></br><br></br>
+              Last close price: {hasData ? formatter.format(tickerData.closePrice) : 'N/A'} <br></br>
+              Daily high: {hasData ? formatter.format(tickerData.highPrice) : 'N/A'} <br></br>
+              Daily low: {hasData ? formatter.format(tickerData.lowPrice) : 'N/A'} <br></br><br></br>
+              Mark: {hasData ? formatter.format(tickerData.mark) : 'N/A'} <br></br>
+              Daily % change: <span style={{ color: hasData ? getColor(tickerData.netPercentChange) : 'black'}}> 
+                {hasData ? formatter.format(tickerData.netPercentChange) : 'N/A'}% 
               </span> <br></br>        
-              Daily net change: <span style={{ color: hasData ? getColor(tickerData[ticker]?.quote?.netChange) : 'black'}}> 
-                {hasData ? formatter.format(tickerData[ticker]?.quote?.netChange) : 'N/A'} 
+              Daily net change: <span style={{ color: hasData ? getColor(tickerData.netChange) : 'black'}}> 
+                {hasData ? formatter.format(tickerData.netChange) : 'N/A'} 
               </span> <br></br>
-              After hours change: <span style={{ color: hasData ? getColor(tickerData[ticker]?.quote?.postMarketChange) : 'black'}}> 
-                {hasData ? formatter.format(tickerData[ticker]?.quote?.postMarketChange) : 'N/A'} 
+              After hours change: <span style={{ color: hasData ? getColor(tickerData.postMarketChange) : 'black'}}> 
+                {hasData ? formatter.format(tickerData.postMarketChange) : 'N/A'} 
               </span> <br></br>
-              After hours % change: <span style={{ color: hasData ? getColor(tickerData[ticker]?.quote?.postMarketPercentChange) : 'black'}}> 
-                {hasData ? formatter.format(tickerData[ticker]?.quote?.postMarketPercentChange) : 'N/A'} 
+              After hours % change: <span style={{ color: hasData ? getColor(tickerData.postMarketPercentChange) : 'black'}}> 
+                {hasData ? formatter.format(tickerData.postMarketPercentChange) : 'N/A'} 
               </span> <br></br>
           </CardContent>
         </Card>  
         <Suspense fallback={<div>Loading price history...</div>}>
-                    <PriceHistoryCard ticker={ticker} />
-                </Suspense>
+          <PriceHistoryCard ticker={ticker} />
+        </Suspense>
       </main>    
     </div>
   );

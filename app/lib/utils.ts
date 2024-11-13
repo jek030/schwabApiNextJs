@@ -12,6 +12,33 @@ export interface AccountsTableProps {
   initialData: Account[];
 }
 
+export type Ticker = {
+  key: string
+  symbol: string
+  description: string
+  mark: number
+  netChange: number
+  netPercentChange: number
+  "52WeekHigh": number
+  "52WeekLow": number
+  "10DayAverageVolume": number
+  "1YearAverageVolume": number
+  peRatio: number
+  eps: number
+  nextDivExDate: string
+  nextDivPayDate: string
+  divYield: number
+  regularMarketLastPrice: number
+  totalVolume: number
+  regularMarketNetChange: number
+  regularMarketPercentChange: number
+  closePrice: number
+  highPrice: number
+  lowPrice: number
+  postMarketChange: number
+  postMarketPercentChange: number
+}
+
 export type Position = {
   key: string
   symbol: string
