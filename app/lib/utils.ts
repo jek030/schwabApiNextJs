@@ -8,6 +8,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export interface AccountsTableProps {
+  initialData: Account[];
+}
 
 export type Position = {
   key: string
@@ -26,6 +29,7 @@ export type Account = {
   accountValue: number
   accountEquity: number
   cashBalance: number
+  positions: Position[]
 }
 
 export interface IAccount extends mysql.RowDataPacket {

@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';//CardFooter
-import AccountsTable from './accounts-table';
-import EmptyDataTableSkeleton from './empty-table-skeleton';
+import EmptyDataTableSkeleton from '../lib/empty-table-skeleton';
 import { Suspense } from 'react';
 import { columns } from '../lib/accountsTableColumns';
+import { getAccounts } from '../lib/accountStore';
+import { DataTable } from '../ui/table';
 
 export default async function Page() {
-  console.log("On accounts page..."); 
+  const accounts = await getAccounts();
       
   return (
     
@@ -35,7 +36,7 @@ export default async function Page() {
           </CardHeader>
           <CardContent>
             <Suspense fallback={EmptyDataTableSkeleton(columns)}>
-              <AccountsTable/>
+              <DataTable columns={columns} data={accounts}/>
             </Suspense>
           </CardContent>
         </Card>

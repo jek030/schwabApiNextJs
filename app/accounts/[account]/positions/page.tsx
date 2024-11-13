@@ -1,17 +1,19 @@
-
 import Link from 'next/link';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';//CardFooter
-import PositionsTable from './positions-table';
 import { Suspense } from 'react';
-import EmptyDataTableSkeleton from '../../empty-table-skeleton';
+import EmptyDataTableSkeleton from '../../../lib/empty-table-skeleton';
 import { columns } from '@/app/lib/positionsTableColumns';
+import { DataTable } from '@/app/ui/table';
+import { getAccountByNumber } from '@/app/lib/accountStore';
 
 export default async function Page({params} : {params: {account: string}}) {
+  const account = await getAccountByNumber(params.account);
+  if (!account) {
+    throw new Error(`Account ${params.account} not found`);
+  }
 
   const accountNum = params.account;
-
- 
-
+  
     return (
 
       <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -40,8 +42,8 @@ export default async function Page({params} : {params: {account: string}}) {
           </CardHeader>
           <CardContent>
 
-            <Suspense fallback={EmptyDataTableSkeleton(columns)}>
-              {PositionsTable(accountNum)}
+          <Suspense fallback={EmptyDataTableSkeleton(columns)}>
+            <DataTable columns={columns} data={account.positions}/>
             </Suspense>
           </CardContent>
         </Card>

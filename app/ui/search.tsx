@@ -1,14 +1,12 @@
 'use client';
  
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { getTicker } from '@/app/lib/getSchwabTicker';
 import { useDebouncedCallback } from 'use-debounce';
 import {usePathname, useRouter } from 'next/navigation';
 
 export default function Search({ placeholder }: { placeholder: string }) {
     const pathname = usePathname();
     const { replace } = useRouter();  
-  console.log("helloooooo")
     const handleSearch = useDebouncedCallback((term) => {
     
       console.log(`Searching for: ' ${term}`);

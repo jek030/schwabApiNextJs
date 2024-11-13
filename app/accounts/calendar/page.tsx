@@ -1,12 +1,11 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/app/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getSchwabAccounts } from '../../lib/getSchwabAccounts';
 import {Account} from '../../lib/utils';
 
 interface EventCategory {
@@ -29,6 +28,8 @@ const EVENT_CATEGORIES: Record<string, EventCategory> = {
 };
 
 const CalendarPage: React.FC = () => {
+    const initialized = useRef(false);
+    const [formattedAccounts, setFormattedAccounts] = useState<Account[]>([]);
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [events, setEvents] = useState<EventsState>({});
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -227,10 +228,16 @@ const CalendarPage: React.FC = () => {
   // Add initial events on component mount
 
   useEffect(() => {
-    const loadAccountEvents = async () => {
+    if (initialized.current) return;
+
+    async function loadAccountEvents() {
       try {
-        const accounts = await getSchwabAccounts();
-        console.log("Fetched accounts:", accounts);
+        const response = await fetch('/api/accounts');
+                if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const formattedAccounts = await response.json();
+                    setFormattedAccounts(formattedAccounts);
         
         const prevBusinessDay = getPreviousBusinessDay(new Date());
         const dateKey = getDateKey(
@@ -241,19 +248,11 @@ const CalendarPage: React.FC = () => {
         console.log("Date key for events:", dateKey);
 
 
-        let formattedAccounts: Account[] = Object.entries(accounts).map(([key,value]:[string,any]) => 
-            ({
-              key: key,
-              accountNumber: value?.securitiesAccount?.accountNumber,
-              roundTrips: value?.securitiesAccount?.roundTrips,
-              accountValue: value?.securitiesAccount?.initialBalances?.accountValue,
-              accountEquity: value?.securitiesAccount?.currentBalances?.equity,
-              cashBalance: value?.securitiesAccount?.initialBalances?.cashBalance
-            }));
 
 
-        const accountEvents = formattedAccounts.map(account => ({
-          title: account.accountNumber,
+
+        const accountEvents = formattedAccounts.map((account: Account) => ({
+          title: account.accountNumber + " " + account,
           category: 'pnl' as keyof typeof EVENT_CATEGORIES
         }));
         console.log("Created events:", accountEvents);
@@ -271,10 +270,13 @@ const CalendarPage: React.FC = () => {
         console.error('Error loading accounts:', error);
       }
     };
-
+    initialized.current = true;
     loadAccountEvents();
+
+   
   }, []);
   return (
+    
     <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="w-full">
         <header className="flex flex-col sm:items-start"> 
@@ -321,7 +323,7 @@ const CalendarPage: React.FC = () => {
         </div>
       </main>
     </div>
-  );
+  ) ;
 };
 
 export default CalendarPage;

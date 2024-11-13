@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/app/ui/card';
 import { Input } from '@/components/ui/input';

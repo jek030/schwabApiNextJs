@@ -20,10 +20,12 @@ export const columns: ColumnDef<Position>[] = [
       cell: ({ row }) => {
         const symbol = String(row.getValue("symbol"))
    
-        return <Link className="border border-slate-300 mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
-                     href={{pathname:  `/search/${symbol}`}}>
-                     ${symbol}
-               </Link>
+        return <div className="text-center">
+          <Link className="border border-slate-300 mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
+                href={{pathname:  `/search/${symbol}`}}>
+                ${symbol}
+          </Link>
+        </div>
       },
     },
     {
@@ -58,7 +60,7 @@ export const columns: ColumnDef<Position>[] = [
           currency: "USD",
         }).format(amount)
    
-        return <div className="text-right font-medium">{formatted}</div>
+        return <div className="text-center font-medium">{formatted}</div>
       },
     },
     {
@@ -80,7 +82,7 @@ export const columns: ColumnDef<Position>[] = [
           currency: "USD",
         }).format(amount)
    
-        return <div className="text-right font-medium">{formatted}</div>
+        return <div className="text-center font-medium">{formatted}</div>
       },
     },
     {
@@ -102,7 +104,7 @@ export const columns: ColumnDef<Position>[] = [
           maximumFractionDigits: 2
         }).format(amount)
    
-        return <div className="text-right font-medium">{formatted}</div>
+        return <div className="text-center font-medium">{formatted}</div>
       },
     },
     {
@@ -126,7 +128,7 @@ export const columns: ColumnDef<Position>[] = [
    
         return (
           <div 
-            className={`text-right font-medium ${
+            className={`text-center font-medium ${
               amount > 0 ? 'text-green-600' : amount < 0 ? 'text-red-600' : ''
             }`}
           >

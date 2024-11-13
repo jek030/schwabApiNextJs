@@ -1,8 +1,6 @@
-"use client"
 import Link from 'next/link';
 import ADRCalculationCard from './lib/adr-calculation-card';
 export default function Home() {
-  console.log("On home page...");   
 
   return (
     <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -18,9 +16,9 @@ export default function Home() {
              Here is the TODO list:
         </strong> 
           <ul className="list-inside list-decimal text-center sm:text-left font-[family-name:var(--font-geist-mono)]">   
-          <li>replace getSchwab accounts call with the new route.ts on calendar page</li>
           <li>replace getTicker with a route, so that we can add a form where we enter a ticker on that page instead of using the search page</li>
-          <li>get calendar working</li>
+          <li>have the calendar add the price of the calendar as a category</li>
+          <li>cache the getPositions and getTickers calls</li>
             <li> fix all table footers, if not data in suspense then table says page 1 of 0</li>
             <li>replace the search with a form</li>
             <li>Add database tables for positions, figure out why date is 1 day ahead when inserting...</li>
