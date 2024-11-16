@@ -6,11 +6,13 @@ import { columns } from '@/app/lib/priceHistoryColumns';
 import { DataTable } from "@/app/ui/table";
 import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/app/ui/card';//CardFooter
 import { PriceHistory } from '@/app/lib/utils';
+import TradingViewChart from '@/app/components/TradingViewChart';
 
 // Add this helper function at the top of the file, after imports
 const getFirstBusinessDay = () => {
     const date = new Date();
-    date.setDate(1); // First day of current month
+    date.setMonth(0); // Set to January
+    date.setDate(1); // First day of year
     
     // Adjust for weekend
     while (date.getDay() === 0 || date.getDay() === 6) {
@@ -88,9 +90,13 @@ export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
                     />
                 </div>
                 <Button onClick={() => fetchPriceHistory()} className="h-10">Update</Button>
-            </div>
-            
-            <DataTable columns={columns} data={priceHistory}/>
+            </div> 
+        </CardContent>
+        <CardContent>
+            <TradingViewChart priceHistory={priceHistory} />
+        </CardContent>
+        <CardContent>
+        <DataTable columns={columns} data={priceHistory}/>
         </CardContent>
       </Card>
     );

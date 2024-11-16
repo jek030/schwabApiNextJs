@@ -17,10 +17,8 @@ export default function Home() {
             <li>cache the getPositions and getTickers calls?</li>
             <li> fix all table footers, if not data in suspense then table says page 1 of 0</li>
             <li>remove NaN from ticker page id web service calls fails</li>
-            <li>why is the accounts page taking so long to load? add skeleton and see if it loads faster..why can't sort account table?</li>
             <li>Add ADR and other stuff to Ticker page</li>
             <li>automate api keys</li>
-            <li>Check if API call is cached on ticker and positions pages</li>
             <li>deployed on vercel - only push if want to deploy changes now...does the ts file work?</li>
 
           </ul>
