@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { PriceHistory } from '@/app/lib/utils';
+import { tokenService } from '@/app/lib/schwabTokenService';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -9,11 +10,14 @@ export async function GET(request: Request) {
 
     const startDateMilliseconds = new Date(startDate!).getTime();
     const endDateMilliseconds = new Date(endDate!).getTime();
+
+    const accessToken = await tokenService.getValidToken();
+
     try {
     const res = await fetch(`https://api.schwabapi.com/marketdata/v1/pricehistory?symbol=${ticker}&periodType=year&frequencyType=daily&startDate=${startDateMilliseconds}&endDate=${endDateMilliseconds}&needPreviousClose=false`, {
         headers: {
             "Accept-Encoding": "application/json",
-            Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+            Authorization: `Bearer ${accessToken}`,
         },
     });
 

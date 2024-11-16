@@ -1,14 +1,17 @@
 import { NextResponse } from 'next/server';
 import { setAccounts } from '@/app/lib/accountStore';
 import { Account } from '@/app/lib/utils';
+import { tokenService } from '@/app/lib/schwabTokenService';
 
 export async function GET() {
+
+    const accessToken = await tokenService.getValidToken();
     try {
         const res = await fetch("https://api.schwabapi.com/trader/v1/accounts?fields=positions", {
             method: 'GET',
             headers: {
                 "Accept-Encoding": "application/json",
-                Authorization: "Bearer " + process.env.ACCESS_TOKEN,
+                Authorization: "Bearer " + accessToken,
             },
         });
 
