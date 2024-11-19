@@ -7,6 +7,7 @@ import { PriceHistoryCard } from '@/app/ui/PriceHistoryCard';
 import { Suspense } from 'react';
 import { Ticker } from '@/app/lib/utils';
 import PageHeader from '@/app/components/PageHeader';
+import ADRCalculationCard from '@/app/lib/adr-calculation-card';
 
 
 const getColor = (num:number) => {
@@ -71,17 +72,39 @@ export default function Page({params} : {params: {ticker: string }}) {
       
         <Card className="w-full">
           <CardHeader>
-            <CardTitle>{ticker}</CardTitle>       
+            <CardTitle>{ticker} {hasData ? " $" + formatter.format(tickerData.mark) : 'N/A'}   
+ 
+                <span style={{ color: hasData ? getColor(tickerData.netPercentChange) : 'black'}}> 
+                    {hasData ? " " + formatter.format(tickerData.netPercentChange) : 'N/A'}% 
+                </span>
+            </CardTitle>       
             <Divider></Divider>
             <CardDescription>
               {hasData ? tickerData.description : 'Failed to load data from Charles Schwab API.'}
             </CardDescription>
           </CardHeader>
           <CardContent >
-            Price: {hasData ? formatter.format(tickerData.mark) : 'N/A'}   <br></br>    
-            Net Change: <span style={{ color: hasData ? getColor(tickerData.netChange) : 'black'}}> 
-              {hasData ? formatter.format(tickerData.netChange) : 'N/A'} 
-            </span>          
+            Net Change: 
+              <span style={{ color: hasData ? getColor(tickerData.netChange) : 'black'}}> 
+                {hasData ? " $" + formatter.format(tickerData.netChange) : 'N/A'} 
+              </span> <br></br>  
+            After hours change: 
+              <span style={{ color: hasData ? getColor(tickerData.postMarketChange) : 'black'}}> 
+                {hasData ? " $" +formatter.format(tickerData.postMarketChange) : 'N/A'} 
+            </span> <br></br>
+            After hours  
+              <span style={{ color: hasData ? getColor(tickerData.postMarketPercentChange) : 'black'}}> 
+                {hasData ? " " + formatter.format(tickerData.postMarketPercentChange) +"%" : 'N/A'} 
+              </span>    
+              <br></br> 
+                   Regular market price: {hasData ? formatter.format(tickerData.regularMarketLastPrice) : 'N/A'} <br></br>
+              Daily volume: {hasData ? formatterVol.format(tickerData .totalVolume) : 'N/A'} <br></br>
+              Regular market net change: {hasData ? formatter.format(tickerData.regularMarketNetChange) : 'N/A'} <br></br>
+              Regular market % change: {hasData ? formatter.format(tickerData.regularMarketPercentChange) : 'N/A'} <br></br><br></br>
+              Last close price: {hasData ? formatter.format(tickerData.closePrice) : 'N/A'} <br></br>
+              Daily high: {hasData ? formatter.format(tickerData.highPrice) : 'N/A'} <br></br>
+              Daily low: {hasData ? formatter.format(tickerData.lowPrice) : 'N/A'} <br></br><br></br>
+                    
           </CardContent>
           <CardContent>
             <Link className="rounded-md bg-purple-500 px-4 py-2 text-sm text-white transition-colors hover:bg-purple-400"
@@ -127,34 +150,9 @@ export default function Page({params} : {params: {ticker: string }}) {
           </CardContent>
         </Card>
 
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle>Daily</CardTitle>       
-            <Divider></Divider>       
-          </CardHeader>
-          <CardContent>
-              Regular market price: {hasData ? formatter.format(tickerData.regularMarketLastPrice) : 'N/A'} <br></br>
-              Daily volume: {hasData ? formatterVol.format(tickerData .totalVolume) : 'N/A'} <br></br>
-              Regular market net change: {hasData ? formatter.format(tickerData.regularMarketNetChange) : 'N/A'} <br></br>
-              Regular market % change: {hasData ? formatter.format(tickerData.regularMarketPercentChange) : 'N/A'} <br></br><br></br>
-              Last close price: {hasData ? formatter.format(tickerData.closePrice) : 'N/A'} <br></br>
-              Daily high: {hasData ? formatter.format(tickerData.highPrice) : 'N/A'} <br></br>
-              Daily low: {hasData ? formatter.format(tickerData.lowPrice) : 'N/A'} <br></br><br></br>
-              Mark: {hasData ? formatter.format(tickerData.mark) : 'N/A'} <br></br>
-              Daily % change: <span style={{ color: hasData ? getColor(tickerData.netPercentChange) : 'black'}}> 
-                {hasData ? formatter.format(tickerData.netPercentChange) : 'N/A'}% 
-              </span> <br></br>        
-              Daily net change: <span style={{ color: hasData ? getColor(tickerData.netChange) : 'black'}}> 
-                {hasData ? formatter.format(tickerData.netChange) : 'N/A'} 
-              </span> <br></br>
-              After hours change: <span style={{ color: hasData ? getColor(tickerData.postMarketChange) : 'black'}}> 
-                {hasData ? formatter.format(tickerData.postMarketChange) : 'N/A'} 
-              </span> <br></br>
-              After hours % change: <span style={{ color: hasData ? getColor(tickerData.postMarketPercentChange) : 'black'}}> 
-                {hasData ? formatter.format(tickerData.postMarketPercentChange) : 'N/A'} 
-              </span> <br></br>
-          </CardContent>
-        </Card> 
+      
+        <ADRCalculationCard price={Number(tickerData.mark)} />
+
         <Suspense fallback={<div>Loading price history...</div>}>
           <PriceHistoryCard ticker={ticker} />
         </Suspense>

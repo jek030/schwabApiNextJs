@@ -3,6 +3,7 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/app/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Divider } from '@nextui-org/react';
 
 interface FormValues {
   value1: string;
@@ -14,10 +15,14 @@ interface CalculationResult {
   value: number;
 }
 
-const ADRCalculationCard: React.FC = () => {
+interface ADRCalculationCardProps {
+  price: number;
+}
+
+const ADRCalculationCard: React.FC<ADRCalculationCardProps> = ({ price }) => {
   const [values, setValues] = useState<FormValues>({
     value1: '',
-    value2: '',
+    value2: price.toString(),
     value3: ''
   });
   const [result, setResult] = useState<CalculationResult | null>(null);
@@ -55,10 +60,12 @@ const ADRCalculationCard: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Risk Calculator</CardTitle>
+        <Divider></Divider>
       </CardHeader>
+      
       <CardContent>
         <form onSubmit={calculateResult} className="space-y-4">
           <div>

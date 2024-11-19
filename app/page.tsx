@@ -29,7 +29,6 @@ export default function Home() {
             Click here to view your accounts.
           </Link>     
         </p>
-        <ADRCalculationCard />
       </div>  
     </div>
   );
