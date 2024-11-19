@@ -1,4 +1,4 @@
-import { Account } from './utils';
+import { Account } from '../utils';
 import { cache } from 'react';
 
 // In-memory store for accounts data
@@ -14,7 +14,7 @@ export const getAccounts = cache(async () => {
     if (accountsCache.length === 0) {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/accounts`, {
-                next: { revalidate: 300 } // Revalidate every 5 minutes
+                next: { revalidate: 60 } // Revalidate every 5 minutes
             });
             
             if (!response.ok) {

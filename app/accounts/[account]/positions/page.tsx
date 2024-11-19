@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import EmptyDataTableSkeleton from '../../../lib/empty-table-skeleton';
 import { columns } from '@/app/lib/positionsTableColumns';
 import { DataTable } from '@/app/ui/table';
-import { getAccountByNumber } from '@/app/lib/accountStore';
+import { getAccountByNumber } from '@/app/lib/stores/accountStore';
 import PageHeader from '@/app/components/PageHeader';
 
 export default async function Page({ params }: { params: { account: string } }) {

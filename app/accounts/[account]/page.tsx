@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getAccountByNumber } from '@/app/lib/accountStore';
+import { getAccountByNumber } from '@/app/lib/stores/accountStore';
 
 export default async function Page({ params }: { params: { account: string } }) {
     const account = await getAccountByNumber(params.account);

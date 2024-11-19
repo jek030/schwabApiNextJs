@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { PriceHistory } from '@/app/lib/utils';
 import { tokenService } from '@/app/lib/schwabTokenService';
+import { usePriceHistoryStore } from '@/app/lib/stores/priceHistoryStore';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -8,6 +9,19 @@ export async function GET(request: Request) {
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
 
+    // Check cache first
+    const store = usePriceHistoryStore.getState();
+    const cachedData = store.getPriceHistory({
+        ticker: ticker!,
+        startDate: startDate!,
+        endDate: endDate!
+    });
+
+    if (cachedData) {
+        return NextResponse.json(cachedData);
+    }
+
+    // If not in cache, fetch from API
     const startDateMilliseconds = new Date(startDate!).getTime();
     const endDateMilliseconds = new Date(endDate!).getTime();
 
@@ -42,6 +56,13 @@ const formattedData: PriceHistory[] = candles.map((item: any, index: number) => 
 }));
 
 
+
+    // Store in cache before returning
+    store.setPriceHistory({
+        ticker: ticker!,
+        startDate: startDate!,
+        endDate: endDate!
+    }, formattedData);
 
     return NextResponse.json(formattedData);
 

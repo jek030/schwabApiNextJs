@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { setAccounts } from '@/app/lib/accountStore';
+import { setAccounts } from '@/app/lib/stores/accountStore';
 import { Account } from '@/app/lib/utils';
 import { tokenService } from '@/app/lib/schwabTokenService';
 
@@ -20,6 +20,7 @@ export async function GET() {
         }
 
         const interfaceData = await res.json();
+       
         //console.log("interfaceData: " + JSON.stringify(interfaceData, null, 2));
         const formattedAccounts : Account[] = Object.entries(interfaceData).map(([key, value]: [string, any]) => ({
             key: key,

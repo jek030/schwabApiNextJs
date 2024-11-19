@@ -3,7 +3,7 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/
 import EmptyDataTableSkeleton from '../lib/empty-table-skeleton';
 import { Suspense } from 'react';
 import { columns } from '../lib/accountsTableColumns';
-import { getAccounts } from '../lib/accountStore';
+import { getAccounts } from '../lib/stores/accountStore';
 import { DataTable } from '../ui/table';
 import PageHeader from '../components/PageHeader';
 
