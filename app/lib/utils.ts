@@ -8,6 +8,19 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export const getFirstBusinessDay = () => {
+  const date = new Date();
+  date.setMonth(0); // Set to January
+  date.setDate(1); // First day of year
+  
+  // Adjust for weekend
+  while (date.getDay() === 0 || date.getDay() === 6) {
+      date.setDate(date.getDate() + 1);
+  }
+  
+  return date.toISOString().split('T')[0];
+};
+
 export interface AccountsTableProps {
   initialData: Account[];
 }

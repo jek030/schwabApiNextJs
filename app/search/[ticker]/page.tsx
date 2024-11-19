@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/app/ui/card';//CardFooter
+import {Card,CardContent,CardDescription,CardHeader,CardTitle, CardFooter} from '@/app/ui/card';//CardFooter
 import { Divider } from "@nextui-org/react";
 import { PriceHistoryCard } from '@/app/ui/PriceHistoryCard';
-import { Suspense } from 'react';
-import { Ticker } from '@/app/lib/utils';
+import {  Suspense } from 'react';
+import { getFirstBusinessDay, PriceHistory, Ticker } from '@/app/lib/utils';
 import PageHeader from '@/app/components/PageHeader';
 import ADRCalculationCard from '@/app/lib/adr-calculation-card';
 
@@ -33,7 +33,7 @@ const formatterVol = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 0,
   maximumFractionDigits: 0
 });
-
+/*** */
 export default function Page({params} : {params: {ticker: string }}) {
   const ticker: string = params.ticker;
   const yahooURL = "https://finance.yahoo.com/quote/" + ticker;
@@ -54,18 +54,97 @@ export default function Page({params} : {params: {ticker: string }}) {
           }
 
   }, [ticker]);
+  const hasData = Object.keys(tickerData).length > 0;
+/*** Price History ***/
+  const [startDate, setStartDate] = useState(getFirstBusinessDay());
+  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+  const [priceHistory, setPriceHistory] = useState<PriceHistory[]>([]);
+
+  
+  // Validate dates
+  const isValidDate = (dateStr: string) => {
+      const date = new Date(dateStr);
+      return date instanceof Date && !isNaN(date.getTime());
+  };
+ 
+  const fetchPriceHistory = useCallback(async () => {    
+      if (isValidDate(startDate) && isValidDate(endDate)) {
+          try {
+              const response = await fetch(`/api/price-history?ticker=${ticker}&startDate=${startDate}&endDate=${endDate}`);
+              
+              const formattedPriceHistory = await response.json();
+              // Sort priceHistory by change date descending
+              const sortedPriceHistory = formattedPriceHistory.sort((a: PriceHistory, b: PriceHistory) => 
+                  new Date(b.datetime).getTime() - new Date(a.datetime).getTime()
+              );
+              setPriceHistory(sortedPriceHistory);
+
+          } catch (error) {
+              console.error('Error fetching price history:', error);
+              setPriceHistory([]);
+          }
+      } else {
+          console.log('Invalid dates provided:', { startDate, endDate });
+          setPriceHistory([]);
+      }
+  }, [ticker, startDate, endDate]);
+
 
   useEffect(() => {
     fetchTickerData();
+    fetchPriceHistory();
   }, [ticker,fetchTickerData]);
 
-  const hasData = Object.keys(tickerData).length > 0;
+console.log("priceHistory: " + JSON.stringify(priceHistory.slice(0, 5), null, 2));
+
+let trueRange5 = 0;
+let dailyRange5 = 0;
+for (let i = 0; i < priceHistory.slice(0, 5).length; i++) {
+
+  let highMinusLow = Math.abs(priceHistory[i].high - priceHistory[i].low);
+  let highMinusPrevClose = 0;
+  let lowMinusPrevClose = 0;
+  if (i > 0) {
+   highMinusPrevClose = Math.abs(priceHistory[i].high - priceHistory[i - 1].close);
+     lowMinusPrevClose = Math.abs(priceHistory[i].low - priceHistory[i - 1].close);
+  }
+  let trueRange = Math.max(highMinusLow, highMinusPrevClose, lowMinusPrevClose);
+  let percentRange = Math.abs((priceHistory[i].high / priceHistory[i].low - 1) * 100).toFixed(2);
+  trueRange5 += trueRange;
+  dailyRange5 += parseFloat(percentRange);
+}
+let averageTrueRange5 : number = parseFloat(formatter.format(trueRange5 / 5));
+console.log("trueRange5: $" + averageTrueRange5);
+let averageDailyRange5 :number = parseFloat((dailyRange5 / 5).toFixed(2));
+console.log("dailyRange5: " + averageDailyRange5 + "%");
+  
+
+let trueRange20 = 0;
+let dailyRange20 = 0;
+for (let i = 0; i < priceHistory.slice(0, 20).length; i++) {
+
+  let highMinusLow = Math.abs(priceHistory[i].high - priceHistory[i].low);
+  let highMinusPrevClose = 0;
+  let lowMinusPrevClose = 0;
+  if (i > 0) {
+   highMinusPrevClose = Math.abs(priceHistory[i].high - priceHistory[i - 1].close);
+     lowMinusPrevClose = Math.abs(priceHistory[i].low - priceHistory[i - 1].close);
+  }
+  let trueRange = Math.max(highMinusLow, highMinusPrevClose, lowMinusPrevClose);
+  let percentRange = Math.abs((priceHistory[i].high / priceHistory[i].low - 1) * 100).toFixed(2);
+  trueRange20 += trueRange;
+  dailyRange20 += parseFloat(percentRange);
+}
+let averageTrueRange20 : number = parseFloat(formatter.format(trueRange20 / 20));
+console.log("trueRange20: $" + averageTrueRange20);
+let averageDailyRange20 : number = parseFloat((dailyRange20 / 20).toFixed(2));
+console.log("dailyRange20: " + averageDailyRange20 + "%");
+  
 
   return (
     <div className="flex flex-col w-full gap-6 p-4">
       <PageHeader>
-        This is the ticker page.    
-       
+        This is the ticker page.          
       </PageHeader> 
 
       <main className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-4 w-full">
@@ -121,11 +200,31 @@ export default function Page({params} : {params: {ticker: string }}) {
             <Divider></Divider>       
           </CardHeader>
           <CardContent>
-              52 week high: {hasData ? tickerData["52WeekHigh"] : 'N/A'} <br></br>
-              52 week low: {hasData ? tickerData["52WeekLow"] : 'N/A'} <br></br>
-              10 day average volume: {hasData ? formatterVol.format(tickerData['10DayAverageVolume']) : 'N/A'} <br></br>      
-              1 year average volume: {hasData ? formatterVol.format(tickerData['1YearAverageVolume']) : 'N/A'} <br></br>  
+          5 Day ADR: <span style={{ color: averageDailyRange5 > 5 ? 'green' : 'red' }}>
+                 {hasData ? averageDailyRange5 + "%" : 'N/A'}
+            </span> <br></br>
+            5 Day ATR: {hasData ? "$" + averageTrueRange5 : 'N/A'}
+            <br></br>
+            <br></br>
+            20 Day ADR: <span style={{ color: averageDailyRange20 > 5 ? 'green' : 'red' }}>
+                 {hasData ? averageDailyRange20 + "%" : 'N/A'}
+            </span> <br></br>
+             20 Day ATR:  {hasData ? "$" + averageTrueRange20 : 'N/A'}
+             <br></br>
+            <br></br>
+            52 week high: {hasData ? tickerData["52WeekHigh"] : 'N/A'} <br></br>
+            52 week low: {hasData ? tickerData["52WeekLow"] : 'N/A'} <br></br>
+            <br></br>
+            10 day average volume: {hasData ? formatterVol.format(tickerData['10DayAverageVolume']) : 'N/A'} <br></br>      
+            1 year average volume: {hasData ? formatterVol.format(tickerData['1YearAverageVolume']) : 'N/A'} <br></br> 
+            <br></br>
+            <Divider></Divider> 
           </CardContent>
+          
+          <CardFooter className="text-sm text-gray-500"> 
+            ADR = Average Daily Range<br></br>
+            ATR = Average True Range           
+          </CardFooter>
         </Card>
 
         <Card className="w-full">

@@ -72,7 +72,7 @@ export default function TradingViewChart({ priceHistory }: TradingViewChartProps
             };
         });
 
-        console.log("chartData: " + JSON.stringify(chartData, null, 2));
+        //console.log("chartData: " + JSON.stringify(chartData, null, 2));
 
         candlestickSeries.setData(chartData);
 

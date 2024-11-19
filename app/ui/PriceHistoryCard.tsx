@@ -5,22 +5,11 @@ import { Button } from "@/components/ui/button";
 import { columns } from '@/app/lib/priceHistoryColumns';
 import { DataTable } from "@/app/ui/table";
 import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/app/ui/card';//CardFooter
-import { PriceHistory } from '@/app/lib/utils';
+import { getFirstBusinessDay, PriceHistory } from '@/app/lib/utils';
 import TradingViewChart from '@/app/components/TradingViewChart';
 
 // Add this helper function at the top of the file, after imports
-const getFirstBusinessDay = () => {
-    const date = new Date();
-    date.setMonth(0); // Set to January
-    date.setDate(1); // First day of year
-    
-    // Adjust for weekend
-    while (date.getDay() === 0 || date.getDay() === 6) {
-        date.setDate(date.getDate() + 1);
-    }
-    
-    return date.toISOString().split('T')[0];
-};
+
 
 export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
 
