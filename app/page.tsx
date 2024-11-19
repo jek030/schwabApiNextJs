@@ -14,6 +14,7 @@ export default function Home() {
              Here is the TODO list:
         </strong> 
           <ul className="list-inside list-decimal text-center sm:text-left font-[family-name:var(--font-geist-mono)]">   
+          <li>chart doesnt resize when window is resized, fix volume on chart</li>
             <li>cache the getPositions and getTickers calls?</li>
             <li> fix all table footers, if not data in suspense then table says page 1 of 0</li>
             <li>remove NaN from ticker page id web service calls fails</li>
