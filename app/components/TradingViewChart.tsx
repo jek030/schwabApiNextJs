@@ -7,6 +7,8 @@ interface TradingViewChartProps {
     priceHistory: PriceHistory[];
 }
 
+
+
 export default function TradingViewChart({ priceHistory }: TradingViewChartProps) {
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const chartRef = useRef<any>(null);
@@ -96,11 +98,17 @@ export default function TradingViewChart({ priceHistory }: TradingViewChartProps
             priceFormat: { type: 'volume' },
             priceScaleId: '', 
             scaleMargins: {
-                top: 0.9,
+                top: 0.7,
                 bottom: 0,
             },
         } as any); // Type assertion to bypass type checking
 
+        volumeSeries.priceScale().applyOptions({
+            scaleMargins: {
+                top: 0.7, // highest point of the series will be 70% away from the top
+                bottom: 0,
+            },
+        });
         // Format volume data
         const volumeData = priceHistory.map(item => {
             const [month, day, year] = item.datetime.split('/');
@@ -113,6 +121,22 @@ export default function TradingViewChart({ priceHistory }: TradingViewChartProps
         });
 
         volumeSeries.setData(volumeData);
+
+        const maData20 = calculateMovingAverageSeriesData(chartData, 20);
+        const maSeries20 = chartRef.current.addLineSeries({ color: '#2962FF', lineWidth: 1 });
+        maSeries20.setData(maData20);
+        
+        const maData10 = calculateMovingAverageSeriesData(chartData, 10);
+        const maSeries10 = chartRef.current.addLineSeries({ color: '#DAA520', lineWidth: 1 });
+        maSeries10.setData(maData10);
+        
+        const maData50 = calculateMovingAverageSeriesData(chartData, 50);
+        const maSeries50 = chartRef.current.addLineSeries({ color: '#9370DB', lineWidth: 1 });
+        maSeries50.setData(maData50);
+
+        const maData200 = calculateMovingAverageSeriesData(chartData, 200);
+        const maSeries200 = chartRef.current.addLineSeries({ color: '#CD5C5C', lineWidth: 1 });
+        maSeries200.setData(maData200);
 
         // Fit the chart content
         chartRef.current.timeScale().fitContent();
@@ -127,4 +151,25 @@ export default function TradingViewChart({ priceHistory }: TradingViewChartProps
     }, [priceHistory]); // Re-run when priceHistory changes
 
     return <div ref={chartContainerRef} style={{ width: '100%' }} />;
+}
+
+function calculateMovingAverageSeriesData(candleData: any[], maLength: number) {
+    const maData = [];
+
+    for (let i = 0; i < candleData.length; i++) {
+        if (i < maLength) {
+            // Provide whitespace data points until the MA can be calculated
+            maData.push({ time: candleData[i].time });
+        } else {
+            // Calculate the moving average, slow but simple way
+            let sum = 0;
+            for (let j = 0; j < maLength; j++) {
+                sum += candleData[i - j].close;
+            }
+            const maValue = sum / maLength;
+            maData.push({ time: candleData[i].time, value: maValue });
+        }
+    }
+
+    return maData;
 }
