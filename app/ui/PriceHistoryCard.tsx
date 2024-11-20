@@ -8,23 +8,16 @@ import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/app/ui/ca
 import { getFirstBusinessDay, PriceHistory } from '@/app/lib/utils';
 import TradingViewChart from '@/app/components/TradingViewChart';
 
-// Add this helper function at the top of the file, after imports
-
-
 export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
-
     const [startDate, setStartDate] = useState(getFirstBusinessDay());
     const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
     const [priceHistory, setPriceHistory] = useState<PriceHistory[]>([]);
-
     
     // Validate dates
     const isValidDate = (dateStr: string) => {
         const date = new Date(dateStr);
         return date instanceof Date && !isNaN(date.getTime());
     };
-
-    
 
     const fetchPriceHistory = useCallback(async () => {    
         if (isValidDate(startDate) && isValidDate(endDate)) {

@@ -9,7 +9,6 @@ import { getFirstBusinessDay, PriceHistory, Ticker } from '@/app/lib/utils';
 import PageHeader from '@/app/components/PageHeader';
 import ADRCalculationCard from '@/app/lib/adr-calculation-card';
 
-
 const getColor = (num:number) => {
   if(num < 0 ) {
      return 'red';
@@ -35,11 +34,9 @@ const formatterVol = new Intl.NumberFormat('en-US', {
 });
 /*** */
 export default function Page({params} : {params: {ticker: string }}) {
-  const ticker: string = params.ticker;
+  const ticker: string = params.ticker.toUpperCase();
   const yahooURL = "https://finance.yahoo.com/quote/" + ticker;
   const [tickerData, setTickerData] = useState<Ticker>({} as Ticker);
-
-
   const fetchTickerData = useCallback(async () => {    
           try {
               const response = await fetch(`/api/ticker?ticker=${ticker}`).then(res => res.json());
@@ -59,8 +56,7 @@ export default function Page({params} : {params: {ticker: string }}) {
   const [startDate, setStartDate] = useState(getFirstBusinessDay());
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
   const [priceHistory, setPriceHistory] = useState<PriceHistory[]>([]);
-
-  
+ 
   // Validate dates
   const isValidDate = (dateStr: string) => {
       const date = new Date(dateStr);
@@ -88,7 +84,6 @@ export default function Page({params} : {params: {ticker: string }}) {
           setPriceHistory([]);
       }
   }, [ticker, startDate, endDate]);
-
 
   useEffect(() => {
     fetchTickerData();
@@ -118,7 +113,6 @@ console.log("trueRange5: $" + averageTrueRange5);
 let averageDailyRange5 :number = parseFloat((dailyRange5 / 5).toFixed(2));
 console.log("dailyRange5: " + averageDailyRange5 + "%");
   
-
 let trueRange20 = 0;
 let dailyRange20 = 0;
 for (let i = 0; i < priceHistory.slice(0, 20).length; i++) {
