@@ -15,6 +15,8 @@ export default function Home() {
         </strong> 
           <ul className="list-inside list-decimal text-center sm:text-left font-[family-name:var(--font-geist-mono)]">   
           <li>chart doesnt resize when window is resized, fix volume on chart</li>
+          <li>fix the ticker page when you type lower case ticker symbol into the browser</li>
+          <li> on the R/R card, add the % gain and loss that the PT and SL are from the entry price</li>
             <li>cache the getPositions and getTickers calls?</li>
             <li> fix all table footers, if not data in suspense then table says page 1 of 0</li>
             <li>remove NaN from ticker page id web service calls fails</li>

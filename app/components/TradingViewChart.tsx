@@ -9,11 +9,12 @@ interface TradingViewChartProps {
 
 export default function TradingViewChart({ priceHistory }: TradingViewChartProps) {
     const chartContainerRef = useRef<HTMLDivElement>(null);
-    //todo - you can use the data points function to update candles if they are above the ATR or something...
+    const chartRef = useRef<any>(null);
+
     useEffect(() => {
         if (!chartContainerRef.current || !priceHistory.length) return;
 
-        const chart = createChart(chartContainerRef.current, {
+        chartRef.current = createChart(chartContainerRef.current, {
             width: chartContainerRef.current.clientWidth,
             height: 500,
             layout: {
@@ -56,8 +57,21 @@ export default function TradingViewChart({ priceHistory }: TradingViewChartProps
             },
         });
 
+        const handleResize = () => {
+            if (chartContainerRef.current && chartRef.current) {
+                chartRef.current.applyOptions({
+                    width: chartContainerRef.current.clientWidth,
+                });
+                
+                // Refit the content after resize
+                chartRef.current.timeScale().fitContent();
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+
         // Add candlestick series
-        const candlestickSeries = chart.addCandlestickSeries();
+        const candlestickSeries = chartRef.current.addCandlestickSeries();
         
         // Format the price history data for the chart
         const chartData = priceHistory.map(item => {
@@ -77,7 +91,7 @@ export default function TradingViewChart({ priceHistory }: TradingViewChartProps
         candlestickSeries.setData(chartData);
 
         // Add volume series
-        const volumeSeries = chart.addHistogramSeries({
+        const volumeSeries = chartRef.current.addHistogramSeries({
             color: '#26a69a',
             priceFormat: { type: 'volume' },
             priceScaleId: '', 
@@ -101,13 +115,16 @@ export default function TradingViewChart({ priceHistory }: TradingViewChartProps
         volumeSeries.setData(volumeData);
 
         // Fit the chart content
-        chart.timeScale().fitContent();
+        chartRef.current.timeScale().fitContent();
         
         // Cleanup on unmount
         return () => {
-            chart.remove();
+            window.removeEventListener('resize', handleResize);
+            if (chartRef.current) {
+                chartRef.current.remove();
+            }
         };
     }, [priceHistory]); // Re-run when priceHistory changes
 
-    return <div ref={chartContainerRef} />;
+    return <div ref={chartContainerRef} style={{ width: '100%' }} />;
 }
