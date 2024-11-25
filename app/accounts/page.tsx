@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';//CardFooter
-import EmptyDataTableSkeleton from '../lib/empty-table-skeleton';
+import EmptyDataTableSkeleton from '../components/empty-table-skeleton';
 import { Suspense } from 'react';
 import { columns } from '../lib/accountsTableColumns';
 import { getAccounts } from '../lib/stores/accountStore';

@@ -3,11 +3,11 @@ import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import {Card,CardContent,CardDescription,CardHeader,CardTitle, CardFooter} from '@/app/ui/card';//CardFooter
 import { Divider } from "@nextui-org/react";
-import { PriceHistoryCard } from '@/app/ui/PriceHistoryCard';
+import { PriceHistoryCard } from '@/app/components/PriceHistoryCard';
 import {  Suspense } from 'react';
 import { getFirstBusinessDay, PriceHistory, Ticker } from '@/app/lib/utils';
 import PageHeader from '@/app/components/PageHeader';
-import ADRCalculationCard from '@/app/lib/adr-calculation-card';
+import ADRCalculationCard from '@/app/components/adr-calculation-card';
 
 const getColor = (num:number) => {
   if(num < 0 ) {

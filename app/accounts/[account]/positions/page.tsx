@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';
 import { Suspense } from 'react';
-import EmptyDataTableSkeleton from '../../../lib/empty-table-skeleton';
+import EmptyDataTableSkeleton from '../../../components/empty-table-skeleton';
 import { columns } from '@/app/lib/positionsTableColumns';
 import { DataTable } from '@/app/ui/table';
 import { getAccountByNumber } from '@/app/lib/stores/accountStore';
