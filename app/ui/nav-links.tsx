@@ -28,6 +28,11 @@ const links = [
     href: '/accounts/calendar',
     icon: DocumentDuplicateIcon,
   },
+  {
+    name: 'Watchlists',
+    href: '/watchlists',
+    icon: DocumentDuplicateIcon,
+  },
 ];
 
 export default function NavLinks() {

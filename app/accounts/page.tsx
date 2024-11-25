@@ -17,15 +17,7 @@ export default async function Page() {
         This is the accounts page.
       </PageHeader>
     
-      <main className="flex flex-col gap-8 sm:items-start">
-        <p>
-            <Link
-            href=".."
-            className="border border-slate-200 mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
-            >
-            Go Back
-            </Link>
-        </p>
+      <main className="flex flex-col gap-8 sm:items-start">    
         <Card>
           <CardHeader>
             <CardTitle>Accounts</CardTitle>
