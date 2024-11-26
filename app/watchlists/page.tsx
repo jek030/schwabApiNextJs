@@ -5,46 +5,65 @@ import { Card, CardContent, CardHeader } from '@/app/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DataTable } from '@/app/ui/table';
-import { ColumnDef } from "@tanstack/react-table";
 import { Plus, X, Pencil, Check } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
+import { ColumnDef } from "@tanstack/react-table";
+import { Ticker } from '../lib/utils';
+import Link from 'next/link';
+
 
 interface WatchlistCard {
   id: string;
   name: string;
-  tickers: string[];
+  tickers: Ticker[];
   isEditing?: boolean;
 }
 
 const STORAGE_KEY = 'watchlists';
 
+const fetchTickerData = async (ticker: string): Promise<Ticker | null> => {
+  try {
+    const response = await fetch(`/api/ticker?ticker=${ticker}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ticker data for ${ticker}`);
+    }
+    const data = await response.json();
+    return {
+      key: ticker,
+      symbol: ticker,
+      ...data
+    };
+  } catch (error) {
+    console.error(`Error fetching ticker data:`, error);
+    return null;
+  }
+};
+
 export default function WatchlistPage() {
   const [watchlists, setWatchlists] = useState<WatchlistCard[]>([]);
   const [newTickerInputs, setNewTickerInputs] = useState<{ [key: string]: string }>({});
   const [editNameInputs, setEditNameInputs] = useState<{ [key: string]: string }>({});
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Load watchlists from localStorage on initial render
+  // Load watchlists from localStorage only on initial render
   useEffect(() => {
-    const savedWatchlists = localStorage.getItem(STORAGE_KEY);
-    if (savedWatchlists) {
-      const parsed = JSON.parse(savedWatchlists);
-      setWatchlists(parsed.map((w: WatchlistCard) => ({ ...w, isEditing: false })));
+    if (!isInitialized) {
+      const savedWatchlists = localStorage.getItem(STORAGE_KEY);
+      if (savedWatchlists) {
+        const parsed = JSON.parse(savedWatchlists);
+        setWatchlists(parsed.map((w: WatchlistCard) => ({ ...w, isEditing: false })));
+      }
+      setIsInitialized(true);
     }
-  }, []);
+  }, [isInitialized]);
 
-  // Save watchlists to localStorage whenever they change
+  // Save watchlists to localStorage only after initialization
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(watchlists));
-  }, [watchlists]);
-
-  // Column definition for the ticker table
-  const columns: ColumnDef<string>[] = [
-    {
-      accessorKey: "ticker",
-      header: "Ticker",
-      cell: ({ row }) => row.original,
-    },
-  ];
+    if (isInitialized) {
+      //console.log("Saving watchlists to localStorage: " + JSON.stringify(watchlists, null, 2));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(watchlists));
+    }
+  }, [watchlists, isInitialized]);
 
   const addWatchlist = () => {
     const newWatchlist: WatchlistCard = {
@@ -58,19 +77,23 @@ export default function WatchlistPage() {
     setEditNameInputs({ ...editNameInputs, [newWatchlist.id]: newWatchlist.name });
   };
 
-  const addTickerToWatchlist = (watchlistId: string) => {
+  const addTickerToWatchlist = async (watchlistId: string) => {
     const ticker = newTickerInputs[watchlistId]?.toUpperCase();
     if (!ticker) return;
 
+    // Check if ticker already exists
+    const watchlist = watchlists.find(w => w.id === watchlistId);
+    if (watchlist?.tickers.some(t => t.key === ticker)) return;
+
+    // Fetch ticker data
+    const tickerData = await fetchTickerData(ticker);
+    if (!tickerData) return;
+
     setWatchlists(watchlists.map(watchlist => {
       if (watchlist.id === watchlistId) {
-        // Prevent duplicate tickers
-        if (watchlist.tickers.includes(ticker)) {
-          return watchlist;
-        }
         return {
           ...watchlist,
-          tickers: [...watchlist.tickers, ticker],
+          tickers: [...watchlist.tickers, tickerData],
         };
       }
       return watchlist;
@@ -83,17 +106,6 @@ export default function WatchlistPage() {
     setWatchlists(watchlists.filter(w => w.id !== watchlistId));
   };
 
-  const removeTicker = (watchlistId: string, ticker: string) => {
-    setWatchlists(watchlists.map(watchlist => {
-      if (watchlist.id === watchlistId) {
-        return {
-          ...watchlist,
-          tickers: watchlist.tickers.filter(t => t !== ticker),
-        };
-      }
-      return watchlist;
-    }));
-  };
 
   const toggleEditMode = (watchlistId: string) => {
     setWatchlists(watchlists.map(watchlist => {
@@ -127,25 +139,96 @@ export default function WatchlistPage() {
     }
   };
 
-  // Updated columns to include delete button
-  const watchlistColumns: ColumnDef<string>[] = [
+  const removeTicker = (watchlistId: string, ticker: string) => {
+    //console.log("Removing ticker:", ticker, "from watchlist:", watchlistId);
+    
+    setWatchlists(watchlists.map(watchlist => {
+      if (watchlist.id === watchlistId) {
+        const newTickers = watchlist.tickers.filter(t => t.symbol !== ticker);
+        console.log("New tickers for watchlist:", newTickers);
+        return {
+          ...watchlist,
+          tickers: newTickers
+        };
+      }
+      return watchlist;
+    }));
+  };
+
+  const createColumns = (watchlistId: string): ColumnDef<Ticker>[] => [
     {
-      accessorKey: "ticker",
-      header: "Ticker",
+      accessorKey: "symbol",
+      header: "Symbol",
       cell: ({ row }) => (
-        <div className="flex items-center justify-between">
-          <span>{row.original}</span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => removeTicker(row.original, row.getValue("ticker"))}
-            className="ml-2 p-1 h-6 w-6"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
+        <Link 
+          href={`/search/${row.getValue("symbol")}`}
+          className="text-blue-600 hover:text-blue-800 font-medium"
+        >
+          {row.getValue("symbol")}
+        </Link>
       ),
     },
+    {
+      accessorKey: "description",
+      header: "Description",
+    },
+    {
+      accessorKey: "mark",
+      header: "Mark",
+    },
+    {
+      accessorKey: "netChange",
+      header: "Net Change",
+      cell: ({ row }) => {
+        const value = row.getValue("netChange") as number;
+        return (
+          <span className={
+            value > 0 ? "text-green-600" : 
+            value < 0 ? "text-red-600" : 
+            "text-gray-900"
+          }>
+            {value.toFixed(2)}
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "netPercentChange",
+      header: "% Change",
+      cell: ({ row }) => {
+        const value = row.getValue("netPercentChange") as number;
+        return (
+          <span className={
+            value > 0 ? "text-green-600" : 
+            value < 0 ? "text-red-600" : 
+            "text-gray-900"
+          }>
+            {value.toFixed(2)}%
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "totalVolume",
+      header: "Volume",
+      cell: ({ row }) => {
+        const value = row.getValue("totalVolume") as number;
+        return new Intl.NumberFormat().format(value);
+      },
+    },
+    {
+      id: "actions",
+      cell: ({ row }) => (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => removeTicker(watchlistId, row.getValue("symbol"))}
+          className="h-8 w-8 p-0"
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      ),
+    }
   ];
 
   return (
@@ -225,7 +308,7 @@ export default function WatchlistPage() {
                       Add Ticker
                     </Button>
                   </div>
-                  <DataTable columns={watchlistColumns} data={watchlist.tickers} />
+                  <DataTable columns={createColumns(watchlist.id)} data={watchlist.tickers} />
                 </CardContent>
               </Card>
             ))}
