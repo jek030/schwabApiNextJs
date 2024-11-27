@@ -8,6 +8,7 @@ import {  Suspense } from 'react';
 import { getFirstBusinessDay, PriceHistory, Ticker } from '@/app/lib/utils';
 import PageHeader from '@/app/components/PageHeader';
 import ADRCalculationCard from '@/app/components/adr-calculation-card';
+import { PolygonSMAResponse } from '@/app/lib/utils';
 
 const getColor = (num:number) => {
   if(num < 0 ) {
@@ -56,7 +57,8 @@ export default function Page({params} : {params: {ticker: string }}) {
   const [startDate, setStartDate] = useState(getFirstBusinessDay());
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
   const [priceHistory, setPriceHistory] = useState<PriceHistory[]>([]);
- 
+  const [twentyDaySMAResponse, setTwentyDaySMAResponse] = useState<PolygonSMAResponse>({} as PolygonSMAResponse);
+  const [sma20, setSma20] = useState<number>(0);
   // Validate dates
   const isValidDate = (dateStr: string) => {
       const date = new Date(dateStr);
@@ -85,12 +87,41 @@ export default function Page({params} : {params: {ticker: string }}) {
       }
   }, [ticker, startDate, endDate]);
 
+  
+  const fetch20DaySMA = useCallback(async () => {
+    if (ticker) {
+      try {
+        const response = await fetch(`/api/polygon/indicators?ticker=${ticker}&indicator=sma&window=20&limit=1&timespan=day`);
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('SMA Fetch Error:', errorData, response.status, response.statusText);
+          return;
+        }
+        
+        const formattedSma = await response.json();
+        setTwentyDaySMAResponse(formattedSma);    
+        setSma20(formattedSma.results.values[0].value);
+      } catch (error) {
+        console.error('Error fetching 20 Day SMA:', error);
+      }
+    }
+  }, [ticker]);
+
+
   useEffect(() => {
     fetchTickerData();
     fetchPriceHistory();
+    fetch20DaySMA();
   }, [ticker,fetchTickerData]);
 
+/*** Get SMA ***/
+console.log("twentyDaySMAResponse: " + JSON.stringify(twentyDaySMAResponse, null, 2));
 
+
+
+
+  /*** ADR Math ***/
 let trueRange5 = 0;
 let dailyRange5 = 0;
 for (let i = 0; i < priceHistory.slice(0, 5).length; i++) {
@@ -192,6 +223,7 @@ let averageDailyRange20 : number = parseFloat((dailyRange20 / 20).toFixed(2));
             <Divider></Divider>       
           </CardHeader>
           <CardContent>
+            20 Day SMA: {sma20} <br></br>
           5 Day ADR: <span style={{ color: averageDailyRange5 > 5 ? 'green' : 'red' }}>
                  {hasData ? averageDailyRange5 + "%" : 'N/A'}
             </span> <br></br>

@@ -104,3 +104,13 @@ export interface PriceHistory {
     datetime: string;
     change: string;
 }
+export interface PolygonSMAResponse {
+  results: {
+    values: {
+      timestamp: number;
+      value: number;
+    }[];
+  };
+  status?: string;
+  request_id?: string;
+}
