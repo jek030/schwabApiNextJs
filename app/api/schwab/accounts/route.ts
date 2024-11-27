@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { setAccounts } from '@/app/lib/stores/accountStore';
 import { Account } from '@/app/lib/utils';
-import { tokenService } from '@/app/api/tokens/schwabTokenService';
+import { tokenService } from '@/app/api/schwab/tokens/schwabTokenService';
 
 export async function GET() {
 

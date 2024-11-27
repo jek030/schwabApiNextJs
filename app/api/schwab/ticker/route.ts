@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Ticker } from '@/app/lib/utils';
-import { tokenService } from '@/app/api/tokens/schwabTokenService';
+import { tokenService } from '@/app/api/schwab/tokens/schwabTokenService';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);

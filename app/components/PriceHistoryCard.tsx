@@ -22,7 +22,7 @@ export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
     const fetchPriceHistory = useCallback(async () => {    
         if (isValidDate(startDate) && isValidDate(endDate)) {
             try {
-                const response = await fetch(`/api/price-history?ticker=${ticker}&startDate=${startDate}&endDate=${endDate}`);
+                const response = await fetch(`/api/schwab/price-history?ticker=${ticker}&startDate=${startDate}&endDate=${endDate}`);
                 
                 const formattedPriceHistory = await response.json();
                 setPriceHistory(formattedPriceHistory);

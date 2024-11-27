@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { PriceHistory } from '@/app/lib/utils';
-import { tokenService } from '@/app/api/tokens/schwabTokenService';
+import { tokenService } from '@/app/api/schwab/tokens/schwabTokenService';
 import { usePriceHistoryStore } from '@/app/lib/stores/priceHistoryStore';
 
 export async function GET(request: Request) {

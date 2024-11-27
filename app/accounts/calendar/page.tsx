@@ -273,7 +273,7 @@ const CalendarPage: React.FC = () => {
 
     async function loadAccountEvents() {
       try {
-        const response = await fetch('/api/accounts');
+        const response = await fetch('/api/schwab/accounts');
                 if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }

@@ -39,7 +39,7 @@ export default function Page({params} : {params: {ticker: string }}) {
   const [tickerData, setTickerData] = useState<Ticker>({} as Ticker);
   const fetchTickerData = useCallback(async () => {    
           try {
-              const response = await fetch(`/api/ticker?ticker=${ticker}`).then(res => res.json());
+              const response = await fetch(`/api/schwab/ticker?ticker=${ticker}`).then(res => res.json());
               
               //const formattedTickerData = await response.json();
               setTickerData(response);
@@ -66,7 +66,7 @@ export default function Page({params} : {params: {ticker: string }}) {
   const fetchPriceHistory = useCallback(async () => {    
       if (isValidDate(startDate) && isValidDate(endDate)) {
           try {
-              const response = await fetch(`/api/price-history?ticker=${ticker}&startDate=${startDate}&endDate=${endDate}`);
+              const response = await fetch(`/api/schwab/price-history?ticker=${ticker}&startDate=${startDate}&endDate=${endDate}`);
               
               const formattedPriceHistory = await response.json();
               // Sort priceHistory by change date descending
@@ -90,7 +90,6 @@ export default function Page({params} : {params: {ticker: string }}) {
     fetchPriceHistory();
   }, [ticker,fetchTickerData]);
 
-console.log("priceHistory: " + JSON.stringify(priceHistory.slice(0, 5), null, 2));
 
 let trueRange5 = 0;
 let dailyRange5 = 0;
@@ -109,9 +108,9 @@ for (let i = 0; i < priceHistory.slice(0, 5).length; i++) {
   dailyRange5 += parseFloat(percentRange);
 }
 let averageTrueRange5 : number = parseFloat(formatter.format(trueRange5 / 5));
-console.log("trueRange5: $" + averageTrueRange5);
+//console.log("trueRange5: $" + averageTrueRange5);
 let averageDailyRange5 :number = parseFloat((dailyRange5 / 5).toFixed(2));
-console.log("dailyRange5: " + averageDailyRange5 + "%");
+//console.log("dailyRange5: " + averageDailyRange5 + "%");
   
 let trueRange20 = 0;
 let dailyRange20 = 0;
@@ -130,11 +129,10 @@ for (let i = 0; i < priceHistory.slice(0, 20).length; i++) {
   dailyRange20 += parseFloat(percentRange);
 }
 let averageTrueRange20 : number = parseFloat(formatter.format(trueRange20 / 20));
-console.log("trueRange20: $" + averageTrueRange20);
+//console.log("trueRange20: $" + averageTrueRange20);
 let averageDailyRange20 : number = parseFloat((dailyRange20 / 20).toFixed(2));
-console.log("dailyRange20: " + averageDailyRange20 + "%");
+//console.log("dailyRange20: " + averageDailyRange20 + "%");
   
-
   return (
     <div className="flex flex-col w-full gap-6 p-4">
       <PageHeader>
@@ -242,15 +240,12 @@ console.log("dailyRange20: " + averageDailyRange20 + "%");
               Dividend yield: {hasData ? formatter.format(tickerData.divYield) : 'N/A'}%<br></br>
           </CardContent>
         </Card>
-
-      
-        <ADRCalculationCard price={Number(tickerData.mark)} />
+   
+        <ADRCalculationCard price={Number( hasData ? tickerData.mark : 0)} />
 
         <Suspense fallback={<div>Loading price history...</div>}>
           <PriceHistoryCard ticker={ticker} />
         </Suspense>
-        
-
       </main>    
     </div>
   );
