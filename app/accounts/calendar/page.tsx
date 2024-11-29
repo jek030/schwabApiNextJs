@@ -292,14 +292,14 @@ const CalendarPage: React.FC = () => {
           title: account.accountNumber + " Account Value: $" + account.accountValue.toLocaleString(),
           category: account.accountNumber as keyof typeof eventCategories
         }));
-        console.log("Created events:", accountEvents);
+        //console.log("Created events:", accountEvents);
 
         setEvents(prev => {
           const newEvents = {
             ...prev,
             [dateKey]: [...(prev[dateKey] || []), ...accountEvents]
           };
-          console.log("New events state:", newEvents);
+          //console.log("New events state:", newEvents);
           return newEvents;
         });
 

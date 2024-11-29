@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from '@/app/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DataTable } from '@/app/ui/table';
-import { Plus, X, Pencil, Check } from 'lucide-react';
+import { Plus, X, Pencil, Check, ArrowUpDown } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { ColumnDef } from "@tanstack/react-table";
 import { Ticker } from '../lib/utils';
@@ -23,7 +23,7 @@ const STORAGE_KEY = 'watchlists';
 
 const fetchTickerData = async (ticker: string): Promise<Ticker | null> => {
   try {
-    const response = await fetch(`/api/ticker?ticker=${ticker}`);
+    const response = await fetch(`/api/schwab/ticker?ticker=${ticker}`);
     if (!response.ok) {
       throw new Error(`Failed to fetch ticker data for ${ticker}`);
     }
@@ -158,12 +158,19 @@ export default function WatchlistPage() {
   const createColumns = (watchlistId: string): ColumnDef<Ticker>[] => [
     {
       accessorKey: "symbol",
-      header: "Symbol",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Symbol
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
       cell: ({ row }) => (
-        <Link 
-          href={`/search/${row.getValue("symbol")}`}
-          className="text-blue-600 hover:text-blue-800 font-medium"
-        >
+        <Link href={`/search/${row.getValue("symbol")}`} className="text-blue-600 hover:text-blue-800 font-medium">
           {row.getValue("symbol")}
         </Link>
       ),
@@ -178,15 +185,21 @@ export default function WatchlistPage() {
     },
     {
       accessorKey: "netChange",
-      header: "Net Change",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Net Change
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
       cell: ({ row }) => {
         const value = row.getValue("netChange") as number;
         return (
-          <span className={
-            value > 0 ? "text-green-600" : 
-            value < 0 ? "text-red-600" : 
-            "text-gray-900"
-          }>
+          <span className={value > 0 ? "text-green-600" : value < 0 ? "text-red-600" : "text-gray-900"}>
             {value.toFixed(2)}
           </span>
         );

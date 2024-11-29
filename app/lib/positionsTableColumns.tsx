@@ -3,6 +3,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button"
 import Link from 'next/link';
 import { Position } from "./utils";
+import { ArrowUpDown } from "lucide-react";
 
 export const columns: ColumnDef<Position>[] = [
     {
@@ -14,6 +15,7 @@ export const columns: ColumnDef<Position>[] = [
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Symbol
+            <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
@@ -37,6 +39,7 @@ export const columns: ColumnDef<Position>[] = [
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Net Change
+            <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
@@ -50,6 +53,7 @@ export const columns: ColumnDef<Position>[] = [
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Market Value
+            <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
@@ -72,6 +76,7 @@ export const columns: ColumnDef<Position>[] = [
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Avg Price
+            <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
@@ -94,6 +99,7 @@ export const columns: ColumnDef<Position>[] = [
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Quantity
+            <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
@@ -116,6 +122,7 @@ export const columns: ColumnDef<Position>[] = [
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             P/L ($)
+            <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },

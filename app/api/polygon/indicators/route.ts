@@ -28,7 +28,7 @@ export async function GET(request: Request) {
         results: {
             values: indicatorData.results.values.map((entry: { timestamp: number; value: number }) => ({
                 date: new Date(entry.timestamp).toLocaleDateString(),
-                value: entry.value
+                value: Number(entry.value.toFixed(2))
             }))
         },
         status: indicatorData.status,

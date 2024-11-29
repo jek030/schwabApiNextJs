@@ -3,6 +3,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Account } from "./utils";
 import { Button } from "@/components/ui/button"
 import Link from 'next/link';
+import { ArrowUpDown } from "lucide-react";
 
 export const columns: ColumnDef<Account>[] = [
     {
@@ -15,6 +16,7 @@ export const columns: ColumnDef<Account>[] = [
             className="w-full justify-center"
           >
             Account Number
+            <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
@@ -39,6 +41,7 @@ export const columns: ColumnDef<Account>[] = [
             className="w-full justify-center"
           >
             Account Value
+            <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
@@ -62,6 +65,7 @@ export const columns: ColumnDef<Account>[] = [
             className="w-full justify-center"
           >
             Account Equity
+            <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
@@ -85,6 +89,7 @@ export const columns: ColumnDef<Account>[] = [
             className="w-full justify-center"
           >
            # of Round Trips
+           <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
@@ -103,6 +108,7 @@ export const columns: ColumnDef<Account>[] = [
             className="w-full justify-center"
           >
             Cash Balance
+            <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },

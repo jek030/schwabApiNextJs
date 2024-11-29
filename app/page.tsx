@@ -18,9 +18,7 @@ export default function Home() {
         
         <CardContent className="flex flex-col gap-6">
           <ul className="list-inside list-decimal text-center sm:text-left font-[family-name:var(--font-geist-mono)]">   
-          <li>cahce the polygoin api call so it does 1 call per minute per ticker</li>
             <li>On the R/R card, add the % gain and loss that the PT and SL are from the entry price</li>
-            <li>Add a watchlist page, why isnt  it saving</li>
             <li>Add stage analysis to the ticker page</li>
             <li>Cache the getPositions and getTickers calls?</li>
             <li>Fix all table footers, if not data in suspense then table says page 1 of 0</li>

@@ -101,7 +101,7 @@ export default function Page({params} : {params: {ticker: string }}) {
         
         const formattedSma = await response.json();
         setTwentyDaySMAResponse(formattedSma);    
-        setSma20(formattedSma.results.values[0].value);
+        setSma20( formattedSma.results.values[0].value);
       } catch (error) {
         console.error('Error fetching 20 Day SMA:', error);
       }
