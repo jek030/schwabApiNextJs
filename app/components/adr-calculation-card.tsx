@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/app/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -27,6 +27,13 @@ const ADRCalculationCard: React.FC<ADRCalculationCardProps> = ({ price }) => {
   });
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [error, setError] = useState<string>('');
+
+  useEffect(() => {
+    setValues(prev => ({
+      ...prev,
+      value2: price.toString()
+    }));
+  }, [price]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
