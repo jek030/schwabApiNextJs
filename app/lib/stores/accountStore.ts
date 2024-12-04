@@ -13,7 +13,7 @@ export const setAccounts = (accounts: Account[]) => {
 export const getAccounts = cache(async () => {
     if (accountsCache.length === 0) {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/accounts`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/schwab/accounts`, {
                 next: { revalidate: 60 } // Revalidate every 5 minutes
             });
             
@@ -34,7 +34,7 @@ export const getAccounts = cache(async () => {
 // Cached function to get a single account by account number
 export const getAccountByNumber = cache(async (accountNumber: string) => {
     const accounts = await getAccounts();
-    return accounts.find(account => account.accountNumber === accountNumber);
+    return accounts.find((account: Account) => account.accountNumber === accountNumber);
 });
 
 // Function to clear the cache if needed
