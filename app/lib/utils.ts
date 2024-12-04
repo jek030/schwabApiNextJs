@@ -60,6 +60,7 @@ export type Position = {
   longQuantity: number
   longOpenProfitLoss: number
   netChange: string
+  dayProfitLoss: number
 }
 
 export type Account = {

@@ -144,5 +144,36 @@ export const columns: ColumnDef<Position>[] = [
         )
       },
     },
+    {
+      accessorKey: "dayProfitLoss",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Day  P/L ($)
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => {
+        const amount = parseFloat(row.getValue("dayProfitLoss"))
+        const formatted = new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+        }).format(amount)
+   
+        return (
+          <div 
+            className={`text-center font-medium ${
+              amount > 0 ? 'text-green-600' : amount < 0 ? 'text-red-600' : ''
+            }`}
+          >
+            {formatted}
+          </div>
+        )
+      },
+    },
   ]
   

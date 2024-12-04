@@ -21,7 +21,7 @@ export async function GET() {
 
         const interfaceData = await res.json();
        
-        //console.log("interfaceData: " + JSON.stringify(interfaceData, null, 2));
+        console.log("interfaceData: " + JSON.stringify(interfaceData, null, 2));
         const formattedAccounts : Account[] = Object.entries(interfaceData).map(([key, value]: [string, any]) => ({
             key: key,
             accountNumber: value?.securitiesAccount?.accountNumber,
@@ -36,7 +36,8 @@ export async function GET() {
                 averagePrice: posValue.averagePrice,
                 longQuantity: posValue.longQuantity,
                 longOpenProfitLoss: posValue.longOpenProfitLoss,
-                netChange: posValue.instrument.netChange
+                netChange: posValue.instrument.netChange,
+                dayProfitLoss:  posValue.currentDayProfitLoss 
             }))
         }));
 

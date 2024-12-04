@@ -14,7 +14,7 @@ export const getAccounts = cache(async () => {
     if (accountsCache.length === 0) {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/schwab/accounts`, {
-                next: { revalidate: 60 } // Revalidate every 5 minutes
+                next: { revalidate: 30 } // Revalidate every 5 minutes
             });
             
             if (!response.ok) {

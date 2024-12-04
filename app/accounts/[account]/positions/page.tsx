@@ -6,6 +6,8 @@ import { columns } from '@/app/lib/positionsTableColumns';
 import { DataTable } from '@/app/ui/table';
 import { getAccountByNumber } from '@/app/lib/stores/accountStore';
 import PageHeader from '@/app/components/PageHeader';
+import { Position } from '@/app/lib/utils';
+import Calendar from '@/app/components/Calendar';
 
 export default async function Page({ params }: { params: { account: string } }) {
   const account = await getAccountByNumber(params.account);
@@ -14,6 +16,17 @@ export default async function Page({ params }: { params: { account: string } }) 
   }
 
   const accountNum = params.account;
+
+  // Calculate total day's profit/loss
+  const totalDayProfitLoss = account.positions.reduce((sum: number, position: Position) => 
+    sum + (position.dayProfitLoss || 0), 0
+  );
+
+  const positionEvents = [{
+    date: new Date().toISOString().split('T')[0],
+    title: `Day P/L: $${totalDayProfitLoss.toFixed(2)}`,
+    category: totalDayProfitLoss >= 0 ? 'profit' : 'loss'
+  }];
 
   return (
     <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -43,6 +56,9 @@ export default async function Page({ params }: { params: { account: string } }) 
             </Suspense>
           </CardContent>
         </Card>
+        <div className="w-full mt-8">
+          <Calendar events={positionEvents} />
+        </div>
       </main>
     </div>
   );
