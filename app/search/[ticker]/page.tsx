@@ -9,6 +9,8 @@ import { getFirstBusinessDay, PriceHistory, Ticker } from '@/app/lib/utils';
 import PageHeader from '@/app/components/PageHeader';
 import ADRCalculationCard from '@/app/components/adr-calculation-card';
 import { PolygonSMAResponse } from '@/app/lib/utils';
+import SearchForm from '@/app/components/search-form';
+import { useRouter } from "next/navigation";
 
 const getColor = (num:number) => {
   if(num < 0 ) {
@@ -35,6 +37,7 @@ const formatterVol = new Intl.NumberFormat('en-US', {
 });
 /*** */
 export default function Page({params} : {params: {ticker: string }}) {
+  const router = useRouter();
   const ticker: string = params.ticker.toUpperCase();
   const yahooURL = "https://finance.yahoo.com/quote/" + ticker;
   const [tickerData, setTickerData] = useState<Ticker>({} as Ticker);
@@ -261,12 +264,17 @@ let averageTrueRange20 : number = parseFloat(formatter.format(trueRange20 / 20))
 let averageDailyRange20 : number = parseFloat((dailyRange20 / 20).toFixed(2));
 //console.log("dailyRange20: " + averageDailyRange20 + "%");
 
+  
 
   return (
     <div className="flex flex-col w-full gap-6 p-4">
       <PageHeader>
         This is the ticker page.          
       </PageHeader> 
+      <div className=" items-center flex flex-col gap-6 px-4">
+
+      <SearchForm />
+      </div>
 
       <div className="flex flex-col gap-6 px-4">
         {/* 3-column grid for main cards */}
