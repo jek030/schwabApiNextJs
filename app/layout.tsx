@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import SideNav from '@/app/ui/sidenav';
 import Footer from "./ui/footer";
+import { Toaster } from "@/components/ui/toaster";
 const geistSans = localFont({
   src: "../lib/fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -26,15 +27,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} h-screen flex flex-col divide-y divide-slate-300 overflow-auto`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} h-screen flex flex-col divide-y divide-slate-300 overflow-auto relative`}>
         <div className="flex flex-row grow h-auto bg-gradient-to-br from-green-200 via-white to-green-100">
-        
           <SideNav />           
           <main className="flex-1 w-full">{children}</main>
         </div>
         <div className="flex-none h-14">
           <Footer  />      
         </div>
+        <Toaster />
       </body>
     </html>
   );

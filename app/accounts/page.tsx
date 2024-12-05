@@ -4,11 +4,11 @@ import { Suspense } from 'react';
 import { columns } from '../lib/accountsTableColumns';
 import { getAccounts } from '../lib/stores/accountStore';
 import PageHeader from '../components/PageHeader';
-import RefreshButton from '../components/RefreshButton';
+import AccountsRefreshButton from '../components/AccountsRefreshButton';
 import { DataTable } from '../ui/table';
 
 export default async function Page() {
-  const accounts = await getAccounts();
+  const { data: accounts, isCached, expiresAt } = await getAccounts();
       
   return (
     <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -25,7 +25,7 @@ export default async function Page() {
                 View accounts retrieved form Charles Schwab API.
               </CardDescription>
             </div>
-            <RefreshButton />
+            <AccountsRefreshButton isCached={isCached} expiresAt={expiresAt} />
           </CardHeader>
           <CardContent>
             <Suspense fallback={EmptyDataTableSkeleton(columns)}>
