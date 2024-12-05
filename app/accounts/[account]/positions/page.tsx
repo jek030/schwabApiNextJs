@@ -15,14 +15,14 @@ export default async function Page({ params }: { params: { account: string } }) 
   if (!account) {
     throw new Error(`Account ${params.account} not found`);
   }
-  try{
-    const response = await fetch(`http://localhost:3000/api/schwab/hashedAcc?accountNumber=${params.account}`);
-    const data = await response.json();
-    console.log("hashValue: " + data.hashValue);
-  } catch (error) {
-   console.error('Error fetching hash value:', error);
-  }
-
+  //try{
+  //  const response = await fetch(`http://localhost:3000/api/schwab/hashedAcc?accountNumber=${params.account}`);
+  //  const data = await response.json();
+  //  console.log("hashValue: " + data.hashValue);
+  //} catch (error) {
+  // console.error('Error fetching hash value:', error);
+  //}
+//
   const accountNum = params.account;
 
   let hashedAccount = "64359A20AF4C459557E43C4854F5D38356ACC13C900AB902797FB351AC672909";
@@ -38,26 +38,26 @@ export default async function Page({ params }: { params: { account: string } }) 
   //}
 
 
-try {
-  const accessToken = await tokenService.getValidToken();
-
-  const response = await fetch("https://api.schwabapi.com/trader/v1/accounts/64359A20AF4C459557E43C4854F5D38356ACC13C900AB902797FB351AC672909/transactions?startDate=2024-12-02T02%3A46%3A16.226Z&endDate=2024-12-03T02%3A46%3A16.226Z&types=TRADE", {
-      method: 'GET',
-      headers: {
-          'accept': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-      },
-  });
-
-  if (!response.ok) {
-      throw new Error(`Failed to fetch transactions. Status: ${response.status} - ${response.statusText}`);
-  }
-  console.log("response: " + JSON.stringify(response, null, 2));
-
-} catch (error) {
-  console.error('Error fetching transactions:', error);
-
-}
+//try {
+//  const accessToken = await tokenService.getValidToken();
+//
+//  const response = await fetch("https://api.schwabapi.com/trader/v1/accounts/64359A20AF4C459557E43C4854F5D38356ACC13C900AB902797FB351AC672909/transactions?startDate=2024-12-02T02%3A46%3A16.226Z&endDate=2024-12-03T02%3A46%3A16.226Z&types=TRADE", {
+//      method: 'GET',
+//      headers: {
+//          'accept': 'application/json',
+//          Authorization: `Bearer ${accessToken}`,
+//      },
+//  });
+//
+//  if (!response.ok) {
+//      throw new Error(`Failed to fetch transactions. Status: ${response.status} - ${response.statusText}`);
+//  }
+//  console.log("response: " + JSON.stringify(response, null, 2));
+//
+//} catch (error) {
+//  console.error('Error fetching transactions:', error);
+//
+//}
 
 
 

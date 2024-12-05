@@ -14,7 +14,7 @@ export const getAccounts = cache(async () => {
     if (accountsCache.length === 0) {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/schwab/accounts`, {
-                next: { revalidate: 30 } // Revalidate every 5 minutes
+                next: { revalidate: 300 } // Revalidate every 5 minutes
             });
             
             if (!response.ok) {
@@ -23,6 +23,7 @@ export const getAccounts = cache(async () => {
             
             const accounts = await response.json();
             accountsCache = accounts;
+            console.log("CAlled api to retrieve accounts");
         } catch (error) {
             console.error('Error fetching accounts:', error);
             return [];

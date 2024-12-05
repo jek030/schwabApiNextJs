@@ -42,7 +42,7 @@ class TokenRefreshService {
       }
 
       const data = await response.json();
-      
+      console.log("API called to refresh token SUCCESSFUL");
       this.tokenData = {
         access_token: data.access_token,
         expires_in: data.expires_in,
@@ -53,7 +53,7 @@ class TokenRefreshService {
       const refreshIn = (data.expires_in - 60) * 1000;
       this.scheduleRefresh(refreshIn);
 
-      console.log("New Refresh Token:", data.refresh_token);
+      console.log("\nIn schwabTokenService..\nNew Refresh Token:", data.refresh_token);
       console.log("New Access Token:", data.access_token);
       return this.tokenData.access_token;
     } catch (error) {

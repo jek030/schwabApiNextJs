@@ -37,8 +37,8 @@ const TAILWIND_COLORS = [
 ];
 
 const CalendarPage: React.FC = () => {
-    const initialized = useRef(false);
-    const [formattedAccounts, setFormattedAccounts] = useState<Account[]>([]);
+  const initialized = useRef(false);
+  const [formattedAccounts, setFormattedAccounts] = useState<Account[]>([]);
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [events, setEvents] = useState<EventsState>({});
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -170,7 +170,7 @@ const CalendarPage: React.FC = () => {
                   placeholder="Add new event"
                   value={newEvent}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEvent(e.target.value)}
-                  onKeyPress={(e: React.KeyboardEvent) => e.key === 'Enter' && handleAddEvent()}
+                  onKeyDown={(e: React.KeyboardEvent) => e.key === 'Enter' && handleAddEvent()}
                 />
                 <Select value={selectedCategory} onValueChange={(value: string) => setSelectedCategory(value)}>
                   <SelectTrigger>
@@ -199,7 +199,7 @@ const CalendarPage: React.FC = () => {
                       <Input
                         value={editingEvent.text}
                         onChange={(e) => setEditingEvent({ ...editingEvent, text: e.target.value })}
-                        onKeyPress={(e) => {
+                        onKeyDown={(e) => {
                           if (e.key === 'Enter') {
                             setEvents(prev => ({
                               ...prev,
