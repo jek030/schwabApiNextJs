@@ -9,58 +9,70 @@ import PageHeader from '@/app/components/PageHeader';
 import { Position } from '@/app/lib/utils';
 import Calendar from '@/app/components/Calendar';
 import { tokenService } from '@/app/api/schwab/tokens/schwabTokenService';
+import { headers } from 'next/headers';
 
 export default async function Page({ params }: { params: { account: string } }) {
   const account = await getAccountByNumber(params.account);
   if (!account) {
     throw new Error(`Account ${params.account} not found`);
   }
-  //try{
-  //  const response = await fetch(`http://localhost:3000/api/schwab/hashedAcc?accountNumber=${params.account}`);
-  //  const data = await response.json();
-  //  console.log("hashValue: " + data.hashValue);
-  //} catch (error) {
-  // console.error('Error fetching hash value:', error);
-  //}
-//
+
   const accountNum = params.account;
 
-  let hashedAccount = "64359A20AF4C459557E43C4854F5D38356ACC13C900AB902797FB351AC672909";
-  let startDate = "2024-12-01T21%3A10%3A42.000Z";
-  let endDate = "2024-12-04T21%3A10%3A42.000Z";
-  let type = "TRADE";
-  //try {
-  //  const response = await fetch(`api/schwab/transactions?hashedAccount=${hashedAccount}&startDate=${startDate}&endDate=${endDate}&types=${type}`);
-  //  const data = await response.json();
-  //  console.log("transactions: " + JSON.stringify(data, null, 2));
-  //} catch (error) {
-  //  console.error('Error fetching transactions:', error);
-  //}
+  /**  Get the hash value for the account */
+  let hashValue: string | null = null;
+  try {
+    // Get the host from headers
+    const headersList = headers();
+    const host = headersList.get('host');
+    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+    
+    // Construct the full URL with accountNum parameter
+    const url = `${protocol}://${host}/api/schwab/hashedAcc?accountNumber=${accountNum}`;
+    
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch hashed accounts. Status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log("\nHash value for account:", data.hashValue);
+    hashValue = data.hashValue;
+    
+  } catch (error) {
+    console.error('Error fetching hashed accounts:', error);
+  } 
 
+  /** Get the transactions for the account using the hash value */
+  try {
+    if (!hashValue) {
+      throw new Error('No hash value available for transactions fetch');
+    }
 
-//try {
-//  const accessToken = await tokenService.getValidToken();
-//
-//  const response = await fetch("https://api.schwabapi.com/trader/v1/accounts/64359A20AF4C459557E43C4854F5D38356ACC13C900AB902797FB351AC672909/transactions?startDate=2024-12-02T02%3A46%3A16.226Z&endDate=2024-12-03T02%3A46%3A16.226Z&types=TRADE", {
-//      method: 'GET',
-//      headers: {
-//          'accept': 'application/json',
-//          Authorization: `Bearer ${accessToken}`,
-//      },
-//  });
-//
-//  if (!response.ok) {
-//      throw new Error(`Failed to fetch transactions. Status: ${response.status} - ${response.statusText}`);
-//  }
-//  console.log("response: " + JSON.stringify(response, null, 2));
-//
-//} catch (error) {
-//  console.error('Error fetching transactions:', error);
-//
-//}
+    const headersList = headers();
+    const host = headersList.get('host');
+    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
+    // Set date range for last 7 days
+    const endDate = new Date().toISOString();
+    const startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
+    const transactionUrl = `${protocol}://${host}/api/schwab/transactions?` + new URLSearchParams({
+      hashedAccount: hashValue,
+      startDate: startDate,
+      endDate: endDate,
+      types: 'TRADE'
+    });
 
+    const response = await fetch(transactionUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch transactions. Status: ${response.status}`);
+    }
+    const transactionData = await response.json();
+    console.log("\nTransactions:", JSON.stringify(transactionData, null, 2));
+
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+  }
 
   // Calculate total day's profit/loss
   const totalDayProfitLoss = account.positions.reduce((sum: number, position: Position) => 

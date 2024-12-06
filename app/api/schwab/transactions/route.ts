@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import { tokenService } from '@/app/api/schwab/tokens/schwabTokenService';
+import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -10,10 +10,10 @@ export async function GET(request: Request) {
 
     try {
         if (!hashedAccount) {
-            return NextResponse.json({ error: 'Hashed account number is required' }, { status: 400 });
+            return Response.json({ error: 'Hashed account number is required' }, { status: 400 });
         }
         if (!startDate || !endDate) {
-            return NextResponse.json({ error: 'Start date and end date are required' }, { status: 400 });
+            return Response.json({ error: 'Start date and end date are required' }, { status: 400 });
         }
 
         const accessToken = await tokenService.getValidToken();
@@ -37,10 +37,10 @@ export async function GET(request: Request) {
         }
 
         const data = await response.json();
-        return NextResponse.json(data);
+        return Response.json(data);
 
     } catch (error) {
         console.error('Error fetching transactions:', error);
-        return NextResponse.json({ error: 'Failed to fetch transactions' }, { status: 500 });
+        return Response.json({ error: 'Failed to fetch transactions' }, { status: 500 });
     }
 } 
