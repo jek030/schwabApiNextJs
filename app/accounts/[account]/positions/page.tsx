@@ -6,10 +6,11 @@ import { columns } from '@/app/lib/positionsTableColumns';
 import { DataTable } from '@/app/ui/table';
 import { getAccountByNumber } from '@/app/lib/stores/accountStore';
 import PageHeader from '@/app/components/PageHeader';
-import { Position } from '@/app/lib/utils';
+import { Position, TransactionFee, ProcessedTransaction } from '@/app/lib/utils';
 import Calendar from '@/app/components/Calendar';
 import { tokenService } from '@/app/api/schwab/tokens/schwabTokenService';
 import { headers } from 'next/headers';
+import TransactionsTable from '@/app/components/TransactionsTable';
 
 export default async function Page({ params }: { params: { account: string } }) {
   const account = await getAccountByNumber(params.account);
@@ -43,6 +44,8 @@ export default async function Page({ params }: { params: { account: string } }) 
   } 
 
   /** Get the transactions for the account using the hash value */
+  let processedTransactions: ProcessedTransaction[] = [];
+  
   try {
     if (!hashValue) {
       throw new Error('No hash value available for transactions fetch');
@@ -68,7 +71,39 @@ export default async function Page({ params }: { params: { account: string } }) 
       throw new Error(`Failed to fetch transactions. Status: ${response.status}`);
     }
     const transactionData = await response.json();
-    console.log("\nTransactions:", JSON.stringify(transactionData, null, 2));
+    
+    // Process the transaction data
+    processedTransactions = transactionData.map((transaction: any) => {
+      // Find fee items
+      const feeItems = transaction.transferItems.filter((item: any) => item.feeType);
+      const tradeItem = transaction.transferItems.find((item: any) => !item.feeType);
+
+      // Create fee object
+      const fees = {
+        commission: feeItems.find((item: any) => item.feeType === 'COMMISSION') || { amount: 0, cost: 0 },
+        secFee: feeItems.find((item: any) => item.feeType === 'SEC_FEE') || { amount: 0, cost: 0 },
+        optRegFee: feeItems.find((item: any) => item.feeType === 'OPT_REG_FEE') || { amount: 0, cost: 0 },
+        tafFee: feeItems.find((item: any) => item.feeType === 'TAF_FEE') || { amount: 0, cost: 0 }
+      };
+
+      return {
+        accountNumber: transaction.accountNumber,
+        type: transaction.type,
+        tradeDate: transaction.tradeDate,
+        netAmount: transaction.netAmount,
+        fees,
+        trade: {
+          symbol: tradeItem.instrument.symbol,
+          closingPrice: tradeItem.instrument.closingPrice,
+          amount: tradeItem.amount,
+          cost: tradeItem.cost,
+          price: tradeItem.price,
+          positionEffect: tradeItem.positionEffect
+        }
+      };
+    });
+
+    console.log("\nProcessed Transactions:", JSON.stringify(processedTransactions, null, 2));
 
   } catch (error) {
     console.error('Error fetching transactions:', error);
@@ -113,6 +148,12 @@ export default async function Page({ params }: { params: { account: string } }) 
             </Suspense>
           </CardContent>
         </Card>
+
+        <TransactionsTable 
+          transactions={processedTransactions} 
+          accountNum={accountNum} 
+        />
+
         <div className="w-full mt-8">
           <Calendar events={positionEvents} />
         </div>

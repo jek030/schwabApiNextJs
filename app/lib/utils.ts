@@ -115,3 +115,30 @@ export interface PolygonSMAResponse {
   status?: string;
   request_id?: string;
 }
+
+export interface TransactionFee {
+  feeType: string;
+  amount: number;
+  cost: number;
+}
+
+export interface ProcessedTransaction {
+  accountNumber: string;
+  type: string;
+  tradeDate: string;
+  netAmount: number;
+  fees: {
+    commission: TransactionFee;
+    secFee: TransactionFee;
+    optRegFee: TransactionFee;
+    tafFee: TransactionFee;
+  };
+  trade: {
+    symbol: string;
+    closingPrice: number;
+    amount: number;
+    cost: number;
+    price: number;
+    positionEffect: string;
+  };
+}

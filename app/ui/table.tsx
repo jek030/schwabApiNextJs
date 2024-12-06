@@ -24,13 +24,17 @@ import {
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    defaultSorting?: SortingState
+    getRowClass?: (row: TData) => string
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
+    defaultSorting = [],
+    getRowClass
 }: DataTableProps<TData, TValue>) {
-    const [sorting, setSorting] = React.useState<SortingState>([])
+    const [sorting, setSorting] = React.useState<SortingState>(defaultSorting)
 
     const table = useReactTable({
         data,
@@ -72,6 +76,7 @@ export function DataTable<TData, TValue>({
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
+                                    className={getRowClass ? getRowClass(row.original) : undefined}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id} className="text-center">
