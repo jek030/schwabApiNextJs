@@ -1,11 +1,13 @@
 "use client"
 
+import React, { useEffect, useState } from 'react';
 import './toast.css';
 import { useToast } from "@/components/ui/use-toast"
 import { createPortal } from 'react-dom';
-import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import Draggable from 'react-draggable';
+
+const DraggableComponent = Draggable as any;
 
 function CountdownTimer({ expiresAt }: { expiresAt: Date }) {
   const [timeLeft, setTimeLeft] = useState('');
@@ -37,6 +39,7 @@ export function Toaster() {
   const { toasts } = useToast();
   const [mounted, setMounted] = useState(false);
   const [visibleToasts, setVisibleToasts] = useState<any[]>([]);
+  const toastRefs = React.useRef<{ [key: string]: React.RefObject<HTMLDivElement> }>({});
 
   useEffect(() => {
     setMounted(true);
@@ -45,6 +48,14 @@ export function Toaster() {
 
   useEffect(() => {
     setVisibleToasts(toasts);
+  }, [toasts]);
+
+  useEffect(() => {
+    toasts.forEach(toast => {
+      if (!toastRefs.current[toast.id]) {
+        toastRefs.current[toast.id] = React.createRef();
+      }
+    });
   }, [toasts]);
 
   const handleClose = (id: string) => {
@@ -56,8 +67,13 @@ export function Toaster() {
   const toastContent = (
     <div className="fixed inset-0 pointer-events-none z-[9999]">
       {visibleToasts.map(({ id, title, description, expiresAt }) => (
-        <Draggable key={id} handle=".drag-handle">
+        <DraggableComponent 
+          key={id} 
+          handle=".drag-handle"
+          nodeRef={toastRefs.current[id]}
+        >
           <div
+            ref={toastRefs.current[id]}
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-200 border border-gray-300 rounded-lg shadow-lg p-4 min-w-[300px] toast-enter pointer-events-auto"
             style={{ zIndex: 9999 }}
           >
@@ -80,7 +96,7 @@ export function Toaster() {
               </div>
             )}
           </div>
-        </Draggable>
+        </DraggableComponent>
       ))}
     </div>
   );

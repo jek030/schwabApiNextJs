@@ -7,9 +7,30 @@ import PageHeader from '../components/PageHeader';
 import AccountsRefreshButton from '../components/AccountsRefreshButton';
 import { DataTable } from '../ui/table';
 
-export default async function Page() {
+// Separate async component for data fetching
+async function AccountsDataTable() {
   const { data: accounts, isCached, expiresAt } = await getAccounts();
-      
+  
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>Accounts</CardTitle>
+          <CardDescription>
+            View accounts retrieved from Charles Schwab API.
+          </CardDescription>
+        </div>
+        <AccountsRefreshButton isCached={isCached} expiresAt={expiresAt} />
+      </CardHeader>
+      <CardContent>
+        <DataTable columns={columns} data={accounts}/>
+      </CardContent>
+    </Card>
+  );
+}
+
+// Main page component with immediate render and loading state
+export default function Page() {
   return (
     <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <PageHeader>
@@ -17,22 +38,21 @@ export default async function Page() {
       </PageHeader>
     
       <main className="flex flex-col gap-8 sm:items-start">    
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle>Accounts</CardTitle>
+        <Suspense fallback={
+          <Card>
+            <CardHeader>
+              <CardTitle>Loading Accounts...</CardTitle>
               <CardDescription>
-                View accounts retrieved form Charles Schwab API.
+                Retrieving data from Charles Schwab API.
               </CardDescription>
-            </div>
-            <AccountsRefreshButton isCached={isCached} expiresAt={expiresAt} />
-          </CardHeader>
-          <CardContent>
-            <Suspense fallback={EmptyDataTableSkeleton(columns)}>
-              <DataTable columns={columns} data={accounts}/>
-            </Suspense>
-          </CardContent>
-        </Card>
+            </CardHeader>
+            <CardContent>
+              <EmptyDataTableSkeleton columns={columns} />
+            </CardContent>
+          </Card>
+        }>
+          <AccountsDataTable />
+        </Suspense>
       </main>
     </div>
   );

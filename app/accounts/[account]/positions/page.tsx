@@ -96,7 +96,7 @@ export default async function Page({ params }: { params: { account: string } }) 
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Suspense fallback={EmptyDataTableSkeleton(columns)}>
+            <Suspense fallback={<EmptyDataTableSkeleton columns={columns} />}>
               <DataTable columns={columns} data={account.positions} />
             </Suspense>
           </CardContent>
