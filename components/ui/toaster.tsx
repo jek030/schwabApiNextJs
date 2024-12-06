@@ -5,6 +5,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { createPortal } from 'react-dom';
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
+import Draggable from 'react-draggable';
 
 function CountdownTimer({ expiresAt }: { expiresAt: Date }) {
   const [timeLeft, setTimeLeft] = useState('');
@@ -53,29 +54,33 @@ export function Toaster() {
   if (!mounted) return null;
 
   const toastContent = (
-    <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-[9999]">
+    <div className="fixed inset-0 pointer-events-none z-[9999]">
       {visibleToasts.map(({ id, title, description, expiresAt }) => (
-        <div
-          key={id}
-          className="bg-gray-200 border border-gray-300 rounded-lg shadow-lg p-4 min-w-[300px] toast-enter pointer-events-auto relative"
-          style={{ zIndex: 9999 }}
-        >
-          <button 
-            onClick={() => handleClose(id)}
-            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 transition-colors"
+        <Draggable key={id} handle=".drag-handle">
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-200 border border-gray-300 rounded-lg shadow-lg p-4 min-w-[300px] toast-enter pointer-events-auto"
+            style={{ zIndex: 9999 }}
           >
-            <X size={16} />
-          </button>
-          {title && (
-            <div className="font-semibold text-gray-900 pr-6">{title}</div>
-          )}
-          {description && (
-            <div className="text-gray-700 text-sm">
-              Showing cached results. <br />
-              <CountdownTimer expiresAt={expiresAt} />
+            <div className="drag-handle cursor-move pb-2 text-gray-400 text-xs text-center select-none">
+              Drag to move
             </div>
-          )}
-        </div>
+            <button 
+              onClick={() => handleClose(id)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              <X size={16} />
+            </button>
+            {title && (
+              <div className="font-semibold text-gray-900 pr-6">{title}</div>
+            )}
+            {description && (
+              <div className="text-gray-700 text-sm">
+                Showing cached results. <br />
+                <CountdownTimer expiresAt={expiresAt} />
+              </div>
+            )}
+          </div>
+        </Draggable>
       ))}
     </div>
   );
