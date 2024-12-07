@@ -1,16 +1,23 @@
 import Link from 'next/link';
 import NavLinks from '@/app/ui/nav-links';
+import Image from 'next/image';
 
 export default function SideNav() {
   return (
     <div className="flex h-auto flex-col px-3 py-4 md:px-2 w-auto md:w-64">
       <Link
-        className="mb-2 flex h-20 items-end justify-start rounded-md bg-blue-600 p-4 md:h-40"
+        className="mb-2 flex h-20 items-center justify-center rounded-md bg-blue-600 p-4 md:h-40 hover:bg-blue-500 transition-colors"
         href="/"
       >
-        <div className="w-32 text-white md:w-40">
-          FinanceGuy
-        </div>
+        <Image
+          src="/stonks.png"
+          alt="Stonks meme"
+          width={150}
+          height={150}
+          priority={true}
+          style={{ width: 'auto', height: 'auto' }}
+          className="w-32 md:w-40 transform hover:scale-105 transition-transform duration-200 rounded-md"
+        />
       </Link>
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
         <NavLinks />
