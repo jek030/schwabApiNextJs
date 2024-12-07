@@ -133,8 +133,9 @@ const transactionColumns: ColumnDef<ProcessedTransaction>[] = [
   },
 ];
 
-function getRowClass(netAmount: number): string {
-  return netAmount >= 0 
+function getRowClass(netAmount: string | number): string {
+  const amount = typeof netAmount === 'string' ? parseFloat(netAmount) : netAmount;
+  return amount >= 0 
     ? "bg-red-50 hover:bg-red-100" 
     : "bg-green-50 hover:bg-green-100";
 }
@@ -163,7 +164,7 @@ export default function TransactionsTable({
               id: "tradeDate",
               desc: true
             }]}
-            getRowClass={(row) => getRowClass(parseFloat(row.netAmount || "0"))}
+            getRowClass={(row) => getRowClass(row.netAmount)}
           />
         </Suspense>
       </CardContent>
