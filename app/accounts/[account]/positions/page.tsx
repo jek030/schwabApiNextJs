@@ -114,11 +114,40 @@ export default async function Page({ params }: { params: { account: string } }) 
     sum + (position.dayProfitLoss || 0), 0
   );
 
-  const positionEvents = [{
-    date: new Date().toISOString().split('T')[0],
-    title: `Day P/L: $${totalDayProfitLoss.toFixed(2)}`,
-    category: totalDayProfitLoss >= 0 ? 'profit' : 'loss'
-  }];
+  // Update the CalendarEvent type
+  type CalendarEvent = {
+    date: string;
+    title: string;
+    category: string;
+    transaction?: ProcessedTransaction;
+  };
+
+  // Update the transactionEvents mapping
+  const transactionEvents = processedTransactions.map(transaction => {
+    if (!transaction.tradeDate) return null;
+    
+    const tradeDate = new Date(transaction.tradeDate);
+    const date = `${tradeDate.getFullYear()}-${tradeDate.getMonth() + 1}-${tradeDate.getDate()}`;
+    
+    const amount = Math.abs(transaction.trade.amount);
+    const formattedCost = transaction.netAmount.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    });
+    
+    const event: CalendarEvent = {
+      date,
+      title: `<b>${transaction.trade.symbol}</b> ${transaction.trade.positionEffect} ${amount}x ${formattedCost}`,
+      category: transaction.netAmount <= 0 ? 'profit' : 'loss',
+      transaction
+    };
+    return event;
+  }).filter((event): event is CalendarEvent => event !== null);
+
+  // Just use transactionEvents directly instead of adding the Day P/L event
+  const calendarEvents: CalendarEvent[] = transactionEvents;
+
+  console.log('Calendar Events:', calendarEvents);
 
   return (
     <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -155,7 +184,7 @@ export default async function Page({ params }: { params: { account: string } }) 
         />
 
         <div className="w-full mt-8">
-          <Calendar events={positionEvents} />
+          <Calendar events={calendarEvents} />
         </div>
       </main>
     </div>

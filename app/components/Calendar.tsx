@@ -55,13 +55,16 @@ const Calendar: React.FC<CalendarProps> = ({ events: initialEvents = [] }) => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
   };
 
-  const renderEventBadge = (event: { title: string; category?: string }) => (
-    <div className={`text-xs truncate p-1 mb-1 rounded ${
+  const renderEventBadge = (event: { title: string; category?: string }, isDialog: boolean = false) => (
+    <div className={`text-xs p-1 mb-1 rounded ${
       event.category === 'profit' ? 'bg-green-100 text-green-800' : 
       event.category === 'loss' ? 'bg-red-100 text-red-800' : 
       'bg-blue-100 text-blue-800'
-    }`}>
-      {event.title}
+    } ${isDialog ? 'whitespace-normal' : ''}`}>
+      <div 
+        className={isDialog ? 'whitespace-normal' : 'truncate'}
+        dangerouslySetInnerHTML={{ __html: event.title }}
+      />
     </div>
   );
 
@@ -72,22 +75,32 @@ const Calendar: React.FC<CalendarProps> = ({ events: initialEvents = [] }) => {
 
     // Add empty cells for days before the start of the month
     for (let i = 0; i < startDay; i++) {
-      days.push(<div key={`empty-${i}`} className="h-24 p-2" />);
+      days.push(<div key={`empty-${i}`} className="h-32 p-2" />);
     }
 
     // Add cells for each day of the month
     for (let day = 1; day <= totalDays; day++) {
+      // Format date string using UTC to match the incoming format
       const dateString = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${day}`;
-      const dayEvents = events.filter(event => event.date === dateString);
+      const dayEvents = events.filter(event => {
+        // Parse both dates and compare them using UTC
+        const [eventYear, eventMonth, eventDay] = event.date.split('-').map(Number);
+        const [cellYear, cellMonth, cellDay] = dateString.split('-').map(Number);
+        
+        return eventYear === cellYear && 
+               eventMonth === cellMonth && 
+               eventDay === cellDay;
+      });
+
       const isToday = new Date().toDateString() === new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toDateString();
 
       days.push(
         <Dialog key={day}>
           <DialogTrigger asChild>
             <div
-              className={`h-24 p-2 border border-gray-200 ${
+              className={`h-32 p-2 border border-gray-200 ${
                 isToday ? 'bg-blue-50 font-bold' : ''
-              } hover:bg-gray-50 cursor-pointer transition-colors`}
+              } hover:bg-gray-50 cursor-pointer transition-colors overflow-hidden`}
               onClick={() => setSelectedDate(dateString)}
             >
               <div className="flex justify-between items-start">
@@ -98,7 +111,7 @@ const Calendar: React.FC<CalendarProps> = ({ events: initialEvents = [] }) => {
                   </span>
                 )}
               </div>
-              <div className="mt-1">
+              <div className="mt-1 overflow-y-auto max-h-[calc(100%-1.5rem)]">
                 {dayEvents.map((event, idx) => (
                   <div key={idx}>{renderEventBadge(event)}</div>
                 ))}
@@ -108,45 +121,15 @@ const Calendar: React.FC<CalendarProps> = ({ events: initialEvents = [] }) => {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                Add Event for {monthNames[currentDate.getMonth()]} {day}
+                Events for {monthNames[currentDate.getMonth()]} {day}
               </DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
-              <Input
-                placeholder="Enter event title"
-                value={newEvent}
-                onChange={(e) => setNewEvent(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleAddEvent()}
-              />
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="default">Default</SelectItem>
-                  <SelectItem value="profit">PNL</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button onClick={handleAddEvent} className="w-full">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Event
-              </Button>
-              <div className="space-y-2">
-                {dayEvents.map((event, idx) => (
-                  <div key={idx} className="flex justify-between items-center">
-                    {renderEventBadge(event)}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setEvents(events.filter((_, i) => i !== idx));
-                      }}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ))}
-              </div>
+            <div className="space-y-2">
+              {dayEvents.map((event, idx) => (
+                <div key={idx}>
+                  {renderEventBadge(event, true)}
+                </div>
+              ))}
             </div>
           </DialogContent>
         </Dialog>
