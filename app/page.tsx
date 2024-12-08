@@ -7,107 +7,139 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/app/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Trash2, Plus, Pencil, Check, X } from 'lucide-react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
-type Note = string;
-
-// Default notes if nothing in localStorage
-const defaultNotes: Note[] = [
-  'set the access token as a cookie so it can be used in the api calls instead of resetting the token every time',
-  'fix price history card.',
-  'update theme colors in globals.css. Looks as shad ui them page for reference, instead of hardcoding blue buttons',
-  'connect supabase to the app. Use it for the account data',
-  'set up refresh token rotation',
-  'On the R/R card, add the % gain and loss that the PT and SL are from the entry price',
-  'add revennue data and percent change from each earnings to the ticker page',
-  'Add stage analysis to the ticker page',
-  'Cache the getPositions and getTickers calls?',
-  'Fix all table footers, if not data in suspense then table says page 1 of 0',
-  'Remove NaN from ticker page id web service calls fails',
-  'Add ADR and other stuff to Ticker page',
-  'Automate api keys',
-  'Deployed on vercel'
-];
+type Todo = {
+  id: number;
+  note: string;
+  created_at: string;
+  complete: boolean;
+};
 
 export default function Home() {
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [newNote, setNewNote] = useState('');
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [newTodo, setNewTodo] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [editingText, setEditingText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  
+  const supabase = createClientComponentClient({
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  });
 
-  // Initialize notes from localStorage
+  console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+
+  // Fetch todos from Supabase
   useEffect(() => {
-    try {
-      const savedNotes = localStorage.getItem('appNotes');
-      if (savedNotes) {
-        const parsedNotes = JSON.parse(savedNotes);
-        if (Array.isArray(parsedNotes)) {
-          setNotes(parsedNotes);
-        } else {
-          setNotes(defaultNotes);
+    const fetchTodos = async () => {
+      try {
+        console.log('Fetching todos...');
+        const { data, error } = await supabase
+          .from('todolist')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Supabase error:', error);
+          throw error;
         }
-      } else {
-        setNotes(defaultNotes);
+
+        console.log('Fetched data:', data);
+        setTodos(data || []);
+      } catch (error) {
+        console.error('Error fetching todos:', error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error('Error loading notes:', error);
-      setNotes(defaultNotes);
-    } finally {
-      setIsLoading(false);
-    }
+    };
+
+    fetchTodos();
   }, []);
 
-  // Save notes to localStorage whenever notes change
-  useEffect(() => {
-    if (!isLoading) {
+  const addTodo = async () => {
+    if (newTodo.trim()) {
       try {
-        localStorage.setItem('appNotes', JSON.stringify(notes));
+        const { data, error } = await supabase
+          .from('todolist')
+          .insert([{ 
+            note: newTodo.trim(),
+            complete: false 
+          }])
+          .select()
+          .single();
+
+        if (error) throw error;
+        if (data) {
+          setTodos([data, ...todos]);
+          setNewTodo('');
+        }
       } catch (error) {
-        console.error('Error saving notes:', error);
+        console.error('Error adding todo:', error);
       }
     }
-  }, [notes, isLoading]);
+  };
 
-  const addNote = () => {
-    if (newNote.trim()) {
-      setNotes([...notes, newNote.trim()]);
-      setNewNote(''); // Clear input after adding
+  const deleteTodo = async (id: number) => {
+    try {
+      const { error } = await supabase
+        .from('todolist')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      setTodos(todos.filter(todo => todo.id !== id));
+    } catch (error) {
+      console.error('Error deleting todo:', error);
     }
   };
 
-  const deleteNote = (indexToRemove: number) => {
-    setNotes(notes.filter((_, index) => index !== indexToRemove));
-  };
-
-  const startEditing = (index: number) => {
-    setEditingIndex(index);
-    setEditingText(notes[index]);
-  };
-
-  const cancelEditing = () => {
-    setEditingIndex(null);
-    setEditingText('');
-  };
-
-  const saveEdit = (index: number) => {
+  const saveEdit = async (id: number) => {
     if (editingText.trim()) {
-      const updatedNotes = [...notes];
-      updatedNotes[index] = editingText.trim();
-      setNotes(updatedNotes);
+      try {
+        const { error } = await supabase
+          .from('todolist')
+          .update({ note: editingText.trim() })
+          .eq('id', id);
+
+        if (error) throw error;
+        setTodos(todos.map(todo => 
+          todo.id === id ? { ...todo, note: editingText.trim() } : todo
+        ));
+        setEditingId(null);
+        setEditingText('');
+      } catch (error) {
+        console.error('Error updating todo:', error);
+      }
     }
-    setEditingIndex(null);
-    setEditingText('');
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const toggleComplete = async (id: number, currentComplete: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('todolist')
+        .update({ complete: !currentComplete })
+        .eq('id', id);
+
+      if (error) throw error;
+      setTodos(todos.map(todo => 
+        todo.id === id ? { ...todo, complete: !todo.complete } : todo
+      ));
+    } catch (error) {
+      console.error('Error toggling todo completion:', error);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      if (editingIndex !== null) {
-        saveEdit(editingIndex);
+      if (editingId !== null) {
+        saveEdit(editingId);
       } else {
-        addNote();
+        addTodo();
       }
-    } else if (e.key === 'Escape' && editingIndex !== null) {
-      cancelEditing();
+    } else if (e.key === 'Escape' && editingId !== null) {
+      setEditingId(null);
+      setEditingText('');
     }
   };
 
@@ -145,17 +177,17 @@ export default function Home() {
             Todo List
             <div className="flex items-center gap-2">
               <Input 
-                value={newNote}
-                onChange={(e) => setNewNote(e.target.value)}
-                onKeyDown={handleKeyPress}
-                placeholder="Enter a new note"
+                value={newTodo}
+                onChange={(e) => setNewTodo(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Enter a new todo"
                 className="w-full max-w-md"
               />
               <Button 
-                onClick={addNote} 
+                onClick={addTodo} 
                 variant="outline" 
                 size="icon"
-                disabled={!newNote.trim()}
+                disabled={!newTodo.trim()}
               >
                 <Plus className="h-4 w-4" />
               </Button>
@@ -164,27 +196,27 @@ export default function Home() {
         </CardHeader>
         
         <CardContent className="flex flex-col gap-6">
-          {notes.length === 0 ? (
-            <p className="text-gray-500 text-center">No notes yet. Add a new note!</p>
+          {todos.length === 0 ? (
+            <p className="text-gray-500 text-center">No todos yet. Add a new todo!</p>
           ) : (
             <ul className="list-inside list-decimal text-left font-[family-name:var(--font-geist-mono)]"> 
-              {notes.map((note, index) => (
+              {todos.map((todo) => (
                 <li 
-                  key={index} 
+                  key={todo.id} 
                   className="flex justify-between items-center py-2 border-b last:border-b-0"
                 >
-                  {editingIndex === index ? (
+                  {editingId === todo.id ? (
                     <div className="flex-1 flex items-center gap-2">
                       <Input
                         value={editingText}
                         onChange={(e) => setEditingText(e.target.value)}
-                        onKeyDown={handleKeyPress}
+                        onKeyDown={handleKeyDown}
                         className="flex-1"
                         autoFocus
                       />
                       <div className="flex gap-1">
                         <Button 
-                          onClick={() => saveEdit(index)}
+                          onClick={() => saveEdit(todo.id)}
                           variant="ghost" 
                           size="icon"
                           className="text-green-500 hover:bg-green-50"
@@ -192,7 +224,10 @@ export default function Home() {
                           <Check className="h-4 w-4" />
                         </Button>
                         <Button 
-                          onClick={cancelEditing}
+                          onClick={() => {
+                            setEditingId(null);
+                            setEditingText('');
+                          }}
                           variant="ghost" 
                           size="icon"
                           className="text-gray-500 hover:bg-gray-50"
@@ -203,10 +238,23 @@ export default function Home() {
                     </div>
                   ) : (
                     <>
-                      <span className="flex-1">{note}</span>
+                      <div className="flex items-center gap-2 flex-1">
+                        <input
+                          type="checkbox"
+                          checked={todo.complete}
+                          onChange={() => toggleComplete(todo.id, todo.complete)}
+                          className="w-4 h-4"
+                        />
+                        <span className={todo.complete ? 'line-through text-gray-500' : ''}>
+                          {todo.note}
+                        </span>
+                      </div>
                       <div className="flex gap-1">
                         <Button 
-                          onClick={() => startEditing(index)}
+                          onClick={() => {
+                            setEditingId(todo.id);
+                            setEditingText(todo.note);
+                          }}
                           variant="ghost" 
                           size="icon"
                           className="text-blue-500 hover:bg-blue-50"
@@ -214,7 +262,7 @@ export default function Home() {
                           <Pencil className="h-4 w-4" />
                         </Button>
                         <Button 
-                          onClick={() => deleteNote(index)} 
+                          onClick={() => deleteTodo(todo.id)} 
                           variant="ghost" 
                           size="icon"
                           className="text-red-500 hover:bg-red-50"
