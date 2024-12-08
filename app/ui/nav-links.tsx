@@ -3,6 +3,7 @@ import {
   UserGroupIcon,
   HomeIcon,
   DocumentDuplicateIcon,
+  CurrencyDollarIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -32,6 +33,11 @@ const links = [
     name: 'Watchlists',
     href: '/watchlists',
     icon: DocumentDuplicateIcon,
+  },
+  {
+    name: 'Crypto',
+    href: '/crypto',
+    icon: CurrencyDollarIcon,
   },
 ];
 
