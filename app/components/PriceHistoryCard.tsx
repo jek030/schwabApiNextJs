@@ -9,9 +9,24 @@ import { getFirstBusinessDay, PriceHistory } from '@/app/lib/utils';
 import TradingViewChart from '@/app/components/TradingViewChart';
 
 export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
-    const [startDate, setStartDate] = useState(getFirstBusinessDay());
-    const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+    // Get a date 3 months ago for the start date
+    const getDefaultStartDate = () => {
+        const date = new Date();
+        date.setMonth(date.getMonth() - 3);
+        return date.toISOString().split('T')[0];
+    };
+
+    // Get current date for end date
+    const getDefaultEndDate = () => {
+        const date = new Date();
+        return date.toISOString().split('T')[0];
+    };
+
+    const [startDate, setStartDate] = useState(getDefaultStartDate());
+    const [endDate, setEndDate] = useState(getDefaultEndDate());
     const [priceHistory, setPriceHistory] = useState<PriceHistory[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     
     // Validate dates
     const isValidDate = (dateStr: string) => {
@@ -21,25 +36,73 @@ export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
 
     const fetchPriceHistory = useCallback(async () => {    
         if (isValidDate(startDate) && isValidDate(endDate)) {
+            // Check if start date is before end date
+            if (new Date(startDate) > new Date(endDate)) {
+                setError('Start date must be before end date');
+                return;
+            }
+
+            // Check if date range is not more than 1 year
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+            if (new Date(startDate) < oneYearAgo) {
+                setError('Date range cannot exceed 1 year');
+                return;
+            }
+
+            setIsLoading(true);
+            setError(null);
             try {
+                console.log('Fetching price history for:', {
+                    ticker,
+                    startDate,
+                    endDate
+                });
+                
                 const response = await fetch(`/api/schwab/price-history?ticker=${ticker}&startDate=${startDate}&endDate=${endDate}`);
                 
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const formattedPriceHistory = await response.json();
-                setPriceHistory(formattedPriceHistory);
+                console.log('Raw API response:', formattedPriceHistory);
+                
+                if (!Array.isArray(formattedPriceHistory)) {
+                    throw new Error('Expected array of price history data but received: ' + typeof formattedPriceHistory);
+                }
+                
+                const sortedPriceHistory = formattedPriceHistory.sort((a: PriceHistory, b: PriceHistory) => 
+                    new Date(a.datetime).getTime() - new Date(b.datetime).getTime()
+                );
+                
+                console.log('Processed price history:', {
+                    length: sortedPriceHistory.length,
+                    firstItem: sortedPriceHistory[0],
+                    lastItem: sortedPriceHistory[sortedPriceHistory.length - 1]
+                });
+                
+                setPriceHistory(sortedPriceHistory);
 
             } catch (error) {
                 console.error('Error fetching price history:', error);
+                setError(error instanceof Error ? error.message : 'Failed to fetch price history');
                 setPriceHistory([]);
+            } finally {
+                setIsLoading(false);
             }
         } else {
+            setError('Invalid dates provided');
             console.log('Invalid dates provided:', { startDate, endDate });
             setPriceHistory([]);
         }
     }, [ticker, startDate, endDate]);
 
     useEffect(() => {
-        fetchPriceHistory();
-    }, []);
+        if (ticker && startDate && endDate) {
+            fetchPriceHistory();
+        }
+    }, [ticker, startDate, endDate, fetchPriceHistory]);
 
     return (
       <Card className="w-full lg:col-span-2">
@@ -75,10 +138,16 @@ export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
             </div> 
         </CardContent>
         <CardContent>
-            <TradingViewChart priceHistory={priceHistory} />
+            {isLoading && <div>Loading chart data...</div>}
+            {error && <div className="text-red-500">Error: {error}</div>}
+            {!isLoading && !error && priceHistory.length > 0 && (
+                <TradingViewChart priceHistory={priceHistory} />
+            )}
         </CardContent>
         <CardContent>
-        <DataTable columns={columns} data={priceHistory}/>
+            {!isLoading && !error && (
+                <DataTable columns={columns} data={priceHistory}/>
+            )}
         </CardContent>
       </Card>
     );

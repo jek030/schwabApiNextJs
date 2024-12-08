@@ -9,65 +9,115 @@ export async function GET(request: Request) {
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
 
+    console.log('Price history request received:', { ticker, startDate, endDate });
+
+    if (!ticker || !startDate || !endDate) {
+        return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
+    }
+
+    // Convert dates to UTC and validate they're not in the future
+    const now = new Date();
+    const startDateTime = new Date(startDate);
+    const endDateTime = new Date(endDate);
+
+    // Validate dates are not in the future
+    if (startDateTime > now || endDateTime > now) {
+        console.error('Future dates requested:', { startDate, endDate });
+        return NextResponse.json({ 
+            error: 'Cannot request price history for future dates' 
+        }, { status: 400 });
+    }
+
+    // Set UTC hours
+    startDateTime.setUTCHours(0, 0, 0, 0);
+    endDateTime.setUTCHours(23, 59, 59, 999);
+
+    const startDateMilliseconds = startDateTime.getTime();
+    const endDateMilliseconds = endDateTime.getTime();
+
     // Check cache first
     const store = usePriceHistoryStore.getState();
     const cachedData = store.getPriceHistory({
-        ticker: ticker!,
-        startDate: startDate!,
-        endDate: endDate!
+        ticker,
+        startDate,
+        endDate
     });
 
     if (cachedData) {
+        console.log('Returning cached data for:', ticker);
         return NextResponse.json(cachedData);
     }
 
-    // If not in cache, fetch from API
-    const startDateMilliseconds = new Date(startDate!).getTime();
-    const endDateMilliseconds = new Date(endDate!).getTime();
-
     const accessToken = await tokenService.getValidToken();
+    console.log('Access token received:', accessToken ? 'Valid token' : 'No token');
 
-    try {
-    const res = await fetch(`https://api.schwabapi.com/marketdata/v1/pricehistory?symbol=${ticker}&periodType=year&frequencyType=daily&startDate=${startDateMilliseconds}&endDate=${endDateMilliseconds}&needPreviousClose=false`, {
-        headers: {
-            "Accept-Encoding": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-        },
+    const apiUrl = `https://api.schwabapi.com/marketdata/v1/pricehistory?symbol=${ticker}&periodType=year&frequencyType=daily&startDate=${startDateMilliseconds}&endDate=${endDateMilliseconds}&needPreviousClose=false`;
+    
+    console.log('Calling Schwab API:', {
+        url: apiUrl,
+        params: {
+            ticker,
+            startDate: new Date(startDateMilliseconds).toISOString(),
+            endDate: new Date(endDateMilliseconds).toISOString(),
+            hasToken: !!accessToken
+        }
     });
 
-    if (!res.ok) {
-        throw new Error(`Failed to get price history from Charles Schwab API. Status: ${res.status} - ${res.statusText}`);
-    }
+    try {
+        const res = await fetch(apiUrl, {
+            headers: {
+                "Accept": "application/json",
+                "Accept-Encoding": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
 
-    const data = await res.json();
-// Check if rawData is an object with a candles property
-const candles = data.candles || [];
-                
-// Transform the data to match PriceHistory interface
-const formattedData: PriceHistory[] = candles.map((item: any, index: number) => ({
-    key: index.toString(),
-    open: item.open,
-    high: item.high,
-    low: item.low,
-    close: item.close,
-    volume: item.volume,
-    datetime: new Date(item.datetime).toLocaleDateString(),
-    change: ((item.close - item.open) / item.open * 100).toFixed(2)
-}));
+        console.log('Schwab API response status:', res.status);
+        
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error('Schwab API error response:', {
+                status: res.status,
+                statusText: res.statusText,
+                errorText
+            });
+            throw new Error(`Failed to get price history. Status: ${res.status}`);
+        }
 
+        const data = await res.json();
+        console.log('Raw Schwab response:', JSON.stringify(data, null, 2));
 
+        // Check if data has the expected structure
+        if (!data || !Array.isArray(data.candles)) {
+            console.error('Unexpected data structure:', JSON.stringify(data, null, 2));
+            throw new Error('Invalid response format from Schwab API');
+        }
 
-    // Store in cache before returning
-    store.setPriceHistory({
-        ticker: ticker!,
-        startDate: startDate!,
-        endDate: endDate!
-    }, formattedData);
+        const formattedData: PriceHistory[] = data.candles.map((item: any, index: number) => ({
+            key: index.toString(),
+            open: item.open,
+            high: item.high,
+            low: item.low,
+            close: item.close,
+            volume: item.volume,
+            datetime: new Date(item.datetime).toISOString().split('T')[0],
+            change: ((item.close - item.open) / item.open * 100).toFixed(2)
+        }));
 
-    return NextResponse.json(formattedData);
+        console.log('Formatted data sample:', formattedData.slice(0, 2));
+
+        if (formattedData.length > 0) {
+            store.setPriceHistory({
+                ticker,
+                startDate,
+                endDate
+            }, formattedData);
+        }
+
+        return NextResponse.json(formattedData);
 
     } catch (error) {
-        console.error('Error fetching price history:', error);
+        console.error('Error in price history route:', error);
         return NextResponse.json({ error: 'Failed to fetch price history' }, { status: 500 });
     }
 } 

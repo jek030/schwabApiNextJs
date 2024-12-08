@@ -3,7 +3,10 @@ import {
   UserGroupIcon,
   HomeIcon,
   DocumentDuplicateIcon,
+  CalendarIcon,
   CurrencyDollarIcon,
+  EyeIcon,
+  TableCellsIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -17,7 +20,7 @@ const links = [
   {
     name: 'Accounts',
     href: '/accounts',
-    icon: DocumentDuplicateIcon,
+    icon: TableCellsIcon,
   },
   {
     name: 'Search',
@@ -27,12 +30,12 @@ const links = [
   {
     name: 'Calendar',
     href: '/accounts/calendar',
-    icon: DocumentDuplicateIcon,
+    icon: CalendarIcon,
   },
   {
     name: 'Watchlists',
     href: '/watchlists',
-    icon: DocumentDuplicateIcon,
+    icon: EyeIcon,
   },
   {
     name: 'Crypto',
