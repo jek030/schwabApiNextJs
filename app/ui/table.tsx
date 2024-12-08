@@ -19,7 +19,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
+} from "@/app/ui/table-styling"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]

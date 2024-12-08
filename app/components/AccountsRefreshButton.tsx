@@ -1,9 +1,9 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/ui/button";
 import { useRouter } from 'next/navigation';
 import { clearAccountsCache } from '../lib/stores/accountStore';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/app/ui/use-toast";
 
 interface AccountsRefreshButtonProps {
   isCached: boolean;

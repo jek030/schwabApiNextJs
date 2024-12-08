@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import './toast.css';
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/app/ui/use-toast"
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import Draggable from 'react-draggable';

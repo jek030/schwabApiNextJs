@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/app/ui/button"
 
 
 interface PriceHistory {

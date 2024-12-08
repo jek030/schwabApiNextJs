@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '@/app/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/app/ui/button';
+import { Input } from '@/app/ui/input';
 import { DataTable } from '@/app/ui/table';
 import { Plus, X, Pencil, Check, ArrowUpDown } from 'lucide-react';
 import PageHeader from '../components/PageHeader';

@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/app/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Input } from '@/app/ui/input';
+import { Button } from '@/app/ui/button';
 import { Divider } from '@nextui-org/react';
 
 interface FormValues {

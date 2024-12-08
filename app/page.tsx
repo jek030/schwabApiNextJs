@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import PageHeader from './components/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Input } from '@/app/ui/input';
+import { Button } from '@/app/ui/button';
 import { Trash2, Plus, Pencil, Check, X } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback } from 'react';
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/app/ui/input";
+import { Button } from "@/app/ui/button";
 import { columns } from '@/app/lib/priceHistoryColumns';
 import { DataTable } from "@/app/ui/table";
 import {Card,CardContent,CardDescription,CardHeader,CardTitle} from '@/app/ui/card';//CardFooter

@@ -7,8 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app
 import { Suspense, useState } from 'react';
 import EmptyDataTableSkeleton from './empty-table-skeleton';
 import { ArrowUpDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/app/ui/button";
+import { Input } from "@/app/ui/input";
 
 const transactionColumns: ColumnDef<ProcessedTransaction>[] = [
   {

@@ -1,5 +1,5 @@
 import {Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';//CardFooter
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/app/ui/skeleton';
 
 export default function SkeletonCard() {
 return (

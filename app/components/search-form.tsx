@@ -2,8 +2,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/app/ui/button";
+import { Input } from "@/app/ui/input";
 import { Search as SearchIcon } from 'lucide-react';
 import { useRouter } from "next/navigation";
 import {
@@ -14,7 +14,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/app/ui/form";
 
 const FormSchema = z.object({
   ticker: z.string().min(1, {

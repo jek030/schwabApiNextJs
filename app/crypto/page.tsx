@@ -4,7 +4,7 @@ import { CryptoPriceCard } from '@/app/components/CryptoPriceCard';
 import { MarketOverviewCard } from '@/app/components/MarketOverviewCard';
 import { CryptoListManager } from '@/app/components/CryptoListManager';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from '@/app/ui/skeleton';
 
 const DEFAULT_CRYPTOS = ['BTC', 'ETH'];
 const STORAGE_KEY = 'selectedCryptos';
