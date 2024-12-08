@@ -4,10 +4,11 @@ import { ProcessedTransaction } from '@/app/lib/utils';
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/app/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import EmptyDataTableSkeleton from './empty-table-skeleton';
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const transactionColumns: ColumnDef<ProcessedTransaction>[] = [
   {
@@ -142,18 +143,64 @@ function getRowClass(netAmount: string | number): string {
 
 export default function TransactionsTable({ 
   transactions, 
-  accountNum 
+  accountNum,
+  onDaysChange
 }: { 
   transactions: ProcessedTransaction[], 
-  accountNum: string 
+  accountNum: string,
+  onDaysChange: (days: number) => void
 }) {
+  const [days, setDays] = useState(30);
+  const [inputDays, setInputDays] = useState('30');
+
+  const handleDaysSubmit = () => {
+    const newDays = parseInt(inputDays) || 30;
+    setDays(newDays);
+    onDaysChange(newDays);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputDays(e.target.value);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleDaysSubmit();
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recent Transactions</CardTitle>
-        <CardDescription>
-          Last 7 days of transactions for account {accountNum}.
-        </CardDescription>
+        <div className="flex justify-between items-center">
+          <div>
+            <CardTitle>Recent Transactions</CardTitle>
+            <CardDescription>
+              Last {days} days of transactions for account {accountNum}.
+            </CardDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            <label htmlFor="days" className="text-sm text-gray-500">Days:</label>
+            <div className="flex gap-2">
+              <Input
+                id="days"
+                type="number"
+                min="1"
+                max="365"
+                value={inputDays}
+                onChange={handleInputChange}
+                onKeyPress={handleKeyPress}
+                className="w-24"
+              />
+              <Button 
+                onClick={handleDaysSubmit}
+                size="sm"
+              >
+                Update
+              </Button>
+            </div>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         <Suspense fallback={<EmptyDataTableSkeleton columns={transactionColumns} />}>
