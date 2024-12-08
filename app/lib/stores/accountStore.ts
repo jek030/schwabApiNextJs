@@ -2,7 +2,7 @@ import { Account } from '../utils';
 
 // In-memory store for accounts data
 let accountsCache: { data: Account[]; timestamp: number } | null = null;
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+const CACHE_DURATION = .25 * 60 * 1000; // 1 minutes in milliseconds
 
 // Function to set accounts data
 export const setAccounts = (accounts: Account[]) => {
@@ -18,7 +18,7 @@ export const getAccounts = async () => {
     
     // If cache exists and is not expired, return cached data
     if (accountsCache && (now - accountsCache.timestamp) < CACHE_DURATION) {
-        console.log("Returning cached accounts data");
+        console.log("Returning cached accounts data from memory - no api or databse query.");
         const expiresAt = new Date(accountsCache.timestamp + CACHE_DURATION);
         return {
             data: accountsCache.data,
