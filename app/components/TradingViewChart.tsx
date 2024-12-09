@@ -77,10 +77,23 @@ export default function TradingViewChart({ priceHistory }: TradingViewChartProps
         
         // Format the price history data for the chart
         const chartData = priceHistory.map(item => {
-            const [month, day, year] = item.datetime.split('/');
-            const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            // Handle date formatting more robustly
+            const date = new Date(item.datetime);
+            if (isNaN(date.getTime())) {
+                // If the date string can't be parsed directly, try parsing MM/DD/YYYY format
+                const [month, day, year] = item.datetime.split('/');
+                return {
+                    time: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+                    open: item.open,
+                    high: item.high,
+                    low: item.low,
+                    close: item.close
+                };
+            }
+            
+            // Format date as YYYY-MM-DD if it's already a valid date
             return {
-                time: formattedDate,
+                time: date.toISOString().split('T')[0],
                 open: item.open,
                 high: item.high,
                 low: item.low,
@@ -111,8 +124,18 @@ export default function TradingViewChart({ priceHistory }: TradingViewChartProps
         });
         // Format volume data
         const volumeData = priceHistory.map(item => {
-            const [month, day, year] = item.datetime.split('/');
-            const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            // Handle date formatting more robustly
+            const date = new Date(item.datetime);
+            let formattedDate;
+            
+            if (isNaN(date.getTime())) {
+                // If the date string can't be parsed directly, try parsing MM/DD/YYYY format
+                const [month, day, year] = item.datetime.split('/');
+                formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            } else {
+                formattedDate = date.toISOString().split('T')[0];
+            }
+
             return {
                 time: formattedDate,
                 value: item.volume,
