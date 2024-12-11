@@ -30,11 +30,27 @@ const formatter = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 2
 });
 
+// Add a safe formatting function to handle NaN and undefined values
+const safeFormat = (value: number | undefined) => {
+  if (value === undefined || isNaN(value)) {
+    return 'N/A';
+  }
+  return formatter.format(value);
+};
+
 const formatterVol = new Intl.NumberFormat('en-US', {
   style: 'decimal',
   minimumFractionDigits: 0,
   maximumFractionDigits: 0
 });
+
+// Add a safe volume formatting function
+const safeFormatVol = (value: number | undefined) => {
+  if (value === undefined || isNaN(value)) {
+    return 'N/A';
+  }
+  return formatterVol.format(value);
+};
 /*** */
 export default function Page({params} : {params: {ticker: string }}) {
   const router = useRouter();
@@ -281,10 +297,10 @@ let averageDailyRange20 : number = parseFloat((dailyRange20 / 20).toFixed(2));
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
           <Card className="w-full">
             <CardHeader>
-              <CardTitle>{ticker} {hasData ? " $" + formatter.format(tickerData.mark) : 'N/A'}   
+              <CardTitle>{ticker} {hasData && tickerData.mark ? " $" + safeFormat(tickerData.mark) : 'N/A'}   
  
-                <span style={{ color: hasData ? getColor(tickerData.netPercentChange) : 'black'}}> 
-                    {hasData ? " " + formatter.format(tickerData.netPercentChange) : 'N/A'}% 
+                <span style={{ color: hasData && !isNaN(tickerData.netPercentChange) ? getColor(tickerData.netPercentChange) : 'black'}}> 
+                    {hasData && !isNaN(tickerData.netPercentChange) ? " " + safeFormat(tickerData.netPercentChange) + "%" : ''} 
                 </span>
             </CardTitle>       
             <Divider></Divider>
@@ -295,42 +311,42 @@ let averageDailyRange20 : number = parseFloat((dailyRange20 / 20).toFixed(2));
           <CardContent >
             <div className="pb-2 border-b border-dotted border-gray-300">
               Net Change: 
-                <span style={{ color: hasData ? getColor(tickerData.netChange) : 'black'}}> 
-                  {hasData ? " $" + formatter.format(tickerData.netChange) : 'N/A'} 
+                <span style={{ color: hasData && !isNaN(tickerData.netChange) ? getColor(tickerData.netChange) : 'black'}}> 
+                  {hasData ? " $" + safeFormat(tickerData.netChange) : 'N/A'} 
                 </span>
             </div>
             <div className="py-2 border-b border-dotted border-gray-300">
               After hours change: 
-                <span style={{ color: hasData ? getColor(tickerData.postMarketChange) : 'black'}}> 
-                  {hasData ? " $" +formatter.format(tickerData.postMarketChange) : 'N/A'} 
+                <span style={{ color: hasData && !isNaN(tickerData.postMarketChange) ? getColor(tickerData.postMarketChange) : 'black'}}> 
+                  {hasData ? " $" + safeFormat(tickerData.postMarketChange) : 'N/A'} 
               </span>
             </div>
             <div className="py-2 border-b border-dotted border-gray-300">
-              After hours  
-                <span style={{ color: hasData ? getColor(tickerData.postMarketPercentChange) : 'black'}}> 
-                  {hasData ? " " + formatter.format(tickerData.postMarketPercentChange) +"%" : 'N/A'} 
+              After hours:  
+                <span style={{ color: hasData && !isNaN(tickerData.postMarketPercentChange) ? getColor(tickerData.postMarketPercentChange) : 'black'}}> 
+                  {hasData ? " " + safeFormat(tickerData.postMarketPercentChange) + "%" : 'N/A'} 
                 </span>    
             </div>
             <div className="py-2 border-b border-dotted border-gray-300">
-              Regular market price: {hasData ? formatter.format(tickerData.regularMarketLastPrice) : 'N/A'}
+              Regular market price: {hasData ? safeFormat(tickerData.regularMarketLastPrice) : 'N/A'}
             </div>
             <div className="py-2 border-b border-dotted border-gray-300">
-              Daily volume: {hasData ? formatterVol.format(tickerData.totalVolume) : 'N/A'}
+              Daily volume: {hasData ? safeFormatVol(tickerData.totalVolume) : 'N/A'}
             </div>
             <div className="py-2 border-b border-dotted border-gray-300">
-              Regular market net change: {hasData ? formatter.format(tickerData.regularMarketNetChange) : 'N/A'}
+              Regular market net change: {hasData ? safeFormat(tickerData.regularMarketNetChange) : 'N/A'}
             </div>
             <div className="py-2 border-b border-dotted border-gray-300">
-              Regular market % change: {hasData ? formatter.format(tickerData.regularMarketPercentChange) : 'N/A'}
+              Regular market % change: {hasData ? safeFormat(tickerData.regularMarketPercentChange) : 'N/A'}
             </div>
             <div className="py-2 border-b border-dotted border-gray-300">
-              Last close price: {hasData ? formatter.format(tickerData.closePrice) : 'N/A'}
+              Last close price: {hasData ? safeFormat(tickerData.closePrice) : 'N/A'}
             </div>
             <div className="py-2 border-b border-dotted border-gray-300">
-              Daily high: {hasData ? formatter.format(tickerData.highPrice) : 'N/A'}
+              Daily high: {hasData ? safeFormat(tickerData.highPrice) : 'N/A'}
             </div>
             <div className="py-2">
-              Daily low: {hasData ? formatter.format(tickerData.lowPrice) : 'N/A'}
+              Daily low: {hasData ? safeFormat(tickerData.lowPrice) : 'N/A'}
             </div>
           </CardContent>
           <CardContent>
@@ -350,26 +366,26 @@ let averageDailyRange20 : number = parseFloat((dailyRange20 / 20).toFixed(2));
           <CardContent>
             <div className="py-2 border-b border-dotted border-gray-300">
               5 Day ADR: <span style={{ color: averageDailyRange5 > 5 ? 'green' : 'red' }}>
-                   {hasData ? averageDailyRange5 + "%" : 'N/A'}
+                   {hasData && !isNaN(averageDailyRange5) ? averageDailyRange5 + "%" : 'N/A'}
               </span> <br></br>
-              5 Day ATR: {hasData ? "$" + averageTrueRange5 : 'N/A'}
+              5 Day ATR: {hasData && !isNaN(averageTrueRange5) ? "$" + averageTrueRange5 : 'N/A'}
             </div>
 
             <div className="py-2 border-b border-dotted border-gray-300">
               20 Day ADR: <span style={{ color: averageDailyRange20 > 5 ? 'green' : 'red' }}>
-                   {hasData ? averageDailyRange20 + "%" : 'N/A'}
+                   {hasData && !isNaN(averageDailyRange20) ? averageDailyRange20 + "%" : 'N/A'}
               </span> <br></br>
-              20 Day ATR:  {hasData ? "$" + averageTrueRange20 : 'N/A'}
+              20 Day ATR:  {hasData && !isNaN(averageTrueRange20) ? "$" + averageTrueRange20 : 'N/A'}
             </div>
 
             <div className="py-2 border-b border-dotted border-gray-300">
-              52 week high: {hasData ? tickerData["52WeekHigh"] : 'N/A'} <br></br>
-              52 week low: {hasData ? tickerData["52WeekLow"] : 'N/A'}
+              52 week high: {hasData && tickerData["52WeekHigh"] ? safeFormat(tickerData["52WeekHigh"]) : 'N/A'} <br></br>
+              52 week low: {hasData && tickerData["52WeekLow"] ? safeFormat(tickerData["52WeekLow"]) : 'N/A'}
             </div>
 
             <div className="py-2">
-              10 day average volume: {hasData ? formatterVol.format(tickerData['10DayAverageVolume']) : 'N/A'} <br></br>      
-              1 year average volume: {hasData ? formatterVol.format(tickerData['1YearAverageVolume']) : 'N/A'}
+              10 day average volume: {hasData ? safeFormatVol(tickerData['10DayAverageVolume']) : 'N/A'} <br></br>      
+              1 year average volume: {hasData ? safeFormatVol(tickerData['1YearAverageVolume']) : 'N/A'}
             </div>
           </CardContent>
           
@@ -450,14 +466,14 @@ let averageDailyRange20 : number = parseFloat((dailyRange20 / 20).toFixed(2));
           </CardHeader>
           <CardContent>
             <div className="pb-2 border-b border-dotted border-gray-300">
-              P/E Ratio: <span style={{ color: hasData ? getColor(tickerData.peRatio) : 'black'}}> 
-                {hasData ? formatter.format(tickerData.peRatio) : 'N/A'} 
+              P/E Ratio: <span style={{ color: hasData && !isNaN(tickerData.peRatio) ? getColor(tickerData.peRatio) : 'black'}}> 
+                {hasData ? safeFormat(tickerData.peRatio) : 'N/A'} 
               </span>
             </div>
 
             <div className="py-2 border-b border-dotted border-gray-300">
-              EPS: <span style={{ color: hasData ? getColor(tickerData.eps) : 'black'}}> 
-                {hasData ? formatter.format(tickerData.eps) : 'N/A'} 
+              EPS: <span style={{ color: hasData && !isNaN(tickerData.eps) ? getColor(tickerData.eps) : 'black'}}> 
+                {hasData ? safeFormat(tickerData.eps) : 'N/A'} 
               </span>
             </div>
 
@@ -474,7 +490,7 @@ let averageDailyRange20 : number = parseFloat((dailyRange20 / 20).toFixed(2));
             </div>
 
             <div className="py-2">
-              Dividend yield: {hasData ? formatter.format(tickerData.divYield) : 'N/A'}%
+              Dividend yield: {hasData && !isNaN(tickerData.divYield) ? safeFormat(tickerData.divYield) + "%" : 'N/A'}
             </div>
           </CardContent>
         </Card>
