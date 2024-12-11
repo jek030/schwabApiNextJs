@@ -5,6 +5,7 @@ import { MarketOverviewCard } from '@/app/components/MarketOverviewCard';
 import { CryptoListManager } from '@/app/components/CryptoListManager';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/ui/card';
 import { Skeleton } from '@/app/ui/skeleton';
+import PageHeader from '@/app/components/PageHeader';
 
 const DEFAULT_CRYPTOS = ['BTC', 'ETH'];
 const STORAGE_KEY = 'selectedCryptos';
@@ -68,56 +69,62 @@ export default function CryptoPage() {
   };
 
   return (
-    <main className="p-6">
-      <div className="flex items-center justify-between gap-2 mb-8">
-        <h1 className="text-2xl font-semibold">Cryptocurrency Dashboard</h1>
-      </div>
-
-      {isLoading ? (
-        <div className="mb-6">
-          <div className="flex items-center justify-between">
-            <Skeleton className="h-7 w-48" />
-            <Skeleton className="h-9 w-36" />
-          </div>
-          <div className="mt-4 flex gap-2">
-            <Skeleton className="h-8 w-32 rounded-full" />
-            <Skeleton className="h-8 w-36 rounded-full" />
-          </div>
-        </div>
-      ) : (
-        <CryptoListManager
-          selectedCryptos={selectedCryptos}
-          onUpdateCryptos={handleUpdateCryptos}
+    <div className="flex flex-col">
+      <div className="p-6">
+        <PageHeader
+          title="Cryptocurrency Dashboard"
+          description="Track and manage your favorite cryptocurrencies in real-time."
+          loading={isLoading}
         />
-      )}
+      </div>
 
-      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <main className="p-6">
         {isLoading ? (
-          <>
-            <LoadingCard />
-            <LoadingCard />
-          </>
+          <div className="mb-6">
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-7 w-48" />
+              <Skeleton className="h-9 w-36" />
+            </div>
+            <div className="mt-4 flex gap-2">
+              <Skeleton className="h-8 w-32 rounded-full" />
+              <Skeleton className="h-8 w-36 rounded-full" />
+            </div>
+          </div>
         ) : (
-          selectedCryptos.map((symbol) => (
-            <CryptoPriceCard key={symbol} symbol={symbol} />
-          ))
+          <CryptoListManager
+            selectedCryptos={selectedCryptos}
+            onUpdateCryptos={handleUpdateCryptos}
+          />
         )}
-      </div>
 
-      <div className="mt-8 grid gap-6 grid-cols-1 lg:grid-cols-2">
-        <MarketOverviewCard />
+        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-6">
+          {isLoading ? (
+            <>
+              <LoadingCard />
+              <LoadingCard />
+            </>
+          ) : (
+            selectedCryptos.map((symbol) => (
+              <CryptoPriceCard key={symbol} symbol={symbol} />
+            ))
+          )}
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>News & Updates</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-500">
-              Cryptocurrency news and updates will be displayed here. Stay tuned for the latest market insights and analysis.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    </main>
+        <div className="mt-8 grid gap-6 grid-cols-1 lg:grid-cols-2">
+          <MarketOverviewCard />
+
+          <Card>
+            <CardHeader>
+              <CardTitle>News & Updates</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-500">
+                Cryptocurrency news and updates will be displayed here. Stay tuned for the latest market insights and analysis.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+    </div>
   );
 } 

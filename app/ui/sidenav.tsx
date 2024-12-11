@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 export default function SideNav() {
   return (
-    <div className="flex h-auto flex-col px-3 py-4 md:px-2 w-auto md:w-64">
+    <div className="flex h-auto flex-col px-3 py-6 md:px-2 w-auto md:w-64">
       <Link
         className="mb-2 flex h-20 items-center justify-center rounded-md bg-blue-600 p-4 md:h-40 hover:bg-blue-500 transition-colors"
         href="/"

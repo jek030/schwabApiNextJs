@@ -331,13 +331,14 @@ const CalendarPage: React.FC = () => {
   }, [formattedAccounts]);
 
   return (
-    
-    <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <PageHeader>
-        This is the calendar page.
-      </PageHeader>
+    <div className="flex flex-col">
+      <div className="p-6">
+        <PageHeader>
+          This is the calendar page.
+        </PageHeader>
+      </div>
 
-      <main className="w-full mt-8">
+      <main className="p-6 w-full">
         <div className="flex flex-col gap-8 sm:items-start">
           <Card className="w-full">
             <CardHeader>

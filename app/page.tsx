@@ -201,128 +201,99 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-        <PageHeader>
-          This is the home page.
-        </PageHeader>
-        <Card>
-          <CardHeader>
-            <CardTitle>Loading notes...</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="animate-pulse space-y-4">
-              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="flex flex-col">
+        <div className="p-6">
+          <PageHeader
+            title="Welcome to Finance Guy"
+            description="This is the home page."
+          />
+        </div>
+
+        <main className="p-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Loading notes...</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="animate-pulse space-y-4">
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+              </div>
+            </CardContent>
+          </Card>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <PageHeader>
-        This is the home page.
-      </PageHeader>
+    <div className="flex flex-col">
+      <div className="p-6">
+        <PageHeader
+          title="Welcome to Finance Guy"
+          description="This is the home page."
+        />
+      </div>
       
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl text-gray-800 md:text-2xl flex justify-between items-center">
-            Todo List
-            <div className="flex items-center gap-2">
-              <Input 
-                value={newTodo}
-                onChange={(e) => setNewTodo(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Enter a new todo"
-                className="w-full max-w-md"
-              />
-              <Button 
-                onClick={addTodo} 
-                variant="outline" 
-                size="icon"
-                disabled={!newTodo.trim()}
+      <main className="p-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl text-gray-800 md:text-2xl flex justify-between items-center">
+              Todo List
+              <div className="flex items-center gap-2">
+                <Input 
+                  value={newTodo}
+                  onChange={(e) => setNewTodo(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Enter a new todo"
+                  className="w-full max-w-md"
+                />
+                <Button 
+                  onClick={addTodo} 
+                  variant="outline" 
+                  size="icon"
+                  disabled={!newTodo.trim()}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardTitle>
+          </CardHeader>
+          
+          <CardContent>
+            <div className="flex justify-between items-center mb-4">
+              <Button
+                onClick={() => setShowCompleted(!showCompleted)}
+                variant="outline"
+                className="text-sm"
               >
-                <Plus className="h-4 w-4" />
+                {showCompleted ? 'Hide Completed' : 'Show Completed'}
               </Button>
             </div>
-          </CardTitle>
-        </CardHeader>
-        
-        <CardContent className="flex flex-col gap-6">
-          <div className="flex justify-between items-center">
-            <Button
-              onClick={() => setShowCompleted(!showCompleted)}
-              variant="outline"
-              className="text-sm"
-            >
-              {showCompleted ? 'Hide Completed' : 'Show Completed'}
-            </Button>
-          </div>
 
-          {todos.length === 0 ? (
-            <p className="text-gray-500 text-center">No todos yet. Add a new todo!</p>
-          ) : (
-            <div className="w-full">
-              {/* Column Headers */}
-              <div className="flex items-center gap-2 pb-4 border-b font-semibold text-gray-600">
-                <div className="w-16 text-center">Priority</div>
-                <div className="flex-1">Todo</div>
-                <div className="w-20"></div> {/* Space for action buttons */}
-              </div>
+            {todos.length === 0 ? (
+              <p className="text-gray-500 text-center">No todos yet. Add a new todo!</p>
+            ) : (
+              <div className="w-full">
+                {/* Column Headers */}
+                <div className="flex items-center gap-2 pb-4 border-b font-semibold text-gray-600">
+                  <div className="w-16 text-center">Priority</div>
+                  <div className="flex-1">Todo</div>
+                  <div className="w-20"></div>
+                </div>
 
-              {/* Todo List */}
-              <ul className="list-none text-left font-[family-name:var(--font-geist-mono)]"> 
-                {todos
-                  .filter(todo => showCompleted ? true : !todo.complete)
-                  .map((todo) => (
-                    <li 
-                      key={todo.id} 
-                      className="flex justify-between items-center py-2 border-b last:border-b-0"
-                    >
-                      {editingId === todo.id ? (
-                        <div className="flex-1 flex items-center gap-2">
-                          <Input
-                            type="number"
-                            value={todo.priority}
-                            onChange={(e) => updatePriority(todo.id, parseInt(e.target.value) || 0)}
-                            className="w-16"
-                            min="0"
-                          />
-                          <Input
-                            value={editingText}
-                            onChange={(e) => setEditingText(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            className="flex-1"
-                            autoFocus
-                          />
-                          <div className="flex gap-1">
-                            <Button 
-                              onClick={() => saveEdit(todo.id)}
-                              variant="ghost" 
-                              size="icon"
-                              className="text-green-500 hover:bg-green-50"
-                            >
-                              <Check className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              onClick={() => {
-                                setEditingId(null);
-                                setEditingText('');
-                              }}
-                              variant="ghost" 
-                              size="icon"
-                              className="text-gray-500 hover:bg-gray-50"
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <>
-                          <div className="flex items-center gap-2 flex-1">
+                {/* Todo List */}
+                <ul className="list-none text-left"> 
+                  {todos
+                    .filter(todo => showCompleted ? true : !todo.complete)
+                    .map((todo) => (
+                      <li 
+                        key={todo.id} 
+                        className="flex justify-between items-center py-2 border-b last:border-b-0"
+                      >
+                        {editingId === todo.id ? (
+                          <div className="flex-1 flex items-center gap-2">
                             <Input
                               type="number"
                               value={todo.priority}
@@ -330,53 +301,93 @@ export default function Home() {
                               className="w-16"
                               min="0"
                             />
-                            <input
-                              type="checkbox"
-                              checked={todo.complete}
-                              onChange={() => toggleComplete(todo.id, todo.complete)}
-                              className="w-4 h-4"
+                            <Input
+                              value={editingText}
+                              onChange={(e) => setEditingText(e.target.value)}
+                              onKeyDown={handleKeyDown}
+                              className="flex-1"
+                              autoFocus
                             />
-                            <span className={todo.complete ? 'line-through text-gray-500' : ''}>
-                              {todo.note}
-                            </span>
+                            <div className="flex gap-1">
+                              <Button 
+                                onClick={() => saveEdit(todo.id)}
+                                variant="ghost" 
+                                size="icon"
+                                className="text-green-500 hover:bg-green-50"
+                              >
+                                <Check className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                onClick={() => {
+                                  setEditingId(null);
+                                  setEditingText('');
+                                }}
+                                variant="ghost" 
+                                size="icon"
+                                className="text-gray-500 hover:bg-gray-50"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
-                          <div className="flex gap-1">
-                            <Button 
-                              onClick={() => {
-                                setEditingId(todo.id);
-                                setEditingText(todo.note);
-                              }}
-                              variant="ghost" 
-                              size="icon"
-                              className="text-blue-500 hover:bg-blue-50"
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              onClick={() => deleteTodo(todo.id)} 
-                              variant="ghost" 
-                              size="icon"
-                              className="text-red-500 hover:bg-red-50"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </>
-                      )}
-                    </li>
-                  ))}
-              </ul>
-            </div>
-          )}
+                        ) : (
+                          <>
+                            <div className="flex items-center gap-2 flex-1">
+                              <Input
+                                type="number"
+                                value={todo.priority}
+                                onChange={(e) => updatePriority(todo.id, parseInt(e.target.value) || 0)}
+                                className="w-16"
+                                min="0"
+                              />
+                              <input
+                                type="checkbox"
+                                checked={todo.complete}
+                                onChange={() => toggleComplete(todo.id, todo.complete)}
+                                className="w-4 h-4"
+                              />
+                              <span className={todo.complete ? 'line-through text-gray-500' : ''}>
+                                {todo.note}
+                              </span>
+                            </div>
+                            <div className="flex gap-1">
+                              <Button 
+                                onClick={() => {
+                                  setEditingId(todo.id);
+                                  setEditingText(todo.note);
+                                }}
+                                variant="ghost" 
+                                size="icon"
+                                className="text-blue-500 hover:bg-blue-50"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                onClick={() => deleteTodo(todo.id)} 
+                                variant="ghost" 
+                                size="icon"
+                                className="text-red-500 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </>
+                        )}
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            )}
 
-          <Link 
-            href="/accounts"
-            className="border border-slate-300 mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400 self-start"
-          >
-            Click here to view your accounts.
-          </Link>
-        </CardContent>
-      </Card>
+            <Link 
+              href="/accounts"
+              className="mt-6 inline-block rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
+            >
+              Click here to view your accounts.
+            </Link>
+          </CardContent>
+        </Card>
+      </main>
     </div>
   );
 }

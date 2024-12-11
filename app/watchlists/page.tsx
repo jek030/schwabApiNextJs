@@ -245,12 +245,14 @@ export default function WatchlistPage() {
   ];
 
   return (
-    <div className="flex flex-col p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <PageHeader>
-        This is the watchlists page.
-      </PageHeader>
-    
-      <main className="flex flex-col gap-8">  
+    <div className="flex flex-col">
+      <div className="p-6">
+        <PageHeader>
+          This is the watchlists page.
+        </PageHeader>
+      </div>
+
+      <main className="p-6 flex flex-col gap-8">  
         <div className="p-4">
           <div className="sticky top-0 z-10 flex justify-between items-center mb-4 pb-4">
             <h1 className="text-2xl font-bold">Watchlists</h1>
