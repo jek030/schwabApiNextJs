@@ -14,6 +14,7 @@ type Todo = {
   note: string;
   created_at: string;
   complete: boolean;
+  priority: number;
 };
 
 export default function Home() {
@@ -22,6 +23,8 @@ export default function Home() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingText, setEditingText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [showCompleted, setShowCompleted] = useState(false);
+  const [updateTimeoutId, setUpdateTimeoutId] = useState<NodeJS.Timeout | null>(null);
   
   const supabase = createClientComponentClient({
     supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -38,6 +41,7 @@ export default function Home() {
         const { data, error } = await supabase
           .from('todolist')
           .select('*')
+          .order('priority', { ascending: false })
           .order('created_at', { ascending: false });
 
         if (error) {
@@ -64,7 +68,8 @@ export default function Home() {
           .from('todolist')
           .insert([{ 
             note: newTodo.trim(),
-            complete: false 
+            complete: false,
+            priority: 0 // default priority
           }])
           .select()
           .single();
@@ -130,6 +135,48 @@ export default function Home() {
     }
   };
 
+  const updatePriority = async (id: number, priority: number) => {
+    // Immediately update the UI
+    setTodos(prevTodos => prevTodos.map(todo => 
+      todo.id === id ? { ...todo, priority } : todo
+    ));
+
+    // Clear any existing timeout
+    if (updateTimeoutId) {
+      clearTimeout(updateTimeoutId);
+    }
+
+    // Set new timeout for database update
+    const timeoutId = setTimeout(async () => {
+      try {
+        const { error } = await supabase
+          .from('todolist')
+          .update({ priority })
+          .eq('id', id);
+
+        if (error) throw error;
+
+        // Re-sort todos after successful update
+        setTodos(prevTodos => 
+          [...prevTodos].sort((a, b) => {
+            // Sort by priority first (descending)
+            if (b.priority !== a.priority) {
+              return b.priority - a.priority;
+            }
+            // Then by creation date (descending)
+            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+          })
+        );
+      } catch (error) {
+        console.error('Error updating priority:', error);
+        // Optionally revert the change if the update fails
+        // You could add error handling here
+      }
+    }, 500); // 500ms delay
+
+    setUpdateTimeoutId(timeoutId);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       if (editingId !== null) {
@@ -142,6 +189,15 @@ export default function Home() {
       setEditingText('');
     }
   };
+
+  // Add cleanup for the timeout when component unmounts
+  useEffect(() => {
+    return () => {
+      if (updateTimeoutId) {
+        clearTimeout(updateTimeoutId);
+      }
+    };
+  }, [updateTimeoutId]);
 
   if (isLoading) {
     return (
@@ -196,85 +252,121 @@ export default function Home() {
         </CardHeader>
         
         <CardContent className="flex flex-col gap-6">
+          <div className="flex justify-between items-center">
+            <Button
+              onClick={() => setShowCompleted(!showCompleted)}
+              variant="outline"
+              className="text-sm"
+            >
+              {showCompleted ? 'Hide Completed' : 'Show Completed'}
+            </Button>
+          </div>
+
           {todos.length === 0 ? (
             <p className="text-gray-500 text-center">No todos yet. Add a new todo!</p>
           ) : (
-            <ul className="list-inside list-decimal text-left font-[family-name:var(--font-geist-mono)]"> 
-              {todos.map((todo) => (
-                <li 
-                  key={todo.id} 
-                  className="flex justify-between items-center py-2 border-b last:border-b-0"
-                >
-                  {editingId === todo.id ? (
-                    <div className="flex-1 flex items-center gap-2">
-                      <Input
-                        value={editingText}
-                        onChange={(e) => setEditingText(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        className="flex-1"
-                        autoFocus
-                      />
-                      <div className="flex gap-1">
-                        <Button 
-                          onClick={() => saveEdit(todo.id)}
-                          variant="ghost" 
-                          size="icon"
-                          className="text-green-500 hover:bg-green-50"
-                        >
-                          <Check className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          onClick={() => {
-                            setEditingId(null);
-                            setEditingText('');
-                          }}
-                          variant="ghost" 
-                          size="icon"
-                          className="text-gray-500 hover:bg-gray-50"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="flex items-center gap-2 flex-1">
-                        <input
-                          type="checkbox"
-                          checked={todo.complete}
-                          onChange={() => toggleComplete(todo.id, todo.complete)}
-                          className="w-4 h-4"
-                        />
-                        <span className={todo.complete ? 'line-through text-gray-500' : ''}>
-                          {todo.note}
-                        </span>
-                      </div>
-                      <div className="flex gap-1">
-                        <Button 
-                          onClick={() => {
-                            setEditingId(todo.id);
-                            setEditingText(todo.note);
-                          }}
-                          variant="ghost" 
-                          size="icon"
-                          className="text-blue-500 hover:bg-blue-50"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          onClick={() => deleteTodo(todo.id)} 
-                          variant="ghost" 
-                          size="icon"
-                          className="text-red-500 hover:bg-red-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </>
-                  )}
-                </li>
-              ))}
-            </ul>
+            <div className="w-full">
+              {/* Column Headers */}
+              <div className="flex items-center gap-2 pb-4 border-b font-semibold text-gray-600">
+                <div className="w-16 text-center">Priority</div>
+                <div className="flex-1">Todo</div>
+                <div className="w-20"></div> {/* Space for action buttons */}
+              </div>
+
+              {/* Todo List */}
+              <ul className="list-none text-left font-[family-name:var(--font-geist-mono)]"> 
+                {todos
+                  .filter(todo => showCompleted ? true : !todo.complete)
+                  .map((todo) => (
+                    <li 
+                      key={todo.id} 
+                      className="flex justify-between items-center py-2 border-b last:border-b-0"
+                    >
+                      {editingId === todo.id ? (
+                        <div className="flex-1 flex items-center gap-2">
+                          <Input
+                            type="number"
+                            value={todo.priority}
+                            onChange={(e) => updatePriority(todo.id, parseInt(e.target.value) || 0)}
+                            className="w-16"
+                            min="0"
+                          />
+                          <Input
+                            value={editingText}
+                            onChange={(e) => setEditingText(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            className="flex-1"
+                            autoFocus
+                          />
+                          <div className="flex gap-1">
+                            <Button 
+                              onClick={() => saveEdit(todo.id)}
+                              variant="ghost" 
+                              size="icon"
+                              className="text-green-500 hover:bg-green-50"
+                            >
+                              <Check className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              onClick={() => {
+                                setEditingId(null);
+                                setEditingText('');
+                              }}
+                              variant="ghost" 
+                              size="icon"
+                              className="text-gray-500 hover:bg-gray-50"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="flex items-center gap-2 flex-1">
+                            <Input
+                              type="number"
+                              value={todo.priority}
+                              onChange={(e) => updatePriority(todo.id, parseInt(e.target.value) || 0)}
+                              className="w-16"
+                              min="0"
+                            />
+                            <input
+                              type="checkbox"
+                              checked={todo.complete}
+                              onChange={() => toggleComplete(todo.id, todo.complete)}
+                              className="w-4 h-4"
+                            />
+                            <span className={todo.complete ? 'line-through text-gray-500' : ''}>
+                              {todo.note}
+                            </span>
+                          </div>
+                          <div className="flex gap-1">
+                            <Button 
+                              onClick={() => {
+                                setEditingId(todo.id);
+                                setEditingText(todo.note);
+                              }}
+                              variant="ghost" 
+                              size="icon"
+                              className="text-blue-500 hover:bg-blue-50"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              onClick={() => deleteTodo(todo.id)} 
+                              variant="ghost" 
+                              size="icon"
+                              className="text-red-500 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </>
+                      )}
+                    </li>
+                  ))}
+              </ul>
+            </div>
           )}
 
           <Link 
