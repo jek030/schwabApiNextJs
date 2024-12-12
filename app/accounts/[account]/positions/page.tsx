@@ -26,37 +26,6 @@ export default function Page({ params }: { params: { account: string } }) {
   const [account, setAccount] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Helper function to process transaction data
-  const processTransactionData = (transactionData: any[]): ProcessedTransaction[] => {
-    return transactionData.map((transaction: any) => {
-      const feeItems = transaction.transferItems.filter((item: any) => item.feeType);
-      const tradeItem = transaction.transferItems.find((item: any) => !item.feeType);
-
-      const fees = {
-        commission: feeItems.find((item: any) => item.feeType === 'COMMISSION') || { amount: 0, cost: 0 },
-        secFee: feeItems.find((item: any) => item.feeType === 'SEC_FEE') || { amount: 0, cost: 0 },
-        optRegFee: feeItems.find((item: any) => item.feeType === 'OPT_REG_FEE') || { amount: 0, cost: 0 },
-        tafFee: feeItems.find((item: any) => item.feeType === 'TAF_FEE') || { amount: 0, cost: 0 }
-      };
-
-      return {
-        accountNumber: transaction.accountNumber,
-        type: transaction.type,
-        tradeDate: transaction.tradeDate,
-        netAmount: transaction.netAmount,
-        fees,
-        trade: {
-          symbol: tradeItem.instrument.symbol,
-          closingPrice: tradeItem.instrument.closingPrice,
-          amount: tradeItem.amount,
-          cost: tradeItem.cost,
-          price: tradeItem.price,
-          positionEffect: tradeItem.positionEffect
-        }
-      };
-    });
-  };
-
   // Helper function to create calendar events
   const createCalendarEvents = (transactions: ProcessedTransaction[]): CalendarEvent[] => {
     const events: CalendarEvent[] = [];
@@ -119,13 +88,12 @@ export default function Page({ params }: { params: { account: string } }) {
       if (!response.ok) {
         throw new Error(`Failed to fetch transactions. Status: ${response.status}`);
       }
-      const transactionData = await response.json();
-      
-      const processed = processTransactionData(transactionData);
-      setProcessedTransactions(processed);
+      const processedData = await response.json();
+      console.log('Processed transactions:', processedData);
+      setProcessedTransactions(processedData);
       
       // Create and set calendar events
-      const events = createCalendarEvents(processed);
+      const events = createCalendarEvents(processedData);
       console.log('Setting calendar events:', events);
       setCalendarEvents(events);
 

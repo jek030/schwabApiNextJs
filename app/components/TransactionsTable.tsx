@@ -71,22 +71,23 @@ const transactionColumns: ColumnDef<ProcessedTransaction>[] = [
     },
   },
   {
-    id: "closingPrice",
-    header: "Closing Price",
+    id: "price",
+    header: "Price",
     accessorFn: (row) => row.trade.closingPrice,
     cell: ({ row }) => {
-      const price = parseFloat(row.getValue("closingPrice") || "0");
+      const price = parseFloat(row.getValue("price") || "0");
       return `$${price.toFixed(2)}`;
     },
-  },
+  }, 
   {
-    accessorKey: "netAmount",
-    header: "Net Amount",
+    id: "cost",
+    header: "Cost",
+    accessorFn: (row) => row.trade.cost,
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("netAmount") || "0");
-      return `$${amount.toFixed(2)}`;
+      const cost = parseFloat(row.getValue("cost") || "0");
+      return `$${cost.toFixed(2)}`;
     },
-  },
+  }, 
   {
     id: "commission",
     header: "Commission",
@@ -124,12 +125,11 @@ const transactionColumns: ColumnDef<ProcessedTransaction>[] = [
     },
   },
   {
-    id: "cost",
-    header: "Cost",
-    accessorFn: (row) => row.trade.cost,
+    accessorKey: "netAmount",
+    header: "Net Amount",
     cell: ({ row }) => {
-      const cost = parseFloat(row.getValue("cost") || "0");
-      return `$${cost.toFixed(2)}`;
+      const amount = parseFloat(row.getValue("netAmount") || "0");
+      return `$${amount.toFixed(2)}`;
     },
   },
 ];
@@ -189,7 +189,7 @@ export default function TransactionsTable({
                 max="365"
                 value={inputDays}
                 onChange={handleInputChange}
-                onKeyPress={handleKeyPress}
+                onKeyDown={handleKeyPress}
                 className="w-24"
               />
               <Button 
