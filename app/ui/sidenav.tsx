@@ -16,7 +16,7 @@ export default function SideNav() {
             alt="Stonks meme"
             fill
             priority={true}
-            className="object-contain transform hover:scale-105 transition-transform duration-200 rounded-md "
+            className="object-contain transform hover:scale-105 transition-transform duration-200 rounded-md"
           />
         </div>
         <div className="flex flex-col">
@@ -24,11 +24,12 @@ export default function SideNav() {
           <span className="text-lg font-bold text-black">Guy</span>
         </div>
       </Link>
-      <div className="flex grow flex-col space-y-2">
+      
+      <div className="flex flex-col flex-1">
         <NavLinks />
-        <div className="hidden h-auto w-full grow rounded-md bg-gray-100 md:block"></div>
-        <form>
-          <button className="flex h-[48px] w-full items-center justify-start gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600">
+        <div className="flex-1" /> {/* Spacer */}
+        <form className="mt-auto">
+          <button className="w-full flex items-center justify-start gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600">
             <div>Sign Out</div>
           </button>
         </form>
