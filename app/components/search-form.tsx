@@ -43,7 +43,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ className = "" }) => {
     <Form {...form}>
       <form 
         onSubmit={form.handleSubmit(onSubmit)} 
-        className={`w-full border border-slate-200 max-w-md space-y-4 bg-white p-6 rounded-lg shadow-sm ${className}`}
+        className={`w-full border border-slate-200 max-w-md space-y-4 bg-gray-50 p-6 rounded-lg shadow-sm ${className}`}
       >
         <FormField
           control={form.control}

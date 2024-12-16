@@ -8,6 +8,14 @@ import { Input } from '@/app/ui/input';
 import { Button } from '@/app/ui/button';
 import { Trash2, Plus, Pencil, Check, X } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/app/ui/dialog"
+import { Label } from "@/app/ui/label"
 
 type Todo = {
   id: number;
@@ -20,11 +28,13 @@ type Todo = {
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState('');
+  const [newPriority, setNewPriority] = useState(0);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingText, setEditingText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [showCompleted, setShowCompleted] = useState(false);
   const [updateTimeoutId, setUpdateTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   const supabase = createClientComponentClient({
     supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -69,7 +79,7 @@ export default function Home() {
           .insert([{ 
             note: newTodo.trim(),
             complete: false,
-            priority: 0 // default priority
+            priority: newPriority
           }])
           .select()
           .single();
@@ -78,6 +88,8 @@ export default function Home() {
         if (data) {
           setTodos([data, ...todos]);
           setNewTodo('');
+          setNewPriority(0);
+          setIsDialogOpen(false);
         }
       } catch (error) {
         console.error('Error adding todo:', error);
@@ -242,21 +254,50 @@ export default function Home() {
             <CardTitle className="text-xl text-gray-800 md:text-2xl flex justify-between items-center">
               Todo List
               <div className="flex items-center gap-2">
-                <Input 
-                  value={newTodo}
-                  onChange={(e) => setNewTodo(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Enter a new todo"
-                  className="w-full max-w-md"
-                />
-                <Button 
-                  onClick={addTodo} 
-                  variant="outline" 
-                  size="icon"
-                  disabled={!newTodo.trim()}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Todo
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Add New Todo</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="todo">Todo</Label>
+                        <Input
+                          id="todo"
+                          value={newTodo}
+                          onChange={(e) => setNewTodo(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              addTodo();
+                            }
+                          }}
+                          placeholder="Enter your todo"
+                        />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="priority">Priority</Label>
+                        <Input
+                          id="priority"
+                          type="number"
+                          min="0"
+                          value={newPriority}
+                          onChange={(e) => setNewPriority(parseInt(e.target.value) || 0)}
+                          placeholder="Enter priority"
+                        />
+                      </div>
+                      <Button onClick={addTodo} className="mt-2">
+                        Add Todo
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             </CardTitle>
           </CardHeader>

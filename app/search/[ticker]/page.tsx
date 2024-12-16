@@ -283,228 +283,228 @@ let averageDailyRange20 : number = parseFloat((dailyRange20 / 20).toFixed(2));
   
 
   return (
-    <div className="flex flex-col">
-      <div className="p-6">
-        <PageHeader>
-          This is the ticker page.
-        </PageHeader>
+    <div className="flex flex-col w-full gap-6 p-4">
+      <PageHeader>
+        This is the ticker page.          
+      </PageHeader> 
+      <div className=" items-center flex flex-col gap-6 px-4">
+
+  <SearchForm />
+  
+      
       </div>
 
-      <div className="p-6 items-center flex flex-col gap-6">
-        <SearchForm />
-
-        <div className="flex flex-col gap-6 px-4">
-          {/* 3-column grid for main cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
-            <Card className="w-full">
-              <CardHeader>
-                <CardTitle>{ticker} {hasData && tickerData.mark ? " $" + safeFormat(tickerData.mark) : 'N/A'}   
+      <div className="flex flex-col gap-6 px-4">
+        {/* 3-column grid for main cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle>{ticker} {hasData && tickerData.mark ? " $" + safeFormat(tickerData.mark) : 'N/A'}   
  
-                  <span style={{ color: hasData && !isNaN(tickerData.netPercentChange) ? getColor(tickerData.netPercentChange) : 'black'}}> 
-                      {hasData && !isNaN(tickerData.netPercentChange) ? " " + safeFormat(tickerData.netPercentChange) + "%" : ''} 
-                  </span>
-              </CardTitle>       
-              <Divider></Divider>
-              <CardDescription>
-                {hasData ? tickerData.description : 'Failed to load data from Charles Schwab API.'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent >
-              <div className="pb-2 border-b border-dotted border-gray-300">
-                Net Change: 
-                  <span style={{ color: hasData && !isNaN(tickerData.netChange) ? getColor(tickerData.netChange) : 'black'}}> 
-                    {hasData ? " $" + safeFormat(tickerData.netChange) : 'N/A'} 
-                  </span>
-              </div>
-              <div className="py-2 border-b border-dotted border-gray-300">
-                After hours change: 
-                  <span style={{ color: hasData && !isNaN(tickerData.postMarketChange) ? getColor(tickerData.postMarketChange) : 'black'}}> 
-                    {hasData ? " $" + safeFormat(tickerData.postMarketChange) : 'N/A'} 
+                <span style={{ color: hasData && !isNaN(tickerData.netPercentChange) ? getColor(tickerData.netPercentChange) : 'black'}}> 
+                    {hasData && !isNaN(tickerData.netPercentChange) ? " " + safeFormat(tickerData.netPercentChange) + "%" : ''} 
                 </span>
-              </div>
-              <div className="py-2 border-b border-dotted border-gray-300">
-                After hours:  
-                  <span style={{ color: hasData && !isNaN(tickerData.postMarketPercentChange) ? getColor(tickerData.postMarketPercentChange) : 'black'}}> 
-                    {hasData ? " " + safeFormat(tickerData.postMarketPercentChange) + "%" : 'N/A'} 
-                  </span>    
-              </div>
-              <div className="py-2 border-b border-dotted border-gray-300">
-                Regular market price: {hasData ? safeFormat(tickerData.regularMarketLastPrice) : 'N/A'}
-              </div>
-              <div className="py-2 border-b border-dotted border-gray-300">
-                Daily volume: {hasData ? safeFormatVol(tickerData.totalVolume) : 'N/A'}
-              </div>
-              <div className="py-2 border-b border-dotted border-gray-300">
-                Regular market net change: {hasData ? safeFormat(tickerData.regularMarketNetChange) : 'N/A'}
-              </div>
-              <div className="py-2 border-b border-dotted border-gray-300">
-                Regular market % change: {hasData ? safeFormat(tickerData.regularMarketPercentChange) : 'N/A'}
-              </div>
-              <div className="py-2 border-b border-dotted border-gray-300">
-                Last close price: {hasData ? safeFormat(tickerData.closePrice) : 'N/A'}
-              </div>
-              <div className="py-2 border-b border-dotted border-gray-300">
-                Daily high: {hasData ? safeFormat(tickerData.highPrice) : 'N/A'}
-              </div>
-              <div className="py-2">
-                Daily low: {hasData ? safeFormat(tickerData.lowPrice) : 'N/A'}
-              </div>
-            </CardContent>
-            <CardContent>
-              <Link className="rounded-md bg-purple-500 px-4 py-2 text-sm text-white transition-colors hover:bg-purple-400"
-               href={yahooURL} 
-               target="_blank" 
-               rel="noopener noreferrer">{"Yahoo Finance"}
-              </Link>
-            </CardContent>
-          </Card>
-
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle>Statistics</CardTitle>       
-              <Divider></Divider>       
-            </CardHeader>
-            <CardContent>
-              <div className="py-2 border-b border-dotted border-gray-300">
-                5 Day ADR: <span style={{ color: averageDailyRange5 > 5 ? 'green' : 'red' }}>
-                     {hasData && !isNaN(averageDailyRange5) ? averageDailyRange5 + "%" : 'N/A'}
-                </span> <br></br>
-                5 Day ATR: {hasData && !isNaN(averageTrueRange5) ? "$" + averageTrueRange5 : 'N/A'}
-              </div>
-
-              <div className="py-2 border-b border-dotted border-gray-300">
-                20 Day ADR: <span style={{ color: averageDailyRange20 > 5 ? 'green' : 'red' }}>
-                     {hasData && !isNaN(averageDailyRange20) ? averageDailyRange20 + "%" : 'N/A'}
-                </span> <br></br>
-                20 Day ATR:  {hasData && !isNaN(averageTrueRange20) ? "$" + averageTrueRange20 : 'N/A'}
-              </div>
-
-              <div className="py-2 border-b border-dotted border-gray-300">
-                52 week high: {hasData && tickerData["52WeekHigh"] ? safeFormat(tickerData["52WeekHigh"]) : 'N/A'} <br></br>
-                52 week low: {hasData && tickerData["52WeekLow"] ? safeFormat(tickerData["52WeekLow"]) : 'N/A'}
-              </div>
-
-              <div className="py-2">
-                10 day average volume: {hasData ? safeFormatVol(tickerData['10DayAverageVolume']) : 'N/A'} <br></br>      
-                1 year average volume: {hasData ? safeFormatVol(tickerData['1YearAverageVolume']) : 'N/A'}
-              </div>
-            </CardContent>
-            
-            <CardFooter className="text-sm text-gray-500"> 
-              ADR = Average Daily Range<br></br>
-              ATR = Average True Range           
-            </CardFooter>
-          </Card>
-
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle>Stage Analysis</CardTitle>       
-              <Divider></Divider>       
-            </CardHeader>
-            <CardContent>
-              <div className="pb-2 border-b border-dotted border-gray-300">
-                10 Day SMA: <span className="font-semibold">${formatter.format(sma10d)}</span>
-                <div className={`mt-1 mb-2 p-2 rounded-md text-white font-medium ${
-                  blnAbove10DaySMA 
-                    ? 'bg-green-500 dark:bg-green-600' 
-                    : 'bg-red-500 dark:bg-red-600'
-                }`}>
-                  {blnAbove10DaySMA 
-                    ? `Above 10 Day SMA ↑ (+${formatter.format((tickerData.mark / sma10d - 1) * 100)}%)` 
-                    : `Below 10 Day SMA ↓ (-${formatter.format((1 - tickerData.mark / sma10d) * 100)}%)`
-                  }
-                </div>
-              </div>
-
-              <div className="py-2 border-b border-dotted border-gray-300">
-                20 Day SMA: <span className="font-semibold">${formatter.format(sma20d)}</span>
-                <div className={`mt-1 mb-2 p-2 rounded-md text-white font-medium ${
-                  blnAbove20DaySMA 
-                    ? 'bg-green-500 dark:bg-green-600' 
-                    : 'bg-red-500 dark:bg-red-600'
-                }`}>
-                  {blnAbove20DaySMA 
-                    ? `Above 20 Day SMA ↑ (+${formatter.format((tickerData.mark / sma20d - 1) * 100)}%)` 
-                    : `Below 20 Day SMA ↓ (-${formatter.format((1 - tickerData.mark / sma20d) * 100)}%)`
-                  }
-                </div>
-              </div>
-
-              <div className="py-2 border-b border-dotted border-gray-300">
-                50 Day SMA: <span className="font-semibold">${formatter.format(sma50d)}</span>
-                <div className={`mt-1 mb-2 p-2 rounded-md text-white font-medium ${
-                  blnAbove50DaySMA 
-                    ? 'bg-green-500 dark:bg-green-600' 
-                    : 'bg-red-500 dark:bg-red-600'
-                }`}>
-                  {blnAbove50DaySMA 
-                    ? `Above 50 Day SMA ↑ (+${formatter.format((tickerData.mark / sma50d - 1) * 100)}%)` 
-                    : `Below 50 Day SMA ↓ (-${formatter.format((1 - tickerData.mark / sma50d) * 100)}%)`
-                  }
-                </div>
-              </div>
-
-              <div className="py-2">
-                20 Week SMA: <span className="font-semibold">${formatter.format(sma20w)}</span>
-                <div className={`mt-1 mb-2 p-2 rounded-md text-white font-medium ${
-                  blnAbove20WeekSMA 
-                    ? 'bg-green-500 dark:bg-green-600' 
-                    : 'bg-red-500 dark:bg-red-600'
-                }`}>
-                  {blnAbove20WeekSMA 
-                    ? `Above 20 Week SMA ↑ (+${formatter.format((tickerData.mark / sma20w - 1) * 100)}%)` 
-                    : `Below 20 Week SMA ↓ (-${formatter.format((1 - tickerData.mark / sma20w) * 100)}%)`
-                  }
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle>Fundamentals</CardTitle>       
-              <Divider></Divider>       
-            </CardHeader>
-            <CardContent>
-              <div className="pb-2 border-b border-dotted border-gray-300">
-                P/E Ratio: <span style={{ color: hasData && !isNaN(tickerData.peRatio) ? getColor(tickerData.peRatio) : 'black'}}> 
-                  {hasData ? safeFormat(tickerData.peRatio) : 'N/A'} 
+            </CardTitle>       
+            <Divider></Divider>
+            <CardDescription>
+              {hasData ? tickerData.description : 'Failed to load data from Charles Schwab API.'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent >
+            <div className="pb-2 border-b border-dotted border-gray-300">
+              Net Change: 
+                <span style={{ color: hasData && !isNaN(tickerData.netChange) ? getColor(tickerData.netChange) : 'black'}}> 
+                  {hasData ? " $" + safeFormat(tickerData.netChange) : 'N/A'} 
                 </span>
-              </div>
+            </div>
+            <div className="py-2 border-b border-dotted border-gray-300">
+              After hours change: 
+                <span style={{ color: hasData && !isNaN(tickerData.postMarketChange) ? getColor(tickerData.postMarketChange) : 'black'}}> 
+                  {hasData ? " $" + safeFormat(tickerData.postMarketChange) : 'N/A'} 
+              </span>
+            </div>
+            <div className="py-2 border-b border-dotted border-gray-300">
+              After hours:  
+                <span style={{ color: hasData && !isNaN(tickerData.postMarketPercentChange) ? getColor(tickerData.postMarketPercentChange) : 'black'}}> 
+                  {hasData ? " " + safeFormat(tickerData.postMarketPercentChange) + "%" : 'N/A'} 
+                </span>    
+            </div>
+            <div className="py-2 border-b border-dotted border-gray-300">
+              Regular market price: {hasData ? safeFormat(tickerData.regularMarketLastPrice) : 'N/A'}
+            </div>
+            <div className="py-2 border-b border-dotted border-gray-300">
+              Daily volume: {hasData ? safeFormatVol(tickerData.totalVolume) : 'N/A'}
+            </div>
+            <div className="py-2 border-b border-dotted border-gray-300">
+              Regular market net change: {hasData ? safeFormat(tickerData.regularMarketNetChange) : 'N/A'}
+            </div>
+            <div className="py-2 border-b border-dotted border-gray-300">
+              Regular market % change: {hasData ? safeFormat(tickerData.regularMarketPercentChange) : 'N/A'}
+            </div>
+            <div className="py-2 border-b border-dotted border-gray-300">
+              Last close price: {hasData ? safeFormat(tickerData.closePrice) : 'N/A'}
+            </div>
+            <div className="py-2 border-b border-dotted border-gray-300">
+              Daily high: {hasData ? safeFormat(tickerData.highPrice) : 'N/A'}
+            </div>
+            <div className="py-2">
+              Daily low: {hasData ? safeFormat(tickerData.lowPrice) : 'N/A'}
+            </div>
+          </CardContent>
+          <CardContent>
+            <Link className="rounded-md bg-purple-500 px-4 py-2 text-sm text-white transition-colors hover:bg-purple-400"
+             href={yahooURL} 
+             target="_blank" 
+             rel="noopener noreferrer">{"Yahoo Finance"}
+            </Link>
+          </CardContent>
+        </Card>
 
-              <div className="py-2 border-b border-dotted border-gray-300">
-                EPS: <span style={{ color: hasData && !isNaN(tickerData.eps) ? getColor(tickerData.eps) : 'black'}}> 
-                  {hasData ? safeFormat(tickerData.eps) : 'N/A'} 
-                </span>
-              </div>
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle>Statistics</CardTitle>       
+            <Divider></Divider>       
+          </CardHeader>
+          <CardContent>
+            <div className="py-2 border-b border-dotted border-gray-300">
+              5 Day ADR: <span style={{ color: averageDailyRange5 > 5 ? 'green' : 'red' }}>
+                   {hasData && !isNaN(averageDailyRange5) ? averageDailyRange5 + "%" : 'N/A'}
+              </span> <br></br>
+              5 Day ATR: {hasData && !isNaN(averageTrueRange5) ? "$" + averageTrueRange5 : 'N/A'}
+            </div>
 
-              <div className="py-2 border-b border-dotted border-gray-300">
-                Next ex-dividend date: {hasData && tickerData?.nextDivExDate ? 
-                  new Date(tickerData?.nextDivExDate).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) 
-                  : 'N/A'}
-              </div>
+            <div className="py-2 border-b border-dotted border-gray-300">
+              20 Day ADR: <span style={{ color: averageDailyRange20 > 5 ? 'green' : 'red' }}>
+                   {hasData && !isNaN(averageDailyRange20) ? averageDailyRange20 + "%" : 'N/A'}
+              </span> <br></br>
+              20 Day ATR:  {hasData && !isNaN(averageTrueRange20) ? "$" + averageTrueRange20 : 'N/A'}
+            </div>
 
-              <div className="py-2 border-b border-dotted border-gray-300">
-                Next dividend payment date: {hasData && tickerData.nextDivPayDate ? 
-                  new Date(tickerData.nextDivPayDate).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) 
-                  : 'N/A'}
-              </div>
+            <div className="py-2 border-b border-dotted border-gray-300">
+              52 week high: {hasData && tickerData["52WeekHigh"] ? safeFormat(tickerData["52WeekHigh"]) : 'N/A'} <br></br>
+              52 week low: {hasData && tickerData["52WeekLow"] ? safeFormat(tickerData["52WeekLow"]) : 'N/A'}
+            </div>
 
-              <div className="py-2">
-                Dividend yield: {hasData && !isNaN(tickerData.divYield) ? safeFormat(tickerData.divYield) + "%" : 'N/A'}
-              </div>
-            </CardContent>
-          </Card>
-     
-          <ADRCalculationCard price={hasData ? Number(tickerData.mark) : 0} />
-          </div>
+            <div className="py-2">
+              10 day average volume: {hasData ? safeFormatVol(tickerData['10DayAverageVolume']) : 'N/A'} <br></br>      
+              1 year average volume: {hasData ? safeFormatVol(tickerData['1YearAverageVolume']) : 'N/A'}
+            </div>
+          </CardContent>
+          
+          <CardFooter className="text-sm text-gray-500"> 
+            ADR = Average Daily Range<br></br>
+            ATR = Average True Range           
+          </CardFooter>
+        </Card>
 
-          {/* Price History Card in full width */}
-          <div className="w-full">
-            <Suspense fallback={<div>Loading price history...</div>}>
-              <PriceHistoryCard ticker={ticker} />
-            </Suspense>
-          </div>
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle>Stage Analysis</CardTitle>       
+            <Divider></Divider>       
+          </CardHeader>
+          <CardContent>
+            <div className="pb-2 border-b border-dotted border-gray-300">
+              10 Day SMA: <span className="font-semibold">${formatter.format(sma10d)}</span>
+              <div className={`mt-1 mb-2 p-2 rounded-md text-white font-medium ${
+                blnAbove10DaySMA 
+                  ? 'bg-green-500 dark:bg-green-600' 
+                  : 'bg-red-500 dark:bg-red-600'
+              }`}>
+                {blnAbove10DaySMA 
+                  ? `Above 10 Day SMA ↑ (+${formatter.format((tickerData.mark / sma10d - 1) * 100)}%)` 
+                  : `Below 10 Day SMA ↓ (-${formatter.format((1 - tickerData.mark / sma10d) * 100)}%)`
+                }
+              </div>
+            </div>
+
+            <div className="py-2 border-b border-dotted border-gray-300">
+              20 Day SMA: <span className="font-semibold">${formatter.format(sma20d)}</span>
+              <div className={`mt-1 mb-2 p-2 rounded-md text-white font-medium ${
+                blnAbove20DaySMA 
+                  ? 'bg-green-500 dark:bg-green-600' 
+                  : 'bg-red-500 dark:bg-red-600'
+              }`}>
+                {blnAbove20DaySMA 
+                  ? `Above 20 Day SMA ↑ (+${formatter.format((tickerData.mark / sma20d - 1) * 100)}%)` 
+                  : `Below 20 Day SMA ↓ (-${formatter.format((1 - tickerData.mark / sma20d) * 100)}%)`
+                }
+              </div>
+            </div>
+
+            <div className="py-2 border-b border-dotted border-gray-300">
+              50 Day SMA: <span className="font-semibold">${formatter.format(sma50d)}</span>
+              <div className={`mt-1 mb-2 p-2 rounded-md text-white font-medium ${
+                blnAbove50DaySMA 
+                  ? 'bg-green-500 dark:bg-green-600' 
+                  : 'bg-red-500 dark:bg-red-600'
+              }`}>
+                {blnAbove50DaySMA 
+                  ? `Above 50 Day SMA ↑ (+${formatter.format((tickerData.mark / sma50d - 1) * 100)}%)` 
+                  : `Below 50 Day SMA ↓ (-${formatter.format((1 - tickerData.mark / sma50d) * 100)}%)`
+                }
+              </div>
+            </div>
+
+            <div className="py-2">
+              20 Week SMA: <span className="font-semibold">${formatter.format(sma20w)}</span>
+              <div className={`mt-1 mb-2 p-2 rounded-md text-white font-medium ${
+                blnAbove20WeekSMA 
+                  ? 'bg-green-500 dark:bg-green-600' 
+                  : 'bg-red-500 dark:bg-red-600'
+              }`}>
+                {blnAbove20WeekSMA 
+                  ? `Above 20 Week SMA ↑ (+${formatter.format((tickerData.mark / sma20w - 1) * 100)}%)` 
+                  : `Below 20 Week SMA ↓ (-${formatter.format((1 - tickerData.mark / sma20w) * 100)}%)`
+                }
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle>Fundamentals</CardTitle>       
+            <Divider></Divider>       
+          </CardHeader>
+          <CardContent>
+            <div className="pb-2 border-b border-dotted border-gray-300">
+              P/E Ratio: <span style={{ color: hasData && !isNaN(tickerData.peRatio) ? getColor(tickerData.peRatio) : 'black'}}> 
+                {hasData ? safeFormat(tickerData.peRatio) : 'N/A'} 
+              </span>
+            </div>
+
+            <div className="py-2 border-b border-dotted border-gray-300">
+              EPS: <span style={{ color: hasData && !isNaN(tickerData.eps) ? getColor(tickerData.eps) : 'black'}}> 
+                {hasData ? safeFormat(tickerData.eps) : 'N/A'} 
+              </span>
+            </div>
+
+            <div className="py-2 border-b border-dotted border-gray-300">
+              Next ex-dividend date: {hasData && tickerData?.nextDivExDate ? 
+                new Date(tickerData?.nextDivExDate).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) 
+                : 'N/A'}
+            </div>
+
+            <div className="py-2 border-b border-dotted border-gray-300">
+              Next dividend payment date: {hasData && tickerData.nextDivPayDate ? 
+                new Date(tickerData.nextDivPayDate).toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) 
+                : 'N/A'}
+            </div>
+
+            <div className="py-2">
+              Dividend yield: {hasData && !isNaN(tickerData.divYield) ? safeFormat(tickerData.divYield) + "%" : 'N/A'}
+            </div>
+          </CardContent>
+        </Card>
+   
+        <ADRCalculationCard price={hasData ? Number(tickerData.mark) : 0} />
+        </div>
+
+        {/* Price History Card in full width */}
+        <div className="w-full">
+          <Suspense fallback={<div>Loading price history...</div>}>
+            <PriceHistoryCard ticker={ticker} />
+          </Suspense>
         </div>
       </div>
     </div>
