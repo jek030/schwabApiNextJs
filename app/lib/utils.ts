@@ -10,12 +10,12 @@ export function cn(...inputs: ClassValue[]) {
 
 export const getFirstBusinessDay = () => {
   const date = new Date();
-  date.setMonth(0); // Set to January
-  date.setDate(1); // First day of year
+  date.setMonth(0); // January
+  date.setDate(1);  // First day of year
   
-  // Adjust for weekend
+  // Keep moving forward until we hit a weekday (Mon-Fri)
   while (date.getDay() === 0 || date.getDay() === 6) {
-      date.setDate(date.getDate() + 1);
+    date.setDate(date.getDate() + 1);
   }
   
   return date.toISOString().split('T')[0];

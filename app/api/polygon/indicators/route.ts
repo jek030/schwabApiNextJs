@@ -22,6 +22,7 @@ export async function GET(request: Request) {
             throw new Error(`Failed to get ${indicator} from Polygon API. Status: ${res.status} - ${res.statusText}`);
         }
 
+        console.log('Polygon API response successful');
         const indicatorData = await res.json();
 
        let formattedSMAData: PolygonSMAResponse = {

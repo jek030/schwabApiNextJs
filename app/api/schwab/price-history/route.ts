@@ -72,7 +72,7 @@ export async function GET(request: Request) {
             },
         });
 
-        console.log('Schwab API response status:', res.status);
+        //g('Schwab API response status:', res.status);
         
         if (!res.ok) {
             const errorText = await res.text();
@@ -85,7 +85,7 @@ export async function GET(request: Request) {
         }
 
         const data = await res.json();
-        console.log('Raw Schwab response:', JSON.stringify(data, null, 2));
+        //console.log('Raw Schwab response:', JSON.stringify(data, null, 2));
 
         // Check if data has the expected structure
         if (!data || !Array.isArray(data.candles)) {
@@ -104,7 +104,7 @@ export async function GET(request: Request) {
             change: ((item.close - item.open) / item.open * 100).toFixed(2)
         }));
 
-        console.log('Formatted data sample:', formattedData.slice(0, 2));
+        //console.log('Formatted data sample:', formattedData.slice(0, 2));
 
         if (formattedData.length > 0) {
             store.setPriceHistory({

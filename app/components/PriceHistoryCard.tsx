@@ -10,11 +10,7 @@ import TradingViewChart from '@/app/components/TradingViewChart';
 
 export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
     // Get a date 3 months ago for the start date
-    const getDefaultStartDate = () => {
-        const date = new Date();
-        date.setMonth(date.getMonth() - 3);
-        return date.toISOString().split('T')[0];
-    };
+    const getDefaultStartDate = getFirstBusinessDay;
 
     // Get current date for end date
     const getDefaultEndDate = () => {
@@ -53,11 +49,11 @@ export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
             setIsLoading(true);
             setError(null);
             try {
-                console.log('Fetching price history for:', {
-                    ticker,
-                    startDate,
-                    endDate
-                });
+                //console.log('Fetching price history for:', {
+                //    ticker,
+                //    startDate,
+                //    endDate
+                //});
                 
                 const response = await fetch(`/api/schwab/price-history?ticker=${ticker}&startDate=${startDate}&endDate=${endDate}`);
                 
@@ -66,7 +62,7 @@ export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
                 }
                 
                 const formattedPriceHistory = await response.json();
-                console.log('Raw API response:', formattedPriceHistory);
+               // console.log('Raw API response:', formattedPriceHistory);
                 
                 if (!Array.isArray(formattedPriceHistory)) {
                     throw new Error('Expected array of price history data but received: ' + typeof formattedPriceHistory);
@@ -76,11 +72,11 @@ export const PriceHistoryCard = ({ ticker }: { ticker: string }) => {
                     new Date(a.datetime).getTime() - new Date(b.datetime).getTime()
                 );
                 
-                console.log('Processed price history:', {
-                    length: sortedPriceHistory.length,
-                    firstItem: sortedPriceHistory[0],
-                    lastItem: sortedPriceHistory[sortedPriceHistory.length - 1]
-                });
+                //console.log('Processed price history:', {
+                //    length: sortedPriceHistory.length,
+                //    firstItem: sortedPriceHistory[0],
+                //    lastItem: sortedPriceHistory[sortedPriceHistory.length - 1]
+                //});
                 
                 setPriceHistory(sortedPriceHistory);
 
