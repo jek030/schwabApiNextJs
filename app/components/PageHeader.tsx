@@ -22,11 +22,11 @@ export default function PageHeader({
   if (loading) {
     return (
       <header className={cn('w-full', className)}>
-        <Card>
-          <CardHeader className="text-center">
-            <div className="animate-pulse space-y-4">
-              <div className="h-6 bg-gray-200 rounded w-1/2 mx-auto"></div>
-              <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
+        <Card className="py-2">
+          <CardHeader className="text-center py-2">
+            <div className="animate-pulse space-y-2">
+              <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
+              <div className="h-2 bg-gray-200 rounded w-3/4 mx-auto"></div>
             </div>
           </CardHeader>
         </Card>
@@ -36,21 +36,21 @@ export default function PageHeader({
 
   return (
     <header className={cn('w-full', className)}>
-      <Card>
-        <CardHeader className="text-center">
+      <Card className="py-2">
+        <CardHeader className="text-center py-2 ">
           <div className="flex items-center justify-between">
             <div className="w-full text-center">
-              <CardTitle>{title}</CardTitle>
+              <CardTitle className="text-xl">{title}</CardTitle>
               {actions && <div className="flex gap-2">{actions}</div>}
             </div>
           </div>
           {description && (
-            <CardDescription className="text-gray-800 md:text-xl md:leading-normal">
+            <CardDescription className="text-gray-800 text-sm md:text-base">
               {description}
             </CardDescription>
           )}
           {children && (
-            <CardDescription className="text-gray-800 md:text-xl md:leading-normal">
+            <CardDescription className="text-gray-800 text-sm md:text-base">
               {children}
             </CardDescription>
           )}
