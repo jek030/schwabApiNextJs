@@ -125,20 +125,17 @@ export default function Page({params} : {params: {ticker: string }}) {
   }, [tickerData]);
 
   return (
-    <div className="flex flex-col w-full gap-6 p-4">
+    <div className="flex flex-col w-full gap-2">
       <PageHeader>
         This is the ticker page.          
       </PageHeader> 
-      <div className=" items-center flex flex-col gap-6 px-4">
-
-  <SearchForm />
-  
-      
+      <div className=" items-center flex flex-col">
+        <SearchForm />    
       </div>
 
-      <div className="flex flex-col gap-6 px-4">
+      <div className="flex flex-col gap-2">
         {/* 3-column grid for main cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 w-full">
           <TickerCard ticker={tickerData} />
           <StatisticsCard ticker={tickerData} priceHistory={priceHistory} />
           <StageAnalysisCard 

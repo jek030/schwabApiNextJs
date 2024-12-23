@@ -332,13 +332,13 @@ const CalendarPage: React.FC = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="p-6">
+      <div className="pb-2">
         <PageHeader>
           This is the calendar page.
         </PageHeader>
       </div>
 
-      <main className="p-6 w-full">
+      <main className="w-full">
         <div className="flex flex-col gap-8 sm:items-start">
           <Card className="w-full">
             <CardHeader>

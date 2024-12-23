@@ -19,12 +19,35 @@ type CalendarEvent = {
   transaction?: ProcessedTransaction;
 };
 
-export default function Page({ params }: { params: { account: string } }) {
-  const [selectedDays, setSelectedDays] = useState(30);
+// Separate component for positions data
+function PositionsDataTable({ account, params }: { account: any, params: { account: string } }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Account {params.account}</CardTitle>
+        <CardDescription>
+          View positions for account {params.account} retrieved from the Charles Schwab API.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <DataTable columns={columns} data={account.positions} />
+      </CardContent>
+    </Card>
+  );
+}
+
+// Separate component for transactions and calendar
+function TransactionsAndCalendar({ 
+  accountNum, 
+  selectedDays, 
+  setSelectedDays 
+}: { 
+  accountNum: string;
+  selectedDays: number;
+  setSelectedDays: (days: number) => void;
+}) {
   const [processedTransactions, setProcessedTransactions] = useState<ProcessedTransaction[]>([]);
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
-  const [account, setAccount] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
 
   // Helper function to create calendar events
   const createCalendarEvents = (transactions: ProcessedTransaction[]): CalendarEvent[] => {
@@ -61,7 +84,7 @@ export default function Page({ params }: { params: { account: string } }) {
       
       // Get hash value
       const hashResponse = await fetch(
-        `${protocol}://${host}/api/schwab/hashedAcc?accountNumber=${params.account}`
+        `${protocol}://${host}/api/schwab/hashedAcc?accountNumber=${accountNum}`
       );
       if (!hashResponse.ok) {
         throw new Error(`Failed to fetch hashed accounts. Status: ${hashResponse.status}`);
@@ -102,6 +125,63 @@ export default function Page({ params }: { params: { account: string } }) {
     }
   };
 
+  // Fetch initial transactions
+  useEffect(() => {
+    fetchTransactions(selectedDays);
+  }, [selectedDays]);
+
+  return (
+    <>
+      <TransactionsTable 
+        transactions={processedTransactions} 
+        accountNum={accountNum}
+        onDaysChange={setSelectedDays}
+      />
+
+      <div className="w-full mt-8">
+        {calendarEvents.length > 0 ? (
+          <Calendar events={calendarEvents} />
+        ) : (
+          <div>No transaction events to display</div>
+        )}
+      </div>
+    </>
+  );
+}
+
+export default function Page({ params }: { params: { account: string } }) {
+  const [selectedDays, setSelectedDays] = useState(30);
+  const [processedTransactions, setProcessedTransactions] = useState<ProcessedTransaction[]>([]);
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
+  const [account, setAccount] = useState<any>(null);
+
+  // Add this function back
+  const createCalendarEvents = (transactions: ProcessedTransaction[]): CalendarEvent[] => {
+    const events: CalendarEvent[] = [];
+    
+    for (const transaction of transactions) {
+      if (!transaction.tradeDate) continue;
+      
+      const tradeDate = new Date(transaction.tradeDate);
+      const date = `${tradeDate.getFullYear()}-${String(tradeDate.getMonth() + 1).padStart(2, '0')}-${String(tradeDate.getDate()).padStart(2, '0')}`;
+      
+      const amount = Math.abs(transaction.trade.amount);
+      const formattedCost = transaction.netAmount.toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      });
+      
+      events.push({
+        date,
+        title: `<b>${transaction.trade.symbol}</b> ${transaction.trade.positionEffect} ${amount}x ${formattedCost}`,
+        category: transaction.netAmount <= 0 ? 'profit' : 'loss',
+        transaction
+      });
+    }
+    
+    return events;
+  };
+
   // Fetch account data
   useEffect(() => {
     const fetchAccount = async () => {
@@ -113,8 +193,6 @@ export default function Page({ params }: { params: { account: string } }) {
         setAccount(accountData);
       } catch (error) {
         console.error('Error fetching account:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -126,28 +204,48 @@ export default function Page({ params }: { params: { account: string } }) {
     fetchTransactions(selectedDays);
   }, [selectedDays]);
 
-  if (loading || !account) {
-    return <div>Loading...</div>;
-  }
+  const fetchTransactions = async (days: number) => {
+    try {
+      const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+      const host = window.location.host;
+      
+      const hashResponse = await fetch(
+        `${protocol}://${host}/api/schwab/hashedAcc?accountNumber=${params.account}`
+      );
+      if (!hashResponse.ok) throw new Error(`Failed to fetch hashed accounts. Status: ${hashResponse.status}`);
+      const hashData = await hashResponse.json();
+      if (!hashData.hashValue) throw new Error('No hash value available for transactions fetch');
+
+      const endDate = new Date().toISOString();
+      const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+
+      const response = await fetch(`${protocol}://${host}/api/schwab/transactions?` + new URLSearchParams({
+        hashedAccount: hashData.hashValue,
+        startDate,
+        endDate,
+        types: 'TRADE'
+      }));
+      
+      if (!response.ok) throw new Error(`Failed to fetch transactions. Status: ${response.status}`);
+      const processedData = await response.json();
+      setProcessedTransactions(processedData);
+      
+      const events = createCalendarEvents(processedData);
+      setCalendarEvents(events);
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    }
+  };
 
   return (
     <div className="flex flex-col">
-      <div className="p-6">
+      <div className="pb-2">
         <PageHeader>
           This is the positions page.
         </PageHeader>
       </div>
 
-      <main className="p-6 flex flex-col gap-8 sm:items-start">
-        <p>
-          <Link
-            href=".."
-            className="border border-slate-200 mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
-          >
-            Go Back
-          </Link>
-        </p>
-
+      <main className="flex flex-col gap-2 sm:items-start">
         <Card>
           <CardHeader>
             <CardTitle>Account {params.account}</CardTitle>
@@ -157,24 +255,54 @@ export default function Page({ params }: { params: { account: string } }) {
           </CardHeader>
           <CardContent>
             <Suspense fallback={<EmptyDataTableSkeleton columns={columns} />}>
-              <DataTable columns={columns} data={account.positions} />
+              {account ? (
+                <DataTable columns={columns} data={account.positions} />
+              ) : (
+                <EmptyDataTableSkeleton columns={columns} />
+              )}
             </Suspense>
           </CardContent>
         </Card>
 
-        <TransactionsTable 
-          transactions={processedTransactions} 
-          accountNum={params.account}
-          onDaysChange={setSelectedDays}
-        />
+        <Card>
+          <CardHeader>
+            <CardTitle>Transactions</CardTitle>
+            <CardDescription>
+              View recent transactions for this account.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Suspense fallback={<EmptyDataTableSkeleton columns={columns} />}>
+              <TransactionsTable 
+                transactions={processedTransactions} 
+                accountNum={params.account}
+                onDaysChange={setSelectedDays}
+              />
+            </Suspense>
+          </CardContent>
+        </Card>
 
-        <div className="w-full mt-8">
-          {calendarEvents.length > 0 ? (
-            <Calendar events={calendarEvents} />
-          ) : (
-            <div>No transaction events to display</div>
-          )}
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Transaction Calendar</CardTitle>
+            <CardDescription>
+              View your transactions in a calendar format.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Suspense fallback={
+              <div className="animate-pulse space-y-4">
+                <div className="h-96 bg-gray-200 rounded"></div>
+              </div>
+            }>
+              {calendarEvents.length > 0 ? (
+                <Calendar events={calendarEvents} />
+              ) : (
+                <div>No transaction events to display</div>
+              )}
+            </Suspense>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );

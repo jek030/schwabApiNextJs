@@ -33,13 +33,13 @@ async function AccountsDataTable() {
 export default function Page() {
   return (
     <div className="flex flex-col">
-      <div className="p-6">
+      <div className="pb-2">
         <PageHeader>
           This is the accounts page.
         </PageHeader>
       </div>
     
-      <main className="p-6 flex flex-col gap-8 sm:items-start">    
+      <main className="flex flex-col gap-8 sm:items-start">    
         <Suspense fallback={
           <Card>
             <CardHeader>

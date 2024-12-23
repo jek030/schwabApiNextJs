@@ -33,7 +33,7 @@ export default function RootLayout({
         <div className="flex flex-1">
           <SideNav />           
           <div className="flex-1 flex flex-col overflow-auto">
-            <main className="flex-1">
+            <main className="flex-1 p-2">
               {children}
             </main>
             <Footer className="flex-shrink-0" />

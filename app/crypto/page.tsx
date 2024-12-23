@@ -70,7 +70,7 @@ export default function CryptoPage() {
 
   return (
     <div className="flex flex-col">
-      <div className="p-6">
+      <div className="pb-2">
         <PageHeader
           title="Cryptocurrency Dashboard"
           description="Track and manage your favorite cryptocurrencies in real-time."
@@ -78,7 +78,7 @@ export default function CryptoPage() {
         />
       </div>
 
-      <main className="p-6">
+      <main >
         {isLoading ? (
           <div className="mb-6">
             <div className="flex items-center justify-between">

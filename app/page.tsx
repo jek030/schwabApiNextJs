@@ -214,17 +214,17 @@ export default function Home() {
   if (isLoading) {
     return (
       <div className="flex flex-col">
-        <div className="p-6">
+        <div className="pb-2">
           <PageHeader
             title="Welcome to Finance Guy"
             description="This is the home page."
           />
         </div>
 
-        <main className="p-6">
+        <main >
           <Card>
             <CardHeader>
-              <CardTitle>Loading notes...</CardTitle>
+              <CardTitle className="text-xl text-gray-800 md:text-2xl flex justify-between items-center">Loading notes...</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="animate-pulse space-y-4">
@@ -241,14 +241,14 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
-      <div className="p-6">
+      <div className="pb-2">
         <PageHeader
           title="Welcome to Finance Guy"
           description="This is the home page."
         />
       </div>
       
-      <main className="p-6">
+      <main className="gap-2">
         <Card>
           <CardHeader>
             <CardTitle className="text-xl text-gray-800 md:text-2xl flex justify-between items-center">

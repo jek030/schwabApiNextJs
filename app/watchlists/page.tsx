@@ -246,14 +246,14 @@ export default function WatchlistPage() {
 
   return (
     <div className="flex flex-col">
-      <div className="p-6">
+      <div className="pb-2">
         <PageHeader>
           This is the watchlists page.
         </PageHeader>
       </div>
 
-      <main className="p-6 flex flex-col gap-8">  
-        <div className="p-4">
+      <main className="flex flex-col gap-8">  
+        <div >
           <div className="sticky top-0 z-10 flex justify-between items-center mb-4 pb-4">
             <h1 className="text-2xl font-bold">Watchlists</h1>
             <Button onClick={addWatchlist} className="ml-auto">
