@@ -10,6 +10,7 @@ import PageHeader from '../components/PageHeader';
 import { ColumnDef } from "@tanstack/react-table";
 import { Ticker } from '../lib/utils';
 import Link from 'next/link';
+import WatchlistHeader from '../components/WatchlistHeader';
 
 
 interface WatchlistCard {
@@ -253,14 +254,9 @@ export default function WatchlistPage() {
       </div>
 
       <main className="flex flex-col gap-8">  
-        <div >
-          <div className="sticky top-0 z-10 flex justify-between items-center mb-4 pb-4">
-            <h1 className="text-2xl font-bold">Watchlists</h1>
-            <Button onClick={addWatchlist} className="ml-auto">
-              <Plus className="mr-2 h-4 w-4" /> Add Watchlist
-            </Button>
-          </div>
-
+        <WatchlistHeader onAddWatchlist={addWatchlist} />
+        
+        <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
             {watchlists.map((watchlist) => (
               <Card key={watchlist.id} className="relative">
