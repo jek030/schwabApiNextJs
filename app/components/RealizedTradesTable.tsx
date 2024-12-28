@@ -221,7 +221,13 @@ function calculateRealizedTrades(transactions: ProcessedTransaction[]): Realized
 }
 
 export default function RealizedTradesTable({ transactions }: { transactions: ProcessedTransaction[] }) {
-  const [startDate, setStartDate] = useState('');
+  // Calculate days since January 1st of current year
+  const today = new Date();
+  const startOfYear = new Date(today.getFullYear(), 0, 1); // January 1st of current year
+  const daysSinceStartOfYear = Math.ceil((today.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24));
+  
+  const [days, setDays] = useState(daysSinceStartOfYear);
+  const [startDate, setStartDate] = useState(startOfYear.toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState('');
   const [symbolFilter, setSymbolFilter] = useState('');
   
@@ -229,7 +235,7 @@ export default function RealizedTradesTable({ transactions }: { transactions: Pr
   
   const filteredTrades = realizedTrades.filter(trade => {
     const sellDate = new Date(trade.sellDate);
-    const endDatePlusOne = endDate ? new Date(new Date(endDate).setDate(new Date(endDate).getDate() + 1)) : null;
+    const endDatePlusOne = endDate ? new Date(new Date(endDate).setDate(new Date(endDate).getDate() + 1)) : new Date();
     
     const dateMatches = (!startDate || sellDate >= new Date(startDate)) && 
                        (!endDate || sellDate < endDatePlusOne);
