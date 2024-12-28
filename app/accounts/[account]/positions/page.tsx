@@ -7,6 +7,7 @@ import { useTransactions } from '@/app/hooks/useTransactions';
 import PositionsCard from '@/app/components/PositionsCard';
 import TransactionsCard from '@/app/components/TransactionsCard';
 import TransactionCalendarCard from '@/app/components/TransactionCalendarCard';
+import RealizedTradesTable from '@/app/components/RealizedTradesTable';
 
 export default function Page({ params }: { params: { account: string } }) {
   const [selectedDays, setSelectedDays] = useState(30);
@@ -45,6 +46,7 @@ export default function Page({ params }: { params: { account: string } }) {
           onDaysChange={setSelectedDays}
           fetchTransactions={fetchTransactions}
         />
+        <RealizedTradesTable transactions={processedTransactions} />
         <TransactionCalendarCard calendarEvents={calendarEvents} />
       </main>
     </div>
