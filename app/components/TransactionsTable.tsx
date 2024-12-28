@@ -141,22 +141,32 @@ function getRowClass(netAmount: string | number): string {
     : "bg-green-50 hover:bg-green-100";
 }
 
+interface TransactionsTableProps {
+  transactions: ProcessedTransaction[];
+  accountNum: string;
+  onDaysChange: (days: number) => void;
+  fetchTransactions: (days: number) => Promise<void>;
+}
+
 export default function TransactionsTable({ 
   transactions, 
   accountNum,
-  onDaysChange
-}: { 
-  transactions: ProcessedTransaction[], 
-  accountNum: string,
-  onDaysChange: (days: number) => void
-}) {
-  const [days, setDays] = useState(30);
-  const [inputDays, setInputDays] = useState('30');
+  onDaysChange,
+  fetchTransactions
+}: TransactionsTableProps) {
+  // Calculate days since January 1st of current year
+  const today = new Date();
+  const startOfYear = new Date(today.getFullYear(), 0, 1); // January 1st of current year
+  const daysSinceStartOfYear = Math.ceil((today.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24));
+  
+  const [days, setDays] = useState(daysSinceStartOfYear);
+  const [inputDays, setInputDays] = useState(daysSinceStartOfYear.toString());
 
-  const handleDaysSubmit = () => {
+  const handleDaysSubmit = async () => {
     const newDays = parseInt(inputDays) || 30;
     setDays(newDays);
     onDaysChange(newDays);
+    await fetchTransactions(newDays);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

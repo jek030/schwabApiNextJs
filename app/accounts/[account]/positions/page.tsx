@@ -11,7 +11,7 @@ import TransactionCalendarCard from '@/app/components/TransactionCalendarCard';
 export default function Page({ params }: { params: { account: string } }) {
   const [selectedDays, setSelectedDays] = useState(30);
   const [account, setAccount] = useState<any>(null);
-  const { processedTransactions, calendarEvents } = useTransactions(params.account, selectedDays);
+  const { processedTransactions, calendarEvents, fetchTransactions } = useTransactions(params.account, selectedDays);
 
   useEffect(() => {
     const fetchAccount = async () => {
@@ -43,6 +43,7 @@ export default function Page({ params }: { params: { account: string } }) {
           transactions={processedTransactions} 
           accountNum={params.account}
           onDaysChange={setSelectedDays}
+          fetchTransactions={fetchTransactions}
         />
         <TransactionCalendarCard calendarEvents={calendarEvents} />
       </main>

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/app/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/app/ui/dialog";
@@ -21,6 +21,10 @@ const Calendar: React.FC<CalendarProps> = ({ events: initialEvents = [] }) => {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [newEvent, setNewEvent] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('default');
+
+  useEffect(() => {
+    setEvents(initialEvents);
+  }, [initialEvents]);
 
   const handleAddEvent = () => {
     if (newEvent.trim() && selectedDate) {

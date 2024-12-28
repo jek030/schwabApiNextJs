@@ -9,9 +9,15 @@ interface TransactionsCardProps {
   transactions: ProcessedTransaction[];
   accountNum: string;
   onDaysChange: (days: number) => void;
+  fetchTransactions: (days: number) => Promise<void>;
 }
 
-export default function TransactionsCard({ transactions, accountNum, onDaysChange }: TransactionsCardProps) {
+export default function TransactionsCard({ 
+  transactions, 
+  accountNum, 
+  onDaysChange,
+  fetchTransactions 
+}: TransactionsCardProps) {
   return (
     <Card>
       <CardHeader>
@@ -26,6 +32,7 @@ export default function TransactionsCard({ transactions, accountNum, onDaysChang
             transactions={transactions} 
             accountNum={accountNum}
             onDaysChange={onDaysChange}
+            fetchTransactions={fetchTransactions}
           />
         </Suspense>
       </CardContent>
