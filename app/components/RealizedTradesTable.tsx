@@ -4,6 +4,9 @@ import { ProcessedTransaction } from '@/app/lib/utils';
 import { DataTable } from "@/app/ui/table";
 import { ColumnDef } from "@tanstack/react-table";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/app/ui/card';
+import { useState } from 'react';
+import { Input } from "@/app/ui/input";
+import { Button } from "@/app/ui/button";
 
 interface RealizedTrade {
   symbol: string;
@@ -218,8 +221,23 @@ function calculateRealizedTrades(transactions: ProcessedTransaction[]): Realized
 }
 
 export default function RealizedTradesTable({ transactions }: { transactions: ProcessedTransaction[] }) {
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [symbolFilter, setSymbolFilter] = useState('');
+  
   const realizedTrades = calculateRealizedTrades(transactions);
   
+  const filteredTrades = realizedTrades.filter(trade => {
+    const sellDate = new Date(trade.sellDate);
+    const endDatePlusOne = endDate ? new Date(new Date(endDate).setDate(new Date(endDate).getDate() + 1)) : null;
+    
+    const dateMatches = (!startDate || sellDate >= new Date(startDate)) && 
+                       (!endDate || sellDate < endDatePlusOne);
+    const symbolMatches = !symbolFilter || 
+                         trade.symbol.toLowerCase().includes(symbolFilter.toLowerCase());
+    return dateMatches && symbolMatches;
+  });
+
   return (
     <Card>
       <CardHeader>
@@ -227,11 +245,51 @@ export default function RealizedTradesTable({ transactions }: { transactions: Pr
         <CardDescription>
           Realized gains and losses calculated using FIFO method
         </CardDescription>
+        <div className="flex gap-4 mt-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm">Symbol:</span>
+            <Input
+              type="text"
+              value={symbolFilter}
+              onChange={(e) => setSymbolFilter(e.target.value)}
+              placeholder="Filter by symbol"
+              className="w-32"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm">From:</span>
+            <Input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="w-40"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm">To:</span>
+            <Input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="w-40"
+            />
+          </div>
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              setStartDate('');
+              setEndDate('');
+              setSymbolFilter('');
+            }}
+          >
+            Clear
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <DataTable 
           columns={realizedTradeColumns} 
-          data={realizedTrades}
+          data={filteredTrades}
           defaultSorting={[{
             id: "sellDate",
             desc: true
