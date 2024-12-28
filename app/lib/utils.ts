@@ -142,3 +142,10 @@ export interface ProcessedTransaction {
     positionEffect: string;
   };
 }
+
+export interface CalendarEvent {
+  date: string;
+  title: string;
+  category: 'profit' | 'loss';
+  transaction?: ProcessedTransaction;
+}
