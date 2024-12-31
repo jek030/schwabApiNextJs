@@ -7,8 +7,9 @@ import { useTransactions } from '@/app/hooks/useTransactions';
 import PositionsCard from '@/app/components/PositionsCard';
 import TransactionsCard from '@/app/components/TransactionsCard';
 import TransactionCalendarCard from '@/app/components/TransactionCalendarCard';
-import RealizedTradesTable from '@/app/components/RealizedTradesTable';
+import RealizedTradesTable, { calculateRealizedTrades } from '@/app/components/RealizedTradesTable';
 import PositionsPieChart from '@/app/components/PositionsPieChart';
+import RealizedTradesAnalytics from '@/app/components/RealizedTradesAnalytics';
 
 export default function Page({ params }: { params: { account: string } }) {
   const [selectedDays, setSelectedDays] = useState(30);
@@ -50,7 +51,10 @@ export default function Page({ params }: { params: { account: string } }) {
           onDaysChange={setSelectedDays}
           fetchTransactions={fetchTransactions}
         />
-        <RealizedTradesTable transactions={processedTransactions} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+          <RealizedTradesTable transactions={processedTransactions} />
+          <RealizedTradesAnalytics trades={calculateRealizedTrades(processedTransactions)} />
+        </div>
         <TransactionCalendarCard calendarEvents={calendarEvents} />
       </main>
     </div>

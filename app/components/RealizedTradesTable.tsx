@@ -140,7 +140,7 @@ const realizedTradeColumns: ColumnDef<RealizedTrade>[] = [
   },
 ];
 
-function calculateRealizedTrades(transactions: ProcessedTransaction[]): RealizedTrade[] {
+export function calculateRealizedTrades(transactions: ProcessedTransaction[]): RealizedTrade[] {
   const positions: { [symbol: string]: { quantity: number; cost: number; date: string }[] } = {};
   const realizedTrades: RealizedTrade[] = [];
 
