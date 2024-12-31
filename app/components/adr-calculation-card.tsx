@@ -66,6 +66,17 @@ const ADRCalculationCard: React.FC<ADRCalculationCardProps> = ({ price }) => {
     setResult({ value: calculation });
   };
 
+  const calculatePercentageDiff = (value: string, baseValue: string): string => {
+    const val = parseFloat(value);
+    const base = parseFloat(baseValue);
+    
+    if (!isNaN(val) && !isNaN(base) && base !== 0) {
+      const percentDiff = ((val - base) / base) * 100;
+      return `${percentDiff.toFixed(2)}%`;
+    }
+    return '';
+  };
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -77,17 +88,24 @@ const ADRCalculationCard: React.FC<ADRCalculationCardProps> = ({ price }) => {
         <form onSubmit={calculateResult} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1" htmlFor="value1">
-            Price Target
+              Price Target
             </label>
-            <Input
-              id="value1"
-              type="number"
-              name="value1"
-              value={values.value1}
-              onChange={handleChange}
-              placeholder="Enter first value"
-              required
-            />
+            <div className="flex items-center gap-2">
+              <Input
+                id="value1"
+                type="number"
+                name="value1"
+                value={values.value1}
+                onChange={handleChange}
+                placeholder="Enter first value"
+                required
+              />
+              {values.value1 && values.value2 && (
+                <span className={`text-sm ${parseFloat(values.value1) > parseFloat(values.value2) ? 'text-green-600' : 'text-red-600'}`}>
+                  {calculatePercentageDiff(values.value1, values.value2)}
+                </span>
+              )}
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium mb-1" htmlFor="value2">
@@ -107,15 +125,22 @@ const ADRCalculationCard: React.FC<ADRCalculationCardProps> = ({ price }) => {
             <label className="block text-sm font-medium mb-1" htmlFor="value3">
               Stop Loss
             </label>
-            <Input
-              id="value3"
-              type="number"
-              name="value3"
-              value={values.value3}
-              onChange={handleChange}
-              placeholder="Enter third value"
-              required
-            />
+            <div className="flex items-center gap-2">
+              <Input
+                id="value3"
+                type="number"
+                name="value3"
+                value={values.value3}
+                onChange={handleChange}
+                placeholder="Enter third value"
+                required
+              />
+              {values.value3 && values.value2 && (
+                <span className={`text-sm ${parseFloat(values.value3) < parseFloat(values.value2) ? 'text-red-600' : 'text-green-600'}`}>
+                  {calculatePercentageDiff(values.value3, values.value2)}
+                </span>
+              )}
+            </div>
           </div>
           <Button type="submit" className="w-full">
             Calculate
