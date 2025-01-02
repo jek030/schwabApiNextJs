@@ -31,12 +31,12 @@ export default function PositionsPieChart({ positions }: PositionsPieChartProps)
       </CardHeader>
       <CardContent>
         <div className="w-full h-[600px] flex justify-center">
-          <PieChart width={600} height={600}>
+          <PieChart width={600} height={600} id="portfolio-distribution">
             <Pie
               data={data}
               cx="50%"
               cy="40%"
-              labelLine={{ strokeWidth: 1, length: 20 }}
+              labelLine={{ strokeWidth: 1 }}
               label={({ name, percent }) => 
                 `${name} (${(percent * 100).toFixed(1)}%)`
               }

@@ -220,30 +220,7 @@ export function calculateRealizedTrades(transactions: ProcessedTransaction[]): R
   return realizedTrades;
 }
 
-export default function RealizedTradesTable({ transactions }: { transactions: ProcessedTransaction[] }) {
-  // Calculate days since January 1st of current year
-  const today = new Date();
-  const startOfYear = new Date(today.getFullYear(), 0, 1); // January 1st of current year
-  const daysSinceStartOfYear = Math.ceil((today.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24));
-  
-  const [days, setDays] = useState(daysSinceStartOfYear);
-  const [startDate, setStartDate] = useState(startOfYear.toISOString().split('T')[0]);
-  const [endDate, setEndDate] = useState('');
-  const [symbolFilter, setSymbolFilter] = useState('');
-  
-  const realizedTrades = calculateRealizedTrades(transactions);
-  
-  const filteredTrades = realizedTrades.filter(trade => {
-    const sellDate = new Date(trade.sellDate);
-    const endDatePlusOne = endDate ? new Date(new Date(endDate).setDate(new Date(endDate).getDate() + 1)) : new Date();
-    
-    const dateMatches = (!startDate || sellDate >= new Date(startDate)) && 
-                       (!endDate || sellDate < endDatePlusOne);
-    const symbolMatches = !symbolFilter || 
-                         trade.symbol.toLowerCase().includes(symbolFilter.toLowerCase());
-    return dateMatches && symbolMatches;
-  });
-
+export default function RealizedTradesTable({ trades }: { trades: RealizedTrade[] }) {
   return (
     <Card>
       <CardHeader>
@@ -251,51 +228,11 @@ export default function RealizedTradesTable({ transactions }: { transactions: Pr
         <CardDescription>
           Realized gains and losses calculated using FIFO method
         </CardDescription>
-        <div className="flex gap-4 mt-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm">Symbol:</span>
-            <Input
-              type="text"
-              value={symbolFilter}
-              onChange={(e) => setSymbolFilter(e.target.value)}
-              placeholder="Filter by symbol"
-              className="w-32"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm">From:</span>
-            <Input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-40"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm">To:</span>
-            <Input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="w-40"
-            />
-          </div>
-          <Button 
-            variant="outline" 
-            onClick={() => {
-              setStartDate('');
-              setEndDate('');
-              setSymbolFilter('');
-            }}
-          >
-            Clear
-          </Button>
-        </div>
       </CardHeader>
       <CardContent>
         <DataTable 
           columns={realizedTradeColumns} 
-          data={filteredTrades}
+          data={trades}
           defaultSorting={[{
             id: "sellDate",
             desc: true

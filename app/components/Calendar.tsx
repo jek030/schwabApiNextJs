@@ -79,23 +79,15 @@ const Calendar: React.FC<CalendarProps> = ({ events: initialEvents = [] }) => {
 
     // Add empty cells for days before the start of the month
     for (let i = 0; i < startDay; i++) {
-      days.push(<div key={`empty-${i}`} className="h-32 p-2" />);
+      days.push(
+        <div key={`empty-${i}`} className="h-32 p-2 border border-gray-200" />
+      );
     }
 
     // Add cells for each day of the month
     for (let day = 1; day <= totalDays; day++) {
-      // Format date string using UTC to match the incoming format
-      const dateString = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${day}`;
-      const dayEvents = events.filter(event => {
-        // Parse both dates and compare them using UTC
-        const [eventYear, eventMonth, eventDay] = event.date.split('-').map(Number);
-        const [cellYear, cellMonth, cellDay] = dateString.split('-').map(Number);
-        
-        return eventYear === cellYear && 
-               eventMonth === cellMonth && 
-               eventDay === cellDay;
-      });
-
+      const dateString = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const dayEvents = events.filter(event => event.date === dateString);
       const isToday = new Date().toDateString() === new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toDateString();
 
       days.push(
@@ -104,7 +96,7 @@ const Calendar: React.FC<CalendarProps> = ({ events: initialEvents = [] }) => {
             <div
               className={`h-32 p-2 border border-gray-200 ${
                 isToday ? 'bg-blue-50 font-bold' : ''
-              } hover:bg-gray-50 cursor-pointer transition-colors overflow-hidden`}
+              } hover:bg-gray-50 cursor-pointer transition-colors`}
               onClick={() => setSelectedDate(dateString)}
             >
               <div className="flex justify-between items-start">
@@ -144,7 +136,7 @@ const Calendar: React.FC<CalendarProps> = ({ events: initialEvents = [] }) => {
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full min-w-full">
       <CardHeader>
         <div className="flex items-center justify-between">
           <button
@@ -164,14 +156,16 @@ const Calendar: React.FC<CalendarProps> = ({ events: initialEvents = [] }) => {
           </button>
         </div>
       </CardHeader>
-      <CardContent className="px-2">
-        <div className="grid grid-cols-7 gap-px">
-          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-            <div key={day} className="h-12 p-2 font-semibold text-center">
-              {day}
-            </div>
-          ))}
-          {renderCalendar()}
+      <CardContent className="w-full">
+        <div className="w-full min-w-full">
+          <div className="grid grid-cols-7 gap-px">
+            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+              <div key={day} className="h-12 p-2 font-semibold text-center">
+                {day}
+              </div>
+            ))}
+            {renderCalendar()}
+          </div>
         </div>
       </CardContent>
     </Card>
